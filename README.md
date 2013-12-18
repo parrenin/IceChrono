@@ -1,4 +1,4 @@
 IceChrono
 =========
 
-A statistical and physical model to optmize chronologie of deep polar ice cores
+A statistical and physical model to optimize chronologies of deep polar ice cores.
