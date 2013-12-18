@@ -1,0 +1,107 @@
+#From Bazin et al. and Veres et al. (CP, 2013)
+#All depths are on EDC 99 and Vostok 5G cores								
+#Depth EDC (m)	Depth Vostok (m)	Uncertainty (a)	#	type	Source
+12.59	10.01	200	#	volcanic	Parrenin et al.. 2012
+29.6	23.57	200	#	volcanic	Parrenin et al.. 2012
+37.93	30.21	200	#	volcanic	Parrenin et al.. 2012
+96.86	76.96	200	#	volcanic	Parrenin et al.. 2012
+232.57	179.67	200	#	volcanic	Parrenin et al.. 2012
+243.13	187.31	200	#	volcanic	Parrenin et al.. 2012
+387.31	289.94	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+389.32	291.41	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+393	294.21	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+404.14	302.92	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+438.09	328.62	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+492.53	372.65	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+494.64	374.29	200	#	volcanic	Parrenin et al.. 2012
+553.12	422.85	200	#	volcanic	Parrenin et al.. 2012
+564.39	432.36	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+632.23	496.49	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+645.92	511.15	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+677.14	547.33	200	#	volcanic	Udisti et al.. 2004. reconfirmed by Parrenin et al. 2012
+700.62	571.76	200	#	volcanic	Parrenin et al.. 2012
+790.52	657.45	500	#	volcanic	Parrenin et al.. 2012
+791.87	658.85	500	#	volcanic	Parrenin et al.. 2012
+798.49	665.45	500	#	volcanic	Parrenin et al.. 2012
+874.22	766.44	500	#	volcanic	Parrenin et al.. 2012
+1013.73	947.52	500	#	volcanic	Parrenin et al.. 2012
+1019.45	955.56	500	#	volcanic	Parrenin et al.. 2012
+1040.5	983.8	500	#	volcanic	Parrenin et al.. 2012
+1071.2	1023.5	500	#	volcanic	Parrenin et al.. 2012
+1078.95	1035	500	#	volcanic	Parrenin et al.. 2012
+1079.7	1036	500	#	volcanic	Parrenin et al.. 2012
+1081.28	1038.45	500	#	volcanic	Parrenin et al.. 2012
+1084.73	1043.56	500	#	volcanic	Parrenin et al.. 2012
+1087.94	1048.35	500	#	volcanic	Parrenin et al.. 2012
+1097.96	1063	500	#	volcanic	Parrenin et al.. 2012
+1098.63	1063.96	500	#	volcanic	Parrenin et al.. 2012
+1140.58	1119.53	500	#	volcanic	Parrenin et al.. 2012
+1173.05	1156.55	500	#	volcanic	Parrenin et al.. 2012
+1176.13	1160.5	500	#	volcanic	Parrenin et al.. 2012
+1179	1164.35	500	#	volcanic	Parrenin et al.. 2012
+1238.72	1244.91	500	#	volcanic	Parrenin et al.. 2012
+1271.2	1283.45	500	#	volcanic	Parrenin et al.. 2012
+1278.6	1291.8	500	#	volcanic	Parrenin et al.. 2012
+1312.4	1332.6	500	#	volcanic	Parrenin et al.. 2012
+1314.15	1334.65	500	#	volcanic	Parrenin et al.. 2012
+1316.3	1337.6	500	#	volcanic	Parrenin et al.. 2012
+1342.72	1372.44	500	#	volcanic	Parrenin et al.. 2012
+1344.23	1374.64	500	#	volcanic	Parrenin et al.. 2012
+1353.24	1386.73	500	#	volcanic	Parrenin et al.. 2012
+1429.12	1465.02	252	#	volcanic	Parrenin et al.. 2012
+1439.88	1478.49	243	#	volcanic	Parrenin et al.. 2012
+1443.42	1483.12	222	#	volcanic	Parrenin et al.. 2012
+1447.72	1488.81	218	#	volcanic	Parrenin et al.. 2012
+1448.39	1489.7	230	#	volcanic	Parrenin et al.. 2012
+1451.03	1493.34	230	#	volcanic	Parrenin et al.. 2012
+1452.38	1495.23	237	#	volcanic	Parrenin et al.. 2012
+1454.69	1498.5	228	#	volcanic	Parrenin et al.. 2012
+1455.98	1500.34	224	#	volcanic	Parrenin et al.. 2012
+1456.59	1501.33	237	#	volcanic	Parrenin et al.. 2012
+1470.51	1521.75	251	#	volcanic	Parrenin et al.. 2012
+1480.96	1537.39	237	#	volcanic	Parrenin et al.. 2012
+1482.8	1540.2	236	#	volcanic	Parrenin et al.. 2012
+1489.18	1550.39	236	#	volcanic	Parrenin et al.. 2012
+1494.9	1559.18	243	#	volcanic	Parrenin et al.. 2012
+1502.62	1571.15	246	#	volcanic	Parrenin et al.. 2012
+1506.28	1576.67	231	#	volcanic	Parrenin et al.. 2012
+1510.12	1582.09	246	#	volcanic	Parrenin et al.. 2012
+1511.51	1584	233	#	volcanic	Parrenin et al.. 2012
+1538.62	1618.24	215	#	volcanic	Parrenin et al.. 2012
+1541.13	1621.23	213	#	volcanic	Parrenin et al.. 2012
+1554.63	1637.66	186	#	volcanic	Parrenin et al.. 2012
+1563	1648.56	180	#	volcanic	Parrenin et al.. 2012
+1572.65	1662.08	171	#	volcanic	Parrenin et al.. 2012
+1580.3	1673.03	176	#	volcanic	Parrenin et al.. 2012
+1580.78	1673.74	176	#	volcanic	Parrenin et al.. 2012
+1581.11	1674.22	176	#	volcanic	Parrenin et al.. 2012
+1587.15	1682.91	168	#	volcanic	Parrenin et al.. 2012
+1598.85	1699.71	167	#	volcanic	Parrenin et al.. 2012
+1604.1	1707.25	161	#	volcanic	Parrenin et al.. 2012
+1607.2	1711.5	167	#	volcanic	Parrenin et al.. 2012
+1610.1	1715.55	159	#	volcanic	Parrenin et al.. 2012
+1631.16	1743.59	173	#	volcanic	Parrenin et al.. 2012
+1676	1801.7	161	#	volcanic	Parrenin et al.. 2012
+1678.9	1805.43	156	#	volcanic	Parrenin et al.. 2012
+1683.97	1811.99	153	#	volcanic	Parrenin et al.. 2012
+1690.85	1820.8	152	#	volcanic	Parrenin et al.. 2012
+1696.67	1828.3	138	#	volcanic	Parrenin et al.. 2012
+1704.3	1838.34	146	#	volcanic	Parrenin et al.. 2012
+1708.9	1844.6	153	#	volcanic	Parrenin et al.. 2012
+1711.1	1847.65	141	#	volcanic	Parrenin et al.. 2012
+1716.85	1855.5	149	#	volcanic	Parrenin et al.. 2012
+1726.85	1869.7	167	#	volcanic	Parrenin et al.. 2012
+1731.78	1876.63	180	#	volcanic	Parrenin et al.. 2012
+1734.65	1880.8	182	#	volcanic	Parrenin et al.. 2012
+1745.91	1896.85	230	#	volcanic	Parrenin et al.. 2012
+1748.07	1899.85	231	#	volcanic	Parrenin et al.. 2012
+1767.4	1926.7	315	#	volcanic	Parrenin et al.. 2012
+1769	1929	345	#	volcanic	Parrenin et al.. 2012
+1771.48	1932.75	356	#	volcanic	Parrenin et al.. 2012
+1772.9	1934.9	357	#	volcanic	Parrenin et al.. 2012
+1781.6	1948.7	350	#	volcanic	Parrenin et al.. 2012
+1782.85	1950.95	344	#	volcanic	Parrenin et al.. 2012
+1789.22	1962.65	371	#	volcanic	Parrenin et al.. 2012
+1791.25	1966.36	351	#	volcanic	Parrenin et al.. 2012
+1799.25	1982.11	335	#	volcanic	Parrenin et al.. 2012
+1804	1991.93	100	#	volcanic	Narcisi et al.. 2005. reconfirmed by F. Parrenin

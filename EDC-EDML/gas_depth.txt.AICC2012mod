@@ -1,0 +1,65 @@
+Depth EDC (m)	#Depth EDML (m)	Uncertainty (a)	#	type	Comments	Source
+418.275	717.962	500	#	CH4	YD-Hol	Schilt at al.. 2010
+443.13	765.334	500	#	CH4	BA-YD	Schilt at al.. 2010
+475.434	828.855	500	#	CH4	Start YD	Schilt at al.. 2010
+519.562	920.615	500	#	CH4	Start T1	Schilt at al.. 2010
+579.9	1032.9	500	#	CH4	end DO2	loulergue et al.. 2007
+592.04	1051.67	500	#	CH4	Max DO2	Schilt at al.. 2010
+599.9	1072.9	500	#	CH4	start DO2	loulergue et al.. 2007
+635.4	1148	500	#	CH4	end DO3	loulergue et al.. 2007
+638.129	1150.16	500	#	CH4	MaxDO3	Schilt at al.. 2010
+639.1	1155.1	500	#	CH4	start DO3	loulergue et al.. 2007
+645.9	1162.7	500	#	CH4	end DO4	loulergue et al.. 2007
+649.597	1171.67	500	#	CH4	Max DO4	Schilt at al.. 2010
+651.9	1174.2	500	#	CH4	start DO4	loulergue et al.. 2007
+682.542	1223.93	500	#	CH4	End DO5	Schilt at al.. 2010
+688.397	1233.61	500	#	CH4	Start DO5	Schilt at al.. 2010
+697.413	1248.14	500	#	CH4	End DO6	Schilt at al.. 2010
+702.201	1261.14	500	#	CH4	Start DO6	Schilt at al.. 2010
+711.635	1271.76	500	#	CH4	End DO7	Schilt at al.. 2010
+719.924	1286.78	500	#	CH4	Start DO7	Schilt at al.. 2010
+732.523	1308.77	500	#	CH4	End DO8	Schilt at al.. 2010
+750.973	1337.55	500	#	CH4	Start DO8	Schilt at al.. 2010
+775.191	1375.67	500	#	CH4	Max DO9	Schilt at al.. 2010
+784.278	1391.28	500	#	CH4	End DO10	Schilt at al.. 2010
+790.6	1404.34	500	#	CH4	Start DO10	Schilt at al.. 2010
+797.677	1415.16	500	#	CH4	End DO11	Schilt at al.. 2010
+809.47	1442.06	500	#	CH4	Start DO11	Schilt at al.. 2010
+820.4	1452.9	500	#	CH4	end DO12	loulergue et al.. 2007
+848.853	1490.53	500	#	CH4	Start DO12	Schilt at al.. 2010
+858.7	1503.1	500	#	CH4	end DO13	PHD loulergue
+862	1511.1	500	#	CH4	start DO13	PHD loulergue
+891.015	1552.56	500	#	CH4	End DO14	Schilt at al.. 2010
+924.887	1601.72	500	#	CH4	Start DO14	Schilt at al.. 2010
+940.7	1621.5	500	#	CH4	end DO15	PHD loulergue
+943.748	1626.08	500	#	CH4	Max DO15	Schilt at al.. 2010
+976.778	1677.98	500	#	CH4	Max DO17	Schilt at al.. 2010
+1030.9	1754.3	612	#	CH4	end DO18	PHD loulergue
+1037.28	1758.98	800	#	CH4	Max DO18	Schilt at al.. 2010
+1038.6	1760	487	#	CH4	start DO18	PHD loulergue
+1090.5	1846.6	800	#	CH4	end DO19	PHD loulergue
+1105.54	1865.34	800	#	CH4	start DO19	Schilt at al.. 2010
+1138.52	1911.32	800	#	CH4	Max DO20	Schilt at al.. 2010
+1142.65	1914.3	800	#	CH4		Bazin et al.. 2013
+1188.02	1976.21	1000	#	CH4	End DO21	Schilt at al.. 2010
+1240.27	2023.77	800	#	CH4	Start DO21	Schilt at al.. 2010
+1280.3	2066.1	488	#	CH4	End DO22	PHD loulergue
+1300.8	2088.15	1000	#	CH4		Bazin et al.. 2013
+1377.77	2155.88	800	#	CH4	End DO23	Schilt at al.. 2010
+1427.27	2190.01	800	#	CH4	Start DO23	Schilt at al.. 2010
+1445.15	2209.5	1000	#	CH4		Bazin et al.. 2013
+1463	2223.9	3000	#	d18Oatm		Bazin et al.. 2013
+1472.75	2230.4	1000	#	CH4		Bazin et al.. 2013
+1473.19	2230.49	800	#	CH4	Start DO24	Schilt at al.. 2010
+1476.8	2233.8	1200	#	CH4		Bazin et al.. 2013
+1485.02	2236.48	800	#	CH4	End DO25	Schilt at al.. 2010
+1509.8	2259.9	3000	#	CH4		Bazin et al.. 2013
+1512.52	2262.67	800	#	CH4	Start DO25	Schilt at al.. 2010
+1567.52	2299.98	800	#	CH4	End MIS 5.5	Schilt at al.. 2010
+1584	2309.85	3000	#	d18Oatm		Bazin et al.. 2013
+1650.2	2342.4	3000	#	d18Oatm		Bazin et al.. 2013
+1705.5	2366.9	3000	#	d18Oatm		Bazin et al.. 2013
+1718.77	2368.32	800	#	CH4	Max MIS 5.5	Schilt at al.. 2010
+1721.5	2369.25	1200	#	CH4		Bazin et al.. 2013
+1746.3	2380.9	2000	#	d18Oatm		Bazin et al.. 2013
+1757.27	2382.25	800	#	CH4	Start MIS 5.5	Schilt at al.. 2010
