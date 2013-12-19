@@ -3,14 +3,19 @@ import time
 import math as m
 import numpy as np
 import matplotlib.pyplot as mpl
+import multiprocessing
 from scipy import interpolate
 from scipy.optimize import leastsq
 from os import chdir
 
 import IceChronoModule as icm
 
+
 ###Registration of start time
 start_time = time.clock()
+
+###Initialisation of multiprocessing
+pool = multiprocessing.Pool(4)
 
 ##Global
 list_drillings=['EDC', 'VK', 'TALDICE', 'EDML']
@@ -21,6 +26,7 @@ DC={}
 
 ##Functions
 def residuals(var):
+    """Calculate the residuals."""
     resi=np.array([])
     index=0
     for i,dlabel in enumerate(list_drillings):
@@ -33,7 +39,22 @@ def residuals(var):
                 resi=np.concatenate((resi,DC[dlabel2+'-'+dlabel].residuals()))
     return resi
 
+def Dres(var):
+    """Calculate derivatives for each parameter using pool."""
+    zeropred = residuals(var)
+    derivparams = []
+    delta = 1e-4
+    for i in range(len(var)):
+        copy = np.array(var)
+        copy[i] += delta
+        derivparams.append(copy)
+#    if __name__ == "__main__":
+    results = pool.map(residuals, derivparams)
+    derivs = [ (r - zeropred)/delta for r in results ]
+    return derivs
+
 ##MAIN
+
 
 ##Initialisation
 for i,dlabel in enumerate(list_drillings):
@@ -54,7 +75,8 @@ for i,dlabel in enumerate(list_drillings):
 
 ##Optimization
 print 'Optimization'
-variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
+#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
+variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
