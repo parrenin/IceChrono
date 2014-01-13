@@ -13,9 +13,13 @@ from os import chdir
 
 import IceChronoModule as icm
 
+###Reading parameters directory
+datadir=sys.argv[1]
+print 'Parameters directory is: ',datadir
+chdir(datadir)
 
 ###Registration of start time
-start_time = time.clock()
+start_time = time.time()
 
 ###Initialisation of multiprocessing
 pool = multiprocessing.Pool(4)
@@ -98,6 +102,6 @@ for i,dlabel in enumerate(list_drillings):
             DC[dlabel2+'-'+dlabel].display_final()
             
 ###Program execution time
-print 'program execution time: ', time.clock() - start_time, 'seconds'
+print 'program execution time: ', time.time() - start_time, 'seconds'
 
 

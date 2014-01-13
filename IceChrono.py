@@ -19,7 +19,7 @@ print 'Parameters directory is: ',datadir
 chdir(datadir)
 
 ###Registration of start time
-start_time = time.clock()
+start_time = time.time()
 
 ###Initialisation of multiprocessing
 pool = multiprocessing.Pool(4)
@@ -81,9 +81,11 @@ for i,dlabel in enumerate(list_drillings):
 
 
 ##Optimization
+start_time_opt = time.time()
 print 'Optimization'
 variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
 #variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
@@ -102,6 +104,6 @@ for i,dlabel in enumerate(list_drillings):
             DC[dlabel2+'-'+dlabel].display_final()
             
 ###Program execution time
-print 'program execution time: ', time.clock() - start_time, 'seconds'
+print 'Program execution time: ', time.time() - start_time, 'seconds'
 
 
