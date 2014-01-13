@@ -25,8 +25,6 @@ start_time = time.time()
 pool = multiprocessing.Pool(4)
 
 ##Global
-list_drillings=['EDC', 'VK', 'TALDICE', 'EDML']
-#list_drillings=['EDML']
 variables=np.array([])
 D={}
 DC={}
@@ -104,6 +102,6 @@ for i,dlabel in enumerate(list_drillings):
             DC[dlabel2+'-'+dlabel].display_final()
             
 ###Program execution time
-print 'Program execution time: ', time.time() - start_time, 'seconds'
+print 'Program execution time: ', time.time() - start_time, 'seconds' 
 
 

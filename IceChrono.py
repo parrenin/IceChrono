@@ -21,12 +21,13 @@ chdir(datadir)
 ###Registration of start time
 start_time = time.time()
 
+##Parameters
+execfile('./parameters.py')
+
 ###Initialisation of multiprocessing
 pool = multiprocessing.Pool(4)
 
 ##Global
-list_drillings=['EDC', 'VK', 'TALDICE', 'EDML']
-#list_drillings=['EDML']
 variables=np.array([])
 D={}
 DC={}
