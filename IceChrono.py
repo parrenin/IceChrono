@@ -104,6 +104,6 @@ for i,dlabel in enumerate(list_drillings):
             DC[dlabel2+'-'+dlabel].display_final()
             
 ###Program execution time
-print 'Program execution time: ', time.time() - start_time, 'seconds'
+print 'Program execution time: ', time.time() - start_time, 'seconds' 
 
 
