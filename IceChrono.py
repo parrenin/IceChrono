@@ -75,8 +75,8 @@ for i,dlabel in enumerate(list_drillings):
 
 ##Optimization
 print 'Optimization'
-#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
-variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
+#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
