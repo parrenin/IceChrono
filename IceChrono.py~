@@ -1,3 +1,6 @@
+#TODO: what about symbolic links in github?
+#Make a script to clean all pdf files.
+
 import sys
 import time
 import math as m
@@ -10,8 +13,12 @@ from os import chdir
 
 import IceChronoModule as icm
 
+
 ###Registration of start time
 start_time = time.clock()
+
+###Initialisation of multiprocessing
+pool = multiprocessing.Pool(4)
 
 ##Global
 list_drillings=['EDC', 'VK', 'TALDICE', 'EDML']
@@ -44,8 +51,8 @@ def Dres(var):
         copy = np.array(var)
         copy[i] += delta
         derivparams.append(copy)
-    if __name__ == "__main__":
-        results = pool.map(residuals, derivparams)
+#    if __name__ == "__main__":
+    results = pool.map(residuals, derivparams)
     derivs = [ (r - zeropred)/delta for r in results ]
     return derivs
 
@@ -71,11 +78,8 @@ for i,dlabel in enumerate(list_drillings):
 
 ##Optimization
 print 'Optimization'
-###Initialisation of multiprocessing
-if __name__ == "__main__":
-    pool = multiprocessing.Pool(4)
-#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
-variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
+#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
