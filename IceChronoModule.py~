@@ -8,6 +8,7 @@ import operator
 import math as m
 import numpy as np
 import matplotlib.pyplot as mpl
+import warnings
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy import interpolate
 from scipy.optimize import leastsq
@@ -19,7 +20,7 @@ color_opt='k'
 color_mod='b'
 color_ci='0.8'
 color_sigma='m'
-show_initial=False
+show_initial=True
         
 class Drilling:
 

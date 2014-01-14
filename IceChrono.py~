@@ -55,8 +55,8 @@ def Dres(var):
         copy[i] += delta
         derivparams.append(copy)
 #        results.append(residuals(derivparams))
-#    if __name__ == "__main__":
-    pool = multiprocessing.Pool(nb_nodes)
+    if __name__ == "__main__":
+        pool = multiprocessing.Pool(nb_nodes)
     results = pool.map(residuals, derivparams)
     derivs = [ (r - zeropred)/delta for r in results ]
     return derivs

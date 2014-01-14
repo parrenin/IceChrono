@@ -75,6 +75,7 @@ for i,dlabel in enumerate(list_drillings):
     D[dlabel].display_init()
     variables=np.concatenate((variables,D[dlabel].variables))
 
+for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
             DC[dlabel2+'-'+dlabel]=icm.DrillingCouple(D[dlabel2],D[dlabel])
