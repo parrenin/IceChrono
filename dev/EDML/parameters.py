@@ -24,8 +24,6 @@ self.LID_LID=np.array([98., 98.])
 self.corr_tau=np.zeros(101)
 self.restart=True
 
-self.variables=np.concatenate((self.corr_tau, self.corr_a, self.corr_LIDIE))
-
 
 #self.thickness=3237
 #self.pprime=1.19
