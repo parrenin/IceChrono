@@ -1,3 +1,5 @@
 list_drillings=['EDC', 'VK', 'TALDICE', 'EDML']
-#list_drillings=['EDML']
+opt_method='leastsq-parallel'  #leastsq, leastsq-para (EXPERIMENTAL)
+nb_nodes=6
+
 

@@ -21,8 +21,8 @@ chdir(datadir)
 ###Registration of start time
 start_time = time.time()
 
-###Initialisation of multiprocessing
-pool = multiprocessing.Pool(4)
+##Parameters
+execfile('./parameters.py')
 
 ##Global
 variables=np.array([])
@@ -48,12 +48,15 @@ def Dres(var):
     """Calculate derivatives for each parameter using pool."""
     zeropred = residuals(var)
     derivparams = []
-    delta = 1e-4
-    for i in range(len(var)):
+    results=[]
+    delta = m.sqrt(np.finfo(float).eps) #Stolen from the leastsq code
+    for i in range(len(var)): #fixme: This loop is probably sub-optimal. Have a look at what does leastsq to improve this.
         copy = np.array(var)
         copy[i] += delta
         derivparams.append(copy)
+#        results.append(residuals(derivparams))
 #    if __name__ == "__main__":
+    pool = multiprocessing.Pool(nb_nodes)
     results = pool.map(residuals, derivparams)
     derivs = [ (r - zeropred)/delta for r in results ]
     return derivs
@@ -80,9 +83,15 @@ for i,dlabel in enumerate(list_drillings):
 
 ##Optimization
 start_time_opt = time.time()
-print 'Optimization'
-variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
-#variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+if opt_method=='leastsq':
+    print 'Optimization by leastsq'
+    variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
+elif opt_method=='leastsq-parallel':
+    print 'Optimization by leastsq-parallel'
+    variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+else:
+    print opt_method,': Optimization method not recognized.'
+    quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
 print 'Calculation of confidence intervals'
 index=0
