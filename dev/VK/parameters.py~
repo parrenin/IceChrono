@@ -20,7 +20,7 @@ self.corr_LIDIE=np.zeros(81)
 self.LID_depth=np.array([0., (self.max_depth-0.1)])
 self.LID_LID=np.array([98., 98.])  #TODO: change this EDC value
 self.corr_tau=np.zeros(101)
-self.restart=False
+self.restart=True
 
 
 #self.pprime=1.19

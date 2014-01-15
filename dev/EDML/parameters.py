@@ -22,7 +22,7 @@ self.corr_LIDIE=np.zeros(31)
 self.LID_depth=np.array([0., (self.max_depth-0.1)])
 self.LID_LID=np.array([98., 98.])
 self.corr_tau=np.zeros(101)
-self.restart=True
+self.restart=False
 
 
 #self.thickness=3237

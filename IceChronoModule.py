@@ -20,7 +20,7 @@ color_opt='k'
 color_mod='b'
 color_ci='0.8'
 color_sigma='m'
-show_initial=False
+show_initial=True
         
 class Drilling:
 
@@ -284,7 +284,6 @@ class Drilling:
         return jacob
     
     
-    #fonction cout hors du For
     def optimisation(self) : 
         self.variables,self.hess,self.infodict,mesg,ier=leastsq(self.residuals, self.variables, full_output=1)
         print self.variables

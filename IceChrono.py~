@@ -1,5 +1,6 @@
 #TODO: what about symbolic links in github?
 #Make a script to clean all pdf files.
+#quit() is not the right thing to do since it exits the interpreter if the program is run within it.
 
 import sys
 import time
@@ -75,6 +76,7 @@ for i,dlabel in enumerate(list_drillings):
     D[dlabel].display_init()
     variables=np.concatenate((variables,D[dlabel].variables))
 
+for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
             DC[dlabel2+'-'+dlabel]=icm.DrillingCouple(D[dlabel2],D[dlabel])
@@ -93,6 +95,9 @@ else:
     print opt_method,': Optimization method not recognized.'
     quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
+if hess==None:
+    print 'singular matrix encountered (flat curvature in some direction)'
+    quit()
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
@@ -112,5 +117,5 @@ for i,dlabel in enumerate(list_drillings):
             
 ###Program execution time
 print 'Program execution time: ', time.time() - start_time, 'seconds' 
-
+quit()
 

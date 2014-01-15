@@ -284,7 +284,6 @@ class Drilling:
         return jacob
     
     
-    #fonction cout hors du For
     def optimisation(self) : 
         self.variables,self.hess,self.infodict,mesg,ier=leastsq(self.residuals, self.variables, full_output=1)
         print self.variables

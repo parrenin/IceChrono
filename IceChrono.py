@@ -94,6 +94,9 @@ else:
     print opt_method,': Optimization method not recognized.'
     quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
+if hess==None:
+    print 'singular matrix encountered (flat curvature in some direction)'
+    quit()
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
@@ -113,5 +116,5 @@ for i,dlabel in enumerate(list_drillings):
             
 ###Program execution time
 print 'Program execution time: ', time.time() - start_time, 'seconds' 
-
+quit()
 
