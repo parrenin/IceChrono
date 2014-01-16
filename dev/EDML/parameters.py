@@ -1,5 +1,4 @@
 #Parameters specific to the EDML ice core
-#TODO: tau_model.txt is incorrect, takes into account firn compaction
 #TODO: udepth.txt is incorrect
 self.dim=2
 self.calc_a=False
@@ -17,7 +16,7 @@ self.k=0.1
 self.lambda_tau=70
 self.lambda_LIDIE=4000
 self.sigmap_corr_LIDIE=0.4
-self.age_max=800000.
+self.age_max=300000.+self.age_min
 self.corr_a=np.zeros(31)
 self.corr_LIDIE=np.zeros(31)
 self.LID_depth=np.array([0., (self.max_depth-0.1)])

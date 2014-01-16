@@ -49,7 +49,7 @@ class Drilling:
             self.a=self.a_model
             
 
-        self.corr_a_age=np.arange(0., self.age_max+0.1, self.age_max/(np.size(self.corr_a)-1))
+        self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))
         self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
         f=interpolate.interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
         self.correlation_corr_a=f(np.abs(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age)))
@@ -96,7 +96,7 @@ class Drilling:
         self.LID=f(self.depth)
         self.LIDIE=np.empty_like(self.LID)
         self.corr_LIDIE=np.zeros(np.size(self.corr_LIDIE))
-        self.corr_LIDIE_age=np.arange(0.,self.age_max+0.1, self.age_max/(np.size(self.corr_LIDIE)-1))
+        self.corr_LIDIE_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LIDIE)-1))
         self.correlation_corr_LIDIE=np.empty((np.size(self.corr_LIDIE),np.size(self.corr_LIDIE)))
         f=interpolate.interp1d(np.array([0,self.lambda_LIDIE,10000000]),np.array([1, 0, 0]))
         self.correlation_corr_LIDIE=f(np.abs(np.ones((np.size(self.corr_LIDIE_age),np.size(self.corr_LIDIE_age)))*self.corr_LIDIE_age-np.transpose(np.ones((np.size(self.corr_LIDIE_age),np.size(self.corr_LIDIE_age)))*self.corr_LIDIE_age)))
@@ -535,7 +535,7 @@ class DrillingCouple:
     def display_init(self):
         
         mpl.figure(self.label+' ice-ice')
-        range=np.array([0, min(self.D1.age_max,self.D2.age_max)])
+        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' ice age')
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -543,7 +543,7 @@ class DrillingCouple:
             mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_init, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' gas-gas')
-        range=np.array([0, min(self.D1.age_max,self.D2.age_max)])
+        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' gas age')
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -551,7 +551,7 @@ class DrillingCouple:
             mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_init, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' ice-gas')
-        range=np.array([0, min(self.D1.age_max,self.D2.age_max)])
+        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' gas age')
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -559,7 +559,7 @@ class DrillingCouple:
             mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' gas-ice')
-        range=np.array([0, min(self.D1.age_max,self.D2.age_max)])
+        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' ice age')
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
