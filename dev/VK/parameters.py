@@ -2,7 +2,8 @@
 self.dim=2
 self.calc_a=False
 self.calc_tau=False
-self.age_surf=-47
+self.age_min=-47
+self.min_depth=0.
 self.max_depth=3501.
 self.thickness=3767.
 self.step=1

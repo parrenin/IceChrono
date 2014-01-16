@@ -6,7 +6,8 @@
 self.dim=1
 self.calc_a=True
 self.calc_tau=True
-self.age_surf=-50
+self.age_min=-50
+self.min_depth=0.
 self.max_depth=1620.
 self.step=1.
 self.gamma_source=3.4 #Same as DC, need to check with B. Stenni if there is a better value

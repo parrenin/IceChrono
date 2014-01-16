@@ -81,7 +81,7 @@ class Drilling:
             self.gasmarkers_age=readarray[:,1]
             self.gasmarkers_sigma=readarray[:,2]
         
-        self.depth=np.arange(0., self.max_depth+0.01, self.step)	#we should use the depth of the isotopes.txt file
+        self.depth=np.arange(self.min_depth, self.max_depth+0.01, self.step)
         self.age=np.empty_like(self.depth)
         self.gage=np.empty_like(self.depth)
         
@@ -204,7 +204,7 @@ class Drilling:
 #        if np.size(self.D)==np.size(tau_model) && np.size(tau_model)==np.size(a_model):
 #            age_model=self.step*np.cumsum(self.D/tau_model/a_model)
         #else:
-        self.age_model=self.age_surf+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
+        self.age_model=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
             
         f_model=interpolate.interp1d(self.depth, self.age_model)
 
@@ -230,7 +230,7 @@ class Drilling:
         i=interpolate.interp1d(self.udepth, self.depth)
 
         #Ice age
-        self.age=self.age_surf+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
+        self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
         f=interpolate.interp1d(self.depth,self.age)
 
         self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>0, self.udepth-self.LIDIE, 0.))
@@ -418,7 +418,7 @@ class Drilling:
         mpl.plot(self.sigma_age*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')       
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_surf,x2,y2,y1))
+        mpl.axis((self.age_min,x2,y2,y1))
         pp=PdfPages(self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
         pp.close()
@@ -432,7 +432,7 @@ class Drilling:
         mpl.plot(self.sigma_gage*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')      
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_surf,x2,y2,y1))
+        mpl.axis((self.age_min,x2,y2,y1))
         pp=PdfPages(self.label+'/gas_age.pdf')
         pp.savefig(mpl.figure(self.label+' gas age'))
         pp.close()

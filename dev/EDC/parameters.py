@@ -3,7 +3,8 @@
 self.dim=1
 self.calc_a=True
 self.calc_tau=True
-self.age_surf=-50.
+self.age_min=-50.
+self.min_depth=0.
 self.max_depth=3190.
 self.step=0.55
 self.gamma_source=3.4
@@ -27,5 +28,3 @@ self.LID_depth=np.array([0., self.max_depth])
 self.LID_LID=np.array([98., 98.])
 self.corr_tau=np.zeros(101)
 self.restart=False
-
-

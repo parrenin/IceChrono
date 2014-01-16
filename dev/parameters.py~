@@ -1,5 +1,0 @@
-list_drillings=['EDML']
-opt_method='leastsq'  #leastsq, leastsq-para (EXPERIMENTAL)
-nb_nodes=6
-
-
