@@ -45,7 +45,7 @@ class Drilling:
             self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
             self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
         else:
-            self.a_model=np.loadtxt(dlabel+'/a_model.txt')
+            self.a_model=np.loadtxt(dlabel+'/accu-prior.txt')
             self.a=self.a_model
             
 
@@ -86,9 +86,9 @@ class Drilling:
         self.gage=np.empty_like(self.depth)
         
 
-        readarray=np.loadtxt(dlabel+'/density.txt')
-        self.density_depth=readarray[:,0]
-        self.D=readarray[:,1]
+        readarray=np.loadtxt(dlabel+'/density-prior.txt')
+#        self.density_depth=readarray[:,0]
+        self.D=readarray
         self.iedepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D)))
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
@@ -115,7 +115,7 @@ class Drilling:
         if self.calc_tau:
             self.tau=np.empty_like(self.depth_mid)
         else:
-            self.tau_model=np.loadtxt(dlabel+'/tau_model.txt')
+            self.tau_model=np.loadtxt(dlabel+'/thinning-prior.txt')
             self.tau=self.tau_model
 
         self.corr_tau_depth=np.arange(0., self.max_depth+0.01, self.max_depth/(np.size(self.corr_tau)-1))
