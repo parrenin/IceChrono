@@ -3,6 +3,7 @@
 self.dim=2
 self.calc_a=False
 self.calc_tau=False
+self.calc_LID=True
 self.age_min=-47
 self.min_depth=0.
 self.max_depth=2416.
@@ -19,8 +20,9 @@ self.sigmap_corr_LIDIE=0.4
 self.age_max=300000.+self.age_min
 self.corr_a=np.zeros(31)
 self.corr_LIDIE=np.zeros(31)
-self.LID_depth=np.array([0., (self.max_depth-0.1)])
-self.LID_LID=np.array([98., 98.])
+self.LID_value=98.
+#self.LID_depth=np.array([0., (self.max_depth-0.1)])
+#self.LID_LID=np.array([98., 98.])
 self.corr_tau=np.zeros(101)
 self.restart=False
 

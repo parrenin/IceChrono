@@ -92,6 +92,9 @@ class Drilling:
         self.iedepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D)))
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
+        if self.calc_LID:
+            self.LID_depth=np.array([self.min_depth, self.max_depth])
+            self.LID_LID=np.array([self.LID_value, self.LID_value])
         f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
         self.LID=f(self.depth)
         self.LIDIE=np.empty_like(self.LID)
