@@ -19,9 +19,8 @@ self.sigmap_corr_LIDIE=0.4
 self.age_max=800000.+self.age_min
 self.corr_a=np.zeros(81)
 self.corr_LIDIE=np.zeros(81)
-#self.LID_depth=np.array([0., (self.max_depth-0.1)])
-#self.LID_LID=np.array([98., 98.])  #TODO: change this EDC value
 self.LID_value=98.   #TODO: change this EDC value
+self.Dfirn=0.698    #This is the EDC value
 self.corr_tau=np.zeros(101)
 self.restart=False
 

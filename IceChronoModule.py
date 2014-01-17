@@ -155,7 +155,8 @@ class Drilling:
         if self.calc_a==True:
             self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
         if self.calc_tau==True:
-            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.s]), np.array([self.mu])))
+#            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.s]), np.array([self.mu])))
+            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.mu])))
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LIDIE))
 #        self.variables=np.concatenate((np.array([self.A0, self.beta, self.pprime, self.s, self.mu]), self.corr_tau, self.corr_a, self.corr_LIDIE))
 
@@ -169,10 +170,13 @@ class Drilling:
             self.beta=variables[index+1]
             index=index+2
         if self.calc_tau==True:
+#            self.p=-1+m.exp(variables[index])
+#            self.s=variables[index+1]
+#            self.mu=variables[index+2]
+#            index=index+3
             self.p=-1+m.exp(variables[index])
-            self.s=variables[index+1]
-            self.mu=variables[index+2]
-            index=index+3
+            self.mu=variables[index+1]
+            index=index+2
         self.corr_tau=variables[index:index+np.size(self.corr_tau)]
         self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
         self.corr_LIDIE=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LIDIE)]
@@ -198,8 +202,9 @@ class Drilling:
         self.udepth_model=self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
         #print 'udepth_model ', np.size(udepth_model)
         
-        g_model=interpolate.interp1d(self.depth, self.udepth_model)
-        self.LIDIE_model=g_model(self.LID)
+        g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
+        self.LIDIE_model=self.LID*self.Dfirn
+        self.ULIDIE_model=g_model(self.LIDIE_model)
         i_model=interpolate.interp1d(self.udepth_model, self.depth)
 
         #Ice age
@@ -212,7 +217,7 @@ class Drilling:
         f_model=interpolate.interp1d(self.depth, self.age_model)
 
         #gas age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.LIDIE_model>0, self.udepth_model-self.LIDIE_model, 0.))
+        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>0, self.udepth_model-self.ULIDIE_model, 0.))
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
 
@@ -227,9 +232,10 @@ class Drilling:
         h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
         self.udepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
-#        g=interpolate.interp1d(self.depth, self.udepth)
+        g=interpolate.interp1d(self.iedepth, self.udepth)
         j=interpolate.interp1d(self.corr_LIDIE_age, np.dot(self.chol_LIDIE,self.corr_LIDIE)*self.sigmap_corr_LIDIE, bounds_error=False, fill_value=self.corr_LIDIE[-1])
         self.LIDIE=self.LIDIE_model*np.exp(j(self.age_model))
+        self.ULIDIE=g(self.LIDIE)
         i=interpolate.interp1d(self.udepth, self.depth)
 
         #Ice age
