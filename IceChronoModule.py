@@ -214,10 +214,10 @@ class Drilling:
         #else:
         self.age_model=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
             
-        f_model=interpolate.interp1d(self.depth, self.age_model)
+        f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #gas age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>0, self.udepth_model-self.ULIDIE_model, 0.))
+        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>0, self.udepth_model-self.ULIDIE_model, 0.))  #FIXME: we assume surface is at depth=0. We might define a depth_surf in the future.
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
 
@@ -240,7 +240,7 @@ class Drilling:
 
         #Ice age
         self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
-        f=interpolate.interp1d(self.depth,self.age)
+        f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
         self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>0, self.udepth-self.LIDIE, 0.))
         self.Ddepth=self.depth-self.ice_equiv_depth
