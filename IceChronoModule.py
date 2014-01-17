@@ -81,7 +81,7 @@ class Drilling:
             self.gasmarkers_age=readarray[:,1]
             self.gasmarkers_sigma=readarray[:,2]
         
-        self.depth=np.arange(self.min_depth, self.max_depth+0.01, self.step)
+        self.depth=np.arange(self.depth_min, self.depth_max+0.01, self.step)
         self.age=np.empty_like(self.depth)
         self.gage=np.empty_like(self.depth)
         
@@ -93,7 +93,7 @@ class Drilling:
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
-            self.LID_depth=np.array([self.min_depth, self.max_depth])
+            self.LID_depth=np.array([self.depth_min, self.depth_max])
             self.LID_LID=np.array([self.LID_value, self.LID_value])
         f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
         self.LID=f(self.depth)
@@ -111,7 +111,7 @@ class Drilling:
         self.thicknes_ie_init=readarray[0]
         self.udepth_init=readarray[1:]
         
-        self.depth_mid=np.arange(self.step/2, self.max_depth, self.step)
+        self.depth_mid=np.arange(self.depth_min+self.step/2, self.depth_max, self.step)
 #        print 'depth_mid ', np.size(self.depth_mid)
         self.zeta=(self.thickness-self.depth_mid)/self.thickness
 #        print 'zeta ', np.size(self.zeta)
@@ -121,7 +121,7 @@ class Drilling:
             self.tau_model=np.loadtxt(dlabel+'/thinning-prior.txt')
             self.tau=self.tau_model
 
-        self.corr_tau_depth=np.arange(0., self.max_depth+0.01, self.max_depth/(np.size(self.corr_tau)-1))
+        self.corr_tau_depth=np.arange(self.depth_min, self.depth_max+0.01, (self.depth_max-self.depth_min)/(np.size(self.corr_tau)-1))
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
@@ -391,6 +391,8 @@ class Drilling:
         mpl.fill_betweenx(self.depth_mid, self.tau-self.sigma_tau, self.tau+self.sigma_tau, color=self.color_ci)
 #        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(self.label+'/thinning.pdf')
@@ -403,8 +405,8 @@ class Drilling:
         mpl.step(self.age, np.concatenate((self.a_model, np.array([self.a_model[-1]]))), color=self.color_mod, where='post', label='Model')
         mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]]))), color=self.color_opt, where='post', label='Corrected +/-$\sigma$')
         mpl.fill_between(self.age[:-1], self.a-self.sigma_a, self.a+self.sigma_a, color=self.color_ci)
-#        mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]])))+np.concatenate((self.sigma_a, np.array([self.sigma_a[-1]]))), color='k', where='post', linestyle='-', label='+/- 1 sigma')
-#        mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]])))-np.concatenate((self.sigma_a, np.array([self.sigma_a[-1]]))), color='k', where='post', linestyle='-')
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/accumulation.pdf')
         pp.savefig(mpl.figure(self.label+' accumulation'))
@@ -414,6 +416,8 @@ class Drilling:
         mpl.step(self.age, self.LIDIE_model, color=self.color_mod,where='post', label='Model')
         mpl.step(self.age, self.LIDIE, color=self.color_opt, where='post', label='Corrected +/-$\sigma$')
         mpl.fill_between(self.age, self.LIDIE-self.sigma_LIDIE, self.LIDIE+self.sigma_LIDIE, color=self.color_ci)
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/LIDIE.pdf')
         pp.savefig(mpl.figure(self.label+' LIDIE'))
@@ -424,7 +428,9 @@ class Drilling:
         mpl.plot(self.age_model, self.depth, color=self.color_mod, label='Model')
         mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=self.color_ci)
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_age*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')       
+        mpl.plot(self.sigma_age*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')   
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y2,y1))
@@ -438,7 +444,9 @@ class Drilling:
         mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=self.color_ci)
 #        mpl.plot(self.gage+self.sigma_gage, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.gage-self.sigma_gage, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_gage*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')      
+        mpl.plot(self.sigma_gage*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')  
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y2,y1))
@@ -452,6 +460,8 @@ class Drilling:
         mpl.fill_betweenx(self.depth, self.Ddepth-self.sigma_Ddepth, self.Ddepth+self.sigma_Ddepth, color=self.color_ci)
 #        mpl.plot(self.Ddepth+self.sigma_Ddepth, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(self.label+'/Ddepth.pdf')
@@ -584,6 +594,8 @@ class DrillingCouple:
         mpl.figure(self.label+' ice-ice')
         mpl.errorbar(self.D1.fct_age_model(self.icemarkers_depth1),self.D2.fct_age_model(self.icemarkers_depth2), color=color_mod, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_opt, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/ice-ice.pdf')
         pp.savefig(mpl.figure(self.label+' ice-ice'))
@@ -592,6 +604,7 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-gas')
         mpl.errorbar(self.D1.fct_gage_model(self.gasmarkers_depth1),self.D2.fct_gage_model(self.gasmarkers_depth2), color=color_mod, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_opt, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/gas-gas.pdf')
         pp.savefig(mpl.figure(self.label+' gas-gas'))
@@ -600,6 +613,7 @@ class DrillingCouple:
         mpl.figure(self.label+' ice-gas')
         mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/ice-gas.pdf')
         pp.savefig(mpl.figure(self.label+' ice-gas'))
@@ -608,6 +622,7 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-ice')
         mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
         mpl.legend()
         pp=PdfPages(self.label+'/gas-ice.pdf')
         pp.savefig(mpl.figure(self.label+' gas-ice'))
