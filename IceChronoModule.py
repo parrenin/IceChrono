@@ -163,7 +163,7 @@ class Drilling:
         if self.restart:
             self.variables=np.loadtxt(dlabel+'/restart.txt')
 
-    def model(self,variables):
+    def model(self, variables):
         index=0
         if self.calc_a==True:
             self.A0=variables[index]
@@ -268,14 +268,14 @@ class Drilling:
         f=interpolate.interp1d(self.depth,self.Ddepth)
         return f(depth)
 
-    def residuals(self):
+    def residuals(self, variables):
+        self.model(variables)
         resi_age=(self.fct_age(self.icemarkers_depth)-self.icemarkers_age)/self.icemarkers_sigma
         resi_gage=(self.fct_gage(self.gasmarkers_depth)-self.gasmarkers_age)/self.gasmarkers_sigma
         resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma 
         resi_corr_tau=self.corr_tau
         resi_corr_a=self.corr_a
         resi_corr_LIDIE=self.corr_LIDIE
-
         return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_corr_tau, resi_corr_a, resi_corr_LIDIE))
 
 

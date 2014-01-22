@@ -37,8 +37,7 @@ def residuals(var):
     for i,dlabel in enumerate(list_drillings):
         D[dlabel].variables=var[index:index+np.size(D[dlabel].variables)]
         index=index+np.size(D[dlabel].variables)
-        D[dlabel].model(D[dlabel].variables)
-        resi=np.concatenate((resi,D[dlabel].residuals()))
+        resi=np.concatenate((resi,D[dlabel].residuals(D[dlabel].variables)))
         for j,dlabel2 in enumerate(list_drillings):
             if j<i:
                 resi=np.concatenate((resi,DC[dlabel2+'-'+dlabel].residuals()))
