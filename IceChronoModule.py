@@ -93,8 +93,12 @@ class Drilling:
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
-            self.LID_depth=np.array([self.depth_min, self.depth_max])
-            self.LID_LID=np.array([self.LID_value, self.LID_value])
+            if self.depth_min<self.LID_value:
+                self.LID_depth=np.array([self.depth_min, self.LID_value, self.depth_max])
+                self.LID_LID=np.array([self.depth_min, self.LID_value, self.LID_value])
+            else:
+                self.LID_depth=np.array([self.depth_min, self.depth_max])
+                self.LID_LID=np.array([self.LID_value, self.LID_value])
             f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
             self.LID_model=f(self.depth)
         else:
