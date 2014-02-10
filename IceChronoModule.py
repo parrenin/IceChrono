@@ -2,7 +2,7 @@
 #TODO: optinally use a restart file to have a bootstrap method
 #TODO: is there an elegant way to unpack the variables vector in the model function?
 #TODO: allow to save the correction vector to be able to restart while changing the resolution
-    
+#TODO: include some checks for when dDdepth/dz>1
     
 import operator
 import math as m
@@ -95,9 +95,10 @@ class Drilling:
         if self.calc_LID:
             self.LID_depth=np.array([self.depth_min, self.depth_max])
             self.LID_LID=np.array([self.LID_value, self.LID_value])
-        f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
-        self.LID_model=f(self.depth)
-#        self.LIDIE=np.empty_like(self.LID_model)
+            f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
+            self.LID_model=f(self.depth)
+        else:
+            self.LID_model=np.loadtxt(dlabel+'/LID-prior.txt')
         self.corr_LID=np.zeros(np.size(self.corr_LID))
         self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
