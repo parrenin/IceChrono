@@ -71,6 +71,7 @@ for i,dlabel in enumerate(list_drillings):
     D[dlabel]=icm.Drilling(dlabel)
     D[dlabel].model(D[dlabel].variables)
     D[dlabel].a_init=D[dlabel].a
+    D[dlabel].LIDIE_init=D[dlabel].LIDIE
     D[dlabel].display_init()
     variables=np.concatenate((variables,D[dlabel].variables))
 

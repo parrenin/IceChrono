@@ -418,6 +418,10 @@ class Drilling:
             mpl.plot(self.age, self.LIDIE_init, color=self.color_init, label='Initial')
         mpl.plot(self.age, self.LIDIE_model, color=self.color_mod, label='Model')
         mpl.plot(self.age, self.LIDIE, color=self.color_opt, label='Corrected +/-$\sigma$')
+#        if show_initial:
+#            mpl.plot(self.age, np.concatenate((self.LIDIE_init, np.array([self.LIDIE_init[-1]]))), color=self.color_init, where='post', label='Initial')
+#        mpl.plot(self.age, self.LIDIE_model, color=self.color_mod,where='post', label='Model')
+#        mpl.plot(self.age, self.LIDIE, color=self.color_opt, where='post', label='Corrected +/-$\sigma$')
         mpl.fill_between(self.age, self.LIDIE-self.sigma_LIDIE, self.LIDIE+self.sigma_LIDIE, color=self.color_ci)
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
