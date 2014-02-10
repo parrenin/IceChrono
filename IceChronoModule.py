@@ -96,15 +96,15 @@ class Drilling:
             self.LID_depth=np.array([self.depth_min, self.depth_max])
             self.LID_LID=np.array([self.LID_value, self.LID_value])
         f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
-        self.LID=f(self.depth)
-        self.LIDIE=np.empty_like(self.LID)
-        self.corr_LIDIE=np.zeros(np.size(self.corr_LIDIE))
-        self.corr_LIDIE_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LIDIE)-1))
-        self.correlation_corr_LIDIE=np.empty((np.size(self.corr_LIDIE),np.size(self.corr_LIDIE)))
-        f=interpolate.interp1d(np.array([0,self.lambda_LIDIE,10000000]),np.array([1, 0, 0]))
-        self.correlation_corr_LIDIE=f(np.abs(np.ones((np.size(self.corr_LIDIE_age),np.size(self.corr_LIDIE_age)))*self.corr_LIDIE_age-np.transpose(np.ones((np.size(self.corr_LIDIE_age),np.size(self.corr_LIDIE_age)))*self.corr_LIDIE_age)))
+        self.LID_model=f(self.depth)
+#        self.LIDIE=np.empty_like(self.LID_model)
+        self.corr_LID=np.zeros(np.size(self.corr_LID))
+        self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
+        self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
+        f=interpolate.interp1d(np.array([0,self.lambda_LID,10000000]),np.array([1, 0, 0]))
+        self.correlation_corr_LID=f(np.abs(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age-np.transpose(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age)))
 
-        self.chol_LIDIE=np.linalg.cholesky(self.correlation_corr_LIDIE)
+        self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
 
 
         readarray=np.loadtxt(dlabel+'/udepth.txt')
@@ -149,16 +149,13 @@ class Drilling:
         self.Ddepth=np.empty_like(self.depth)
         self.udepth=np.empty_like(self.depth)
 
-#        chdir('../')
 
         self.variables=np.array([])
         if self.calc_a==True:
             self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
         if self.calc_tau==True:
-#            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.s]), np.array([self.mu])))
             self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.mu])))
-        self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LIDIE))
-#        self.variables=np.concatenate((np.array([self.A0, self.beta, self.pprime, self.s, self.mu]), self.corr_tau, self.corr_a, self.corr_LIDIE))
+        self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
 
         if self.restart:
             self.variables=np.loadtxt(dlabel+'/restart.txt')
@@ -180,7 +177,7 @@ class Drilling:
             index=index+2
         self.corr_tau=variables[index:index+np.size(self.corr_tau)]
         self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
-        self.corr_LIDIE=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LIDIE)]
+        self.corr_LID=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LID)]
 
         ##Raw model
 
@@ -204,7 +201,7 @@ class Drilling:
         #print 'udepth_model ', np.size(udepth_model)
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
-        self.LIDIE_model=self.LID*self.Dfirn
+        self.LIDIE_model=self.LID_model*self.Dfirn
         self.ULIDIE_model=g_model(self.LIDIE_model)
         i_model=interpolate.interp1d(self.udepth_model, self.depth)
 
@@ -234,8 +231,9 @@ class Drilling:
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
         self.udepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
-        j=interpolate.interp1d(self.corr_LIDIE_age, np.dot(self.chol_LIDIE,self.corr_LIDIE)*self.sigmap_corr_LIDIE, bounds_error=False, fill_value=self.corr_LIDIE[-1])
-        self.LIDIE=self.LIDIE_model*np.exp(j(self.age_model))
+        j=interpolate.interp1d(self.corr_LID_age, np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
+        self.LID=self.LID_model*np.exp(j(self.age_model))
+        self.LIDIE=self.LID*self.Dfirn
         self.ULIDIE=g(self.LIDIE)
         i=interpolate.interp1d(self.udepth, self.depth)
 
@@ -247,7 +245,7 @@ class Drilling:
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
 
-        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LIDIE)) 
+        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID)) 
 
     def fct_age(self, depth):
         f=interpolate.interp1d(self.depth,self.age)
@@ -276,8 +274,8 @@ class Drilling:
         resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma 
         resi_corr_tau=self.corr_tau
         resi_corr_a=self.corr_a
-        resi_corr_LIDIE=self.corr_LIDIE
-        return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_corr_tau, resi_corr_a, resi_corr_LIDIE))
+        resi_corr_LID=self.corr_LID
+        return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_corr_tau, resi_corr_a, resi_corr_LID))
 
 
     def jacobian(self):
@@ -320,11 +318,11 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.tau)]),np.dot(self.hess,jacob[:,index:index+np.size(self.tau)]))
         self.sigma_tau=np.sqrt(np.diag(c_model))
         index=index+np.size(self.tau)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.LIDIE)]),np.dot(self.hess,jacob[:,index:index+np.size(self.LIDIE)]))
-        self.sigma_LIDIE=np.sqrt(np.diag(c_model))
-        index=index+np.size(self.LIDIE)
+        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.LID)]),np.dot(self.hess,jacob[:,index:index+np.size(self.LID)]))
+        self.sigma_LID=np.sqrt(np.diag(c_model))
+        index=index+np.size(self.LID)
         
-        return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LIDIE
+        return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LID
 
     
 
@@ -351,10 +349,10 @@ class Drilling:
         mpl.xlabel('Optimized age (yr)')
         mpl.ylabel('Accumulation (m/an)')
 
-        mpl.figure(self.label+' LIDIE')
-        mpl.title(self.label+' LIDIE')
+        mpl.figure(self.label+' LID')
+        mpl.title(self.label+' LID')
         mpl.xlabel('Optimized age (yr)')
-        mpl.ylabel('LIDIE')
+        mpl.ylabel('LID')
 
         mpl.figure(self.label+' ice age')
         mpl.title(self.label+' ice age')
@@ -413,17 +411,17 @@ class Drilling:
         pp.savefig(mpl.figure(self.label+' accumulation'))
         pp.close()
 
-        mpl.figure(self.label+' LIDIE')
+        mpl.figure(self.label+' LID')
         if show_initial:
-            mpl.plot(self.age, self.LIDIE_init, color=self.color_init, label='Initial')
-        mpl.plot(self.age, self.LIDIE_model, color=self.color_mod, label='Model')
-        mpl.plot(self.age, self.LIDIE, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.fill_between(self.age, self.LIDIE-self.sigma_LIDIE, self.LIDIE+self.sigma_LIDIE, color=self.color_ci)
+            mpl.plot(self.age, self.LID_init, color=self.color_init, label='Initial')
+        mpl.plot(self.age, self.LID_model, color=self.color_mod, label='Model')
+        mpl.plot(self.age, self.LID, color=self.color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_between(self.age, self.LID-self.sigma_LID, self.LID+self.sigma_LID, color=self.color_ci)
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
-        pp=PdfPages(self.label+'/LIDIE.pdf')
-        pp.savefig(mpl.figure(self.label+' LIDIE'))
+        pp=PdfPages(self.label+'/LID.pdf')
+        pp.savefig(mpl.figure(self.label+' LID'))
         pp.close()
 
         mpl.figure(self.label+' ice age')
@@ -474,9 +472,9 @@ class Drilling:
 
     def save(self):
         output=np.vstack((self.depth,np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),\
-        np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),self.LIDIE,\
-        self.sigma_LIDIE,self.age,self.sigma_age,self.gage,self.sigma_gage,self.Ddepth,self.sigma_Ddepth))
-        np.savetxt(self.label+'/output.txt',np.transpose(output), header='depth thinning sigma_thinning accu sigma_accu LIDIE sigma_LIDIE age sigma_age gas_age sigma_gas_age Ddepth sigma_Ddepth')
+        np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),self.LID,\
+        self.sigma_LID,self.age,self.sigma_age,self.gage,self.sigma_gage,self.Ddepth,self.sigma_Ddepth))
+        np.savetxt(self.label+'/output.txt',np.transpose(output), header='depth thinning sigma_thinning accu sigma_accu LID sigma_LID age sigma_age gas_age sigma_gas_age Ddepth sigma_Ddepth')
         np.savetxt(self.label+'/restart.txt',np.transpose(self.variables))
     
     def udepth_save(self):
