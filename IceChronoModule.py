@@ -130,8 +130,8 @@ class Drilling:
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
-        f=interpolate.interp1d(self.depth,self.udepth_init)
-#        f=interpolate.interp1d(self.depth,self.udepth_init, bounds_error=False, fill_value=self.udepth_init[-1]) #We should not need the bounds_error option. Check what is the problem.
+#        f=interpolate.interp1d(self.depth,self.udepth_init)
+        f=interpolate.interp1d(self.depth,self.udepth_init, bounds_error=False, fill_value=self.udepth_init[-1]) #We should not need the bounds_error option. Check what is the problem.
         self.sigmap_corr_tau=self.k/self.thicknes_ie_init*f(self.corr_tau_depth)
         correlation_corr_tau=np.empty((np.size(self.corr_tau),np.size(self.corr_tau)))
         g=interpolate.interp1d(np.array([0,self.lambda_tau,5000]),np.array([1, 0, 0]))
