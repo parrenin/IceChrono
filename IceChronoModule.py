@@ -25,15 +25,17 @@ show_initial=True
 class Drilling:
 
     def __init__(self, dlabel):
-
-        print 'Initialization of drilling '+dlabel
-
         self.label=dlabel
+
+    def init(self):
+
+        print 'Initialization of drilling '+self.label
+
         
-        execfile(dlabel+'/parameters.py')
+        execfile(self.label+'/parameters.py')
 
         if self.calc_a:
-            readarray=np.loadtxt(dlabel+'/isotopes.txt')
+            readarray=np.loadtxt(self.dlabel+'/isotopes.txt')
             self.depthtop=readarray[:,0]
             self.d18Oice=readarray[:,1]
             self.deutice=readarray[:,2]
@@ -45,7 +47,7 @@ class Drilling:
             self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
             self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
         else:
-            self.a_model=np.loadtxt(dlabel+'/accu-prior.txt')
+            self.a_model=np.loadtxt(self.label+'/accu-prior.txt')
             self.a=self.a_model
             
 
@@ -58,7 +60,7 @@ class Drilling:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            readarray=np.loadtxt(dlabel+'/ice_age.txt')
+            readarray=np.loadtxt(self.label+'/ice_age.txt')
         if np.size(readarray)==0:
             self.icemarkers_depth=np.array([])
             self.icemarkers_age=np.array([])
@@ -71,7 +73,7 @@ class Drilling:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            readarray=np.loadtxt(dlabel+'/gas_age.txt')
+            readarray=np.loadtxt(self.label+'/gas_age.txt')
         if np.size(readarray)==0:
             self.gasmarkers_depth=np.array([])
             self.gasmarkers_age=np.array([])
@@ -86,7 +88,7 @@ class Drilling:
         self.gage=np.empty_like(self.depth)
         
 
-        readarray=np.loadtxt(dlabel+'/density-prior.txt')
+        readarray=np.loadtxt(self.label+'/density-prior.txt')
 #        self.density_depth=readarray[:,0]
         self.D=readarray
         self.iedepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D)))
@@ -102,7 +104,7 @@ class Drilling:
             f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
             self.LID_model=f(self.depth)
         else:
-            self.LID_model=np.loadtxt(dlabel+'/LID-prior.txt')
+            self.LID_model=np.loadtxt(self.label+'/LID-prior.txt')
         self.corr_LID=np.zeros(np.size(self.corr_LID))
         self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
@@ -112,7 +114,7 @@ class Drilling:
         self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
 
 
-        readarray=np.loadtxt(dlabel+'/udepth.txt')
+        readarray=np.loadtxt(self.label+'/udepth.txt')
         self.thicknes_ie_init=readarray[0]
         self.udepth_init=readarray[1:]
         
@@ -123,7 +125,7 @@ class Drilling:
         if self.calc_tau:
             self.tau=np.empty_like(self.depth_mid)
         else:
-            self.tau_model=np.loadtxt(dlabel+'/thinning-prior.txt')
+            self.tau_model=np.loadtxt(self.label+'/thinning-prior.txt')
             self.tau=self.tau_model
 
         self.corr_tau_depth=np.arange(self.depth_min, self.depth_max+0.01, (self.depth_max-self.depth_min)/(np.size(self.corr_tau)-1))
@@ -141,7 +143,7 @@ class Drilling:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            readarray=np.loadtxt(dlabel+'/Ddepth.txt')
+            readarray=np.loadtxt(self.label+'/Ddepth.txt')
         if np.size(readarray)==0:
             self.Ddepth_depth=np.array([])
             self.Ddepth_Ddepth=np.array([])
@@ -163,8 +165,9 @@ class Drilling:
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
 
         if self.restart:
-            self.variables=np.loadtxt(dlabel+'/restart.txt')
+            self.variables=np.loadtxt(self.label+'/restart.txt')
 
+        return 0
 
     def model(self, variables):
         index=0

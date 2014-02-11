@@ -69,6 +69,7 @@ for i,dlabel in enumerate(list_drillings):
 #    print dlabel
         
     D[dlabel]=icm.Drilling(dlabel)
+    D[dlabel].init()
     D[dlabel].model(D[dlabel].variables)
     D[dlabel].a_init=D[dlabel].a
     D[dlabel].LID_init=D[dlabel].LID
