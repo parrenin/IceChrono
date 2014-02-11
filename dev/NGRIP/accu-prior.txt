@@ -1,3 +1,4 @@
+#Prior accu for NGRIP from AICC2012.
 0.366112
 0.33225
 0.339609

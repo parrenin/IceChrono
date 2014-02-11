@@ -1,3 +1,4 @@
+#Density for NGRIP from AICC2012.
 0.496229
 0.520606
 0.534747

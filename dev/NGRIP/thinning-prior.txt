@@ -1,3 +1,4 @@
+#Prior thinning for NGRIP from AICC2012.
 0.9986
 0.9984
 0.9982
