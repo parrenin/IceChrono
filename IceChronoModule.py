@@ -35,7 +35,7 @@ class Drilling:
         execfile(self.label+'/parameters.py')
 
         if self.calc_a:
-            readarray=np.loadtxt(self.dlabel+'/isotopes.txt')
+            readarray=np.loadtxt(self.label+'/isotopes.txt')
             self.depthtop=readarray[:,0]
             self.d18Oice=readarray[:,1]
             self.deutice=readarray[:,2]
