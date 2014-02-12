@@ -21,7 +21,7 @@ color_mod='b'
 color_ci='0.8'
 color_sigma='m'
 show_initial=True
-        
+
 class Drilling:
 
     def __init__(self, dlabel):
@@ -69,7 +69,7 @@ class Drilling:
             self.icemarkers_depth=readarray[:,0]
             self.icemarkers_age=readarray[:,1]
             self.icemarkers_sigma=readarray[:,2]
-        
+
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -82,6 +82,36 @@ class Drilling:
             self.gasmarkers_depth=readarray[:,0]
             self.gasmarkers_age=readarray[:,1]
             self.gasmarkers_sigma=readarray[:,2]
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            readarray=np.loadtxt(self.label+'/ice_age_intervals.txt')
+        if np.size(readarray)==0:
+            self.iceintervals_depthtop=np.array([])
+            self.iceintervals_depthbot=np.array([])
+            self.iceintervals_duration=np.array([])
+            self.iceintervals_sigma=np.array([])
+        else:
+            self.iceintervals_depthtop=readarray[:,0]
+            self.iceintervals_depthbot=readarray[:,1]
+            self.iceintervals_duration=readarray[:,2]
+            self.iceintervals_sigma=readarray[:,3]
+
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            readarray=np.loadtxt(self.label+'/gas_age_intervals.txt')
+        if np.size(readarray)==0:
+            self.gasintervals_depthtop=np.array([])
+            self.gasintervals_depthbot=np.array([])
+            self.gasintervals_duration=np.array([])
+            self.gasintervals_sigma=np.array([])
+        else:
+            self.gasintervals_depthtop=readarray[:,0]
+            self.gasintervals_depthbot=readarray[:,1]
+            self.gasintervals_duration=readarray[:,2]
+            self.gasintervals_sigma=readarray[:,3]
+
         
         self.depth=np.arange(self.depth_min, self.depth_max+0.01, self.step)
         self.age=np.empty_like(self.depth)
@@ -279,11 +309,13 @@ class Drilling:
         self.model(variables)
         resi_age=(self.fct_age(self.icemarkers_depth)-self.icemarkers_age)/self.icemarkers_sigma
         resi_gage=(self.fct_gage(self.gasmarkers_depth)-self.gasmarkers_age)/self.gasmarkers_sigma
-        resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma 
+        resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma
+        resi_iceint=(self.fct_age(self.iceintervals_depthbot)-self.fct_age(self.iceintervals_depthtop)-self.iceintervals_duration)/self.iceintervals_sigma
+        resi_gasint=(self.fct_gage(self.gasintervals_depthbot)-self.fct_gage(self.gasintervals_depthtop)-self.gasintervals_duration)/self.gasintervals_sigma
         resi_corr_tau=self.corr_tau
         resi_corr_a=self.corr_a
         resi_corr_LID=self.corr_LID
-        return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_corr_tau, resi_corr_a, resi_corr_LID))
+        return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_iceint, resi_gasint, resi_corr_tau, resi_corr_a, resi_corr_LID))
 
 
     def jacobian(self):
