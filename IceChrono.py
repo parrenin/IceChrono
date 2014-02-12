@@ -80,6 +80,7 @@ for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
             DC[dlabel2+'-'+dlabel]=icm.DrillingCouple(D[dlabel2],D[dlabel])
+            DC[dlabel2+'-'+dlabel].init()
             DC[dlabel2+'-'+dlabel].display_init()
 
 

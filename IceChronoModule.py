@@ -197,7 +197,7 @@ class Drilling:
         if self.restart:
             self.variables=np.loadtxt(self.label+'/restart.txt')
 
-        return 0
+        return
 
     def model(self, variables):
         index=0
@@ -524,10 +524,11 @@ class Drilling:
 class DrillingCouple:
 
     def __init__(self, D1, D2):
-
-       
         self.D1=D1
         self.D2=D2
+
+
+    def init(self):
         self.label=self.D1.label+'-'+self.D2.label
         print 'Initialization of drilling couple ',self.label
 
@@ -581,6 +582,7 @@ class DrillingCouple:
             self.gasicemarkers_depth2=readarray[:,1]
             self.gasicemarkers_sigma=readarray[:,2]
 
+        return
 
     def residuals(self):
 
