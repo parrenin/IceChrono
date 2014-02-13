@@ -9,10 +9,11 @@ import math as m
 import numpy as np
 import matplotlib.pyplot as mpl
 import warnings
+import os
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy import interpolate
 from scipy.optimize import leastsq
-from os import chdir
+
 
 color_init='c'
 color_obs='g'
@@ -58,59 +59,54 @@ class Drilling:
 
         self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.label+'/ice_age.txt')
-        if np.size(readarray)==0:
-            self.icemarkers_depth=np.array([])
-            self.icemarkers_age=np.array([])
-            self.icemarkers_sigma=np.array([])
-        else:
+
+        filename=self.label+'/ice_age.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.icemarkers_depth=readarray[:,0]
             self.icemarkers_age=readarray[:,1]
             self.icemarkers_sigma=readarray[:,2]
-
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.label+'/gas_age.txt')
-        if np.size(readarray)==0:
-            self.gasmarkers_depth=np.array([])
-            self.gasmarkers_age=np.array([])
-            self.gasmarkers_sigma=np.array([])
         else:
+            self.icemarkers_depth=np.array([])
+            self.icemarkers_age=np.array([])
+            self.icemarkers_sigma=np.array([])
+
+        filename=self.label+'/gas_age.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.gasmarkers_depth=readarray[:,0]
             self.gasmarkers_age=readarray[:,1]
             self.gasmarkers_sigma=readarray[:,2]
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.label+'/ice_age_intervals.txt')
-        if np.size(readarray)==0:
-            self.iceintervals_depthtop=np.array([])
-            self.iceintervals_depthbot=np.array([])
-            self.iceintervals_duration=np.array([])
-            self.iceintervals_sigma=np.array([])
         else:
+            self.gasmarkers_depth=np.array([])
+            self.gasmarkers_age=np.array([])
+            self.gasmarkers_sigma=np.array([])
+
+        filename=self.label+'/ice_age_intervals.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.iceintervals_depthtop=readarray[:,0]
             self.iceintervals_depthbot=readarray[:,1]
             self.iceintervals_duration=readarray[:,2]
             self.iceintervals_sigma=readarray[:,3]
-
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.label+'/gas_age_intervals.txt')
-        if np.size(readarray)==0:
-            self.gasintervals_depthtop=np.array([])
-            self.gasintervals_depthbot=np.array([])
-            self.gasintervals_duration=np.array([])
-            self.gasintervals_sigma=np.array([])
         else:
+            self.iceintervals_depthtop=np.array([])
+            self.iceintervals_depthbot=np.array([])
+            self.iceintervals_duration=np.array([])
+            self.iceintervals_sigma=np.array([])
+
+        filename=self.label+'/gas_age_intervals.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.gasintervals_depthtop=readarray[:,0]
             self.gasintervals_depthbot=readarray[:,1]
             self.gasintervals_duration=readarray[:,2]
             self.gasintervals_sigma=readarray[:,3]
+        else:
+            self.gasintervals_depthtop=np.array([])
+            self.gasintervals_depthbot=np.array([])
+            self.gasintervals_duration=np.array([])
+            self.gasintervals_sigma=np.array([])
 
         
         self.depth=np.arange(self.depth_min, self.depth_max+0.01, self.step)
@@ -171,18 +167,19 @@ class Drilling:
         self.chol_tau=np.linalg.cholesky(correlation_corr_tau)
 
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.label+'/Ddepth.txt')
-        if np.size(readarray)==0:
-            self.Ddepth_depth=np.array([])
-            self.Ddepth_Ddepth=np.array([])
-            self.Ddepth_sigma=np.array([])
-        else:
+
+        filename=self.label+'/Ddepth.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.Ddepth_depth=readarray[:,0]
             self.Ddepth_Ddepth=readarray[:,1]
             self.Ddepth_sigma=readarray[:,2]
-        
+        else:
+            self.Ddepth_depth=np.array([])
+            self.Ddepth_Ddepth=np.array([])
+            self.Ddepth_sigma=np.array([])
+
+
         self.Ddepth=np.empty_like(self.depth)
         self.udepth=np.empty_like(self.depth)
 
@@ -534,53 +531,49 @@ class DrillingCouple:
 
 
 #TODO: allow to have either dlabel1+'-'dlabel2 or dlbel2+'-'dlabel1 as directory
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.D1.label+'-'+self.D2.label+'/ice_depth.txt')
-        if np.size(readarray)==0:
-            self.icemarkers_depth1=np.array([])
-            self.icemarkers_depth2=np.array([])
-            self.icemarkers_sigma=np.array([])
-        else:
+        filename=self.D1.label+'-'+self.D2.label+'/ice_depth.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.icemarkers_depth1=readarray[:,0]
             self.icemarkers_depth2=readarray[:,1]
             self.icemarkers_sigma=readarray[:,2]
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.D1.label+'-'+self.D2.label+'/gas_depth.txt')
-        if np.size(readarray)==0:
-            self.gasmarkers_depth1=np.array([])
-            self.gasmarkers_depth2=np.array([])
-            self.gasmarkers_sigma=np.array([])
         else:
+            self.icemarkers_depth1=np.array([])
+            self.icemarkers_depth2=np.array([])
+            self.icemarkers_sigma=np.array([])
+
+        filename=self.D1.label+'-'+self.D2.label+'/gas_depth.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.gasmarkers_depth1=readarray[:,0]
             self.gasmarkers_depth2=readarray[:,1]
             self.gasmarkers_sigma=readarray[:,2]
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.D1.label+'-'+self.D2.label+'/icegas_depth.txt')
-        if np.size(readarray)==0:
-            self.icegasmarkers_depth1=np.array([])
-            self.icegasmarkers_depth2=np.array([])
-            self.icegasmarkers_sigma=np.array([])
         else:
+            self.gasmarkers_depth1=np.array([])
+            self.gasmarkers_depth2=np.array([])
+            self.gasmarkers_sigma=np.array([])
+
+        filename=self.D1.label+'-'+self.D2.label+'/icegas_depth.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.icegasmarkers_depth1=readarray[:,0]
             self.icegasmarkers_depth2=readarray[:,1]
             self.icegasmarkers_sigma=readarray[:,2]
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            readarray=np.loadtxt(self.D1.label+'-'+self.D2.label+'/gasice_depth.txt')
-        if np.size(readarray)==0:
-            self.gasicemarkers_depth1=np.array([])
-            self.gasicemarkers_depth2=np.array([])
-            self.gasicemarkers_sigma=np.array([])
         else:
+            self.icegasmarkers_depth1=np.array([])
+            self.icegasmarkers_depth2=np.array([])
+            self.icegasmarkers_sigma=np.array([])
+
+        filename=self.D1.label+'-'+self.D2.label+'/gasice_depth.txt'
+        if os.path.isfile(filename) and open(filename).read():
+            readarray=np.loadtxt(filename)
             self.gasicemarkers_depth1=readarray[:,0]
             self.gasicemarkers_depth2=readarray[:,1]
             self.gasicemarkers_sigma=readarray[:,2]
+        else:
+            self.gasicemarkers_depth1=np.array([])
+            self.gasicemarkers_depth2=np.array([])
+            self.gasicemarkers_sigma=np.array([])
 
         return
 
@@ -633,7 +626,11 @@ class DrillingCouple:
 
 
     def display_final(self):
-        
+
+        if not os.path.isdir(self.label):
+            os.mkdir(self.label)
+
+
         mpl.figure(self.label+' ice-ice')
         mpl.errorbar(self.D1.fct_age_model(self.icemarkers_depth1),self.D2.fct_age_model(self.icemarkers_depth2), color=color_mod, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_opt, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")

@@ -1,5 +1,4 @@
 #TODO: what about symbolic links in github?
-#Make a script to clean all pdf files.
 
 import sys
 import time
