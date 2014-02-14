@@ -65,7 +65,7 @@ def Dres(var):
 ##Initialisation
 for i,dlabel in enumerate(list_drillings):
 
-#    print dlabel
+    print 'Initialization of drilling '+dlabel
         
     D[dlabel]=icm.Drilling(dlabel)
     D[dlabel].init()
@@ -78,6 +78,7 @@ for i,dlabel in enumerate(list_drillings):
 for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
+            print 'Initialization of drilling couple '+dlabel2+'-'+dlabel
             DC[dlabel2+'-'+dlabel]=icm.DrillingCouple(D[dlabel2],D[dlabel])
             DC[dlabel2+'-'+dlabel].init()
             DC[dlabel2+'-'+dlabel].display_init()
