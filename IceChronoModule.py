@@ -234,7 +234,7 @@ class Drilling:
 #        if np.size(self.D)==np.size(tau_model):
 #            udepth_model=self.step*np.cumsum(self.D/tau_model)
 #        else:
-        self.udepth_model=self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
+        self.udepth_model=self.udepth_init[0]+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
         #print 'udepth_model ', np.size(udepth_model)
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
@@ -252,7 +252,7 @@ class Drilling:
         f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #gas age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>0, self.udepth_model-self.ULIDIE_model, 0.))  #FIXME: we assume surface is at depth=0. We might define a depth_surf in the future.
+        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_init[0], self.udepth_model-self.ULIDIE_model, np.nan))  #FIXME: we assume surface is at depth=0. We might define a depth_surf in the future.
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
 
@@ -266,7 +266,7 @@ class Drilling:
         #Thinning
         h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
-        self.udepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
+        self.udepth=self.udepth_init[0]+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
         j=interpolate.interp1d(self.corr_LID_age, np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
         self.LID=self.LID_model*np.exp(j(self.age_model))
@@ -278,7 +278,7 @@ class Drilling:
         self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
         f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
-        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>0, self.udepth-self.LIDIE, 0.))
+        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_init[0], self.udepth-self.LIDIE, np.nan))
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
 
