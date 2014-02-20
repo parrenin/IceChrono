@@ -592,34 +592,26 @@ class DrillingCouple:
     def display_init(self):
         
         mpl.figure(self.label+' ice-ice')
-        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' ice age')
-        mpl.plot(range,range, color=color_obs, label='perfect agreement')
         if show_initial:
             mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_init, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' gas-gas')
-        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' gas age')
-        mpl.plot(range,range, color=color_obs, label='perfect agreement')
         if show_initial:
             mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_init, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' ice-gas')
-        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' gas age')
-        mpl.plot(range,range, color=color_obs, label='perfect agreement')
         if show_initial:
             mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' gas-ice')
-        range=np.array([max(self.D1.age_min,self.D2.age_min), min(self.D1.age_max,self.D2.age_max)])
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' ice age')
-        mpl.plot(range,range, color=color_obs, label='perfect agreement')
         if show_initial:
             mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
@@ -637,8 +629,12 @@ class DrillingCouple:
         mpl.errorbar(self.D1.fct_age_model(self.icemarkers_depth1),self.D2.fct_age_model(self.icemarkers_depth2), color=color_mod, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_opt, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
-        mpl.legend()
+        x1=self.D1.age_min
+        y1=self.D2.age_min
+        mpl.axis((x1,x2,y1,y2))
+        range=np.array([max(x1,y1),min(x2,y2)])
+        mpl.plot(range,range, color=color_obs, label='perfect agreement')
+        mpl.legend(loc=4)
         pp=PdfPages(self.label+'/ice-ice.pdf')
         pp.savefig(mpl.figure(self.label+' ice-ice'))
         pp.close()
@@ -646,8 +642,13 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-gas')
         mpl.errorbar(self.D1.fct_gage_model(self.gasmarkers_depth1),self.D2.fct_gage_model(self.gasmarkers_depth2), color=color_mod, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_opt, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
-        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
-        mpl.legend()
+        x1,x2,y1,y2 = mpl.axis()
+        x1=self.D1.age_min
+        y1=self.D2.age_min
+        mpl.axis((x1,x2,y1,y2))
+        range=np.array([max(x1,y1),min(x2,y2)])
+        mpl.plot(range,range, color=color_obs, label='perfect agreement')
+        mpl.legend(loc=4)
         pp=PdfPages(self.label+'/gas-gas.pdf')
         pp.savefig(mpl.figure(self.label+' gas-gas'))
         pp.close()
@@ -655,8 +656,13 @@ class DrillingCouple:
         mpl.figure(self.label+' ice-gas')
         mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
-        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
-        mpl.legend()
+        x1,x2,y1,y2 = mpl.axis()
+        x1=self.D1.age_min
+        y1=self.D2.age_min
+        mpl.axis((x1,x2,y1,y2))
+        range=np.array([max(x1,y1),min(x2,y2)])
+        mpl.plot(range,range, color=color_obs, label='perfect agreement')
+        mpl.legend(loc=4)
         pp=PdfPages(self.label+'/ice-gas.pdf')
         pp.savefig(mpl.figure(self.label+' ice-gas'))
         pp.close()
@@ -664,8 +670,13 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-ice')
         mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
-        mpl.axis((self.D1.age_min,x2,self.D2.age_min,y2))
-        mpl.legend()
+        x1,x2,y1,y2 = mpl.axis()
+        x1=self.D1.age_min
+        y1=self.D2.age_min
+        mpl.axis((x1,x2,y1,y2))
+        range=np.array([max(x1,y1),min(x2,y2)])
+        mpl.plot(range,range, color=color_obs, label='perfect agreement')
+        mpl.legend(loc=4)
         pp=PdfPages(self.label+'/gas-ice.pdf')
         pp.savefig(mpl.figure(self.label+' gas-ice'))
         pp.close()
