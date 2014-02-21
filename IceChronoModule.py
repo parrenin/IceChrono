@@ -247,6 +247,7 @@ class Drilling:
         self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_init[0], self.udepth_model-self.ULIDIE_model, np.nan))  #FIXME: we assume surface is at depth=0. We might define a depth_surf in the future.
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
+        self.gaslayerthick_model=1/np.diff(self.gage_model)
 
 
         ##Corrected model
@@ -274,8 +275,10 @@ class Drilling:
         self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_init[0], self.udepth-self.LIDIE, np.nan))
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
+        self.gaslayerthick=1/np.diff(self.gage)
 
-        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick)) 
+
+        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick,self.gaslayerthick)) 
 
     def fct_age(self, depth):
         f=interpolate.interp1d(self.depth,self.age)
@@ -356,6 +359,9 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.icelayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.icelayerthick)]))
         self.sigma_icelayerthick=np.sqrt(np.diag(c_model))
         index=index+np.size(self.icelayerthick)
+        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
+        self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
+        index=index+np.size(self.gaslayerthick)
         
         return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LID, self.sigma_icelayerthick
 
@@ -389,6 +395,25 @@ class Drilling:
                 mpl.plot(xserie,yserie, color=color_obs, label="observations")
             else:
                 mpl.plot(xserie,yserie, color=color_obs)
+
+        mpl.figure(self.label+' gas layer thickness')
+        mpl.title(self.label+' gas layer thickness')
+        mpl.xlabel('thickness of annual layers (m/yr)')
+        mpl.ylabel('Depth')
+        if show_initial:
+            mpl.plot(self.gaslayerthick, self.depth_mid, color=color_init, label='Initial')
+        for i in range(np.size(self.gasintervals_duration)):
+            y1=self.gasintervals_depthtop[i]
+            y2=self.gasintervals_depthbot[i]
+            x1=(y2-y1)/(self.gasintervals_duration[i]+self.gasintervals_sigma[i])
+            x2=(y2-y1)/(self.gasintervals_duration[i]-self.gasintervals_sigma[i])
+            yserie=np.array([y1,y1,y2,y2,y1])
+            xserie=np.array([x1,x2,x2,x1,x1])
+            if i==0:
+                mpl.plot(xserie,yserie, color=color_obs, label="observations")
+            else:
+                mpl.plot(xserie,yserie, color=color_obs)
+
 
         mpl.figure(self.label+' accumulation')
         mpl.title(self.label+' accumulation')
@@ -448,14 +473,24 @@ class Drilling:
         mpl.plot(self.icelayerthick_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
-#        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
-#        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(self.label+'/icelayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' ice layer thickness'))
+        pp.close()
+
+        mpl.figure(self.label+' gas layer thickness')
+        mpl.plot(self.gaslayerthick_model, self.depth_mid, color=color_mod, label='Model')
+        mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))
+        mpl.legend(loc=4)
+        mpl.ylim(mpl.ylim()[::-1])
+        pp=PdfPages(self.label+'/gaslayerthick.pdf')
+        pp.savefig(mpl.figure(self.label+' gas layer thickness'))
         pp.close()
 
         mpl.figure(self.label+' accumulation')
