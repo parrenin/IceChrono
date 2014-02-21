@@ -15,8 +15,9 @@ from scipy import interpolate
 from scipy.optimize import leastsq
 
 
+
 color_init='c'
-color_obs='g'
+color_obs='r'
 color_opt='k'
 color_mod='b'
 color_ci='0.8'
@@ -229,13 +230,7 @@ class Drilling:
             self.tau_model=(1-self.mu)*omega+self.mu 
 
         #udepth
-        #print 'D ',np.size(self.D)
-        #print 'tau_model ',np.size(tau_model)
-#        if np.size(self.D)==np.size(tau_model):
-#            udepth_model=self.step*np.cumsum(self.D/tau_model)
-#        else:
         self.udepth_model=self.udepth_init[0]+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
-        #print 'udepth_model ', np.size(udepth_model)
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
@@ -243,10 +238,7 @@ class Drilling:
         i_model=interpolate.interp1d(self.udepth_model, self.depth)
 
         #Ice age
-        #print 'a_model',np.size(a_model)
-#        if np.size(self.D)==np.size(tau_model) && np.size(tau_model)==np.size(a_model):
-#            age_model=self.step*np.cumsum(self.D/tau_model/a_model)
-        #else:
+        self.icelayerthick_model=self.tau_model*self.a_model/self.D
         self.age_model=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
             
         f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
@@ -275,6 +267,7 @@ class Drilling:
         i=interpolate.interp1d(self.udepth, self.depth)
 
         #Ice age
+        self.icelayerthick=self.tau*self.a/self.D
         self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
         f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
@@ -282,7 +275,7 @@ class Drilling:
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
 
-        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID)) 
+        return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick)) 
 
     def fct_age(self, depth):
         f=interpolate.interp1d(self.depth,self.age)
@@ -360,28 +353,42 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.LID)]),np.dot(self.hess,jacob[:,index:index+np.size(self.LID)]))
         self.sigma_LID=np.sqrt(np.diag(c_model))
         index=index+np.size(self.LID)
+        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.icelayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.icelayerthick)]))
+        self.sigma_icelayerthick=np.sqrt(np.diag(c_model))
+        index=index+np.size(self.icelayerthick)
         
-        return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LID
+        return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LID, self.sigma_icelayerthick
 
     
 
     def display_init(self):
         
-        self.color_init='c'
-        self.color_obs='g'
-        self.color_opt='k'
-        self.color_mod='b'
-        self.color_ci='0.8'
-        self.color_sigma='m'
-        
+    
 
         mpl.figure(self.label+' thinning')
         mpl.title(self.label+' thinning')
         mpl.xlabel('Thinning')
         mpl.ylabel('Depth')
         if show_initial:
-            mpl.plot(self.tau, self.depth_mid, color=self.color_init, label='Initial')
-#        mpl.ylim(mpl.ylim()[::-1])
+            mpl.plot(self.tau, self.depth_mid, color=color_init, label='Initial')
+
+        mpl.figure(self.label+' ice layer thickness')
+        mpl.title(self.label+' ice layer thickness')
+        mpl.xlabel('thickness of annual layers (m/yr)')
+        mpl.ylabel('Depth')
+        if show_initial:
+            mpl.plot(self.icelayerthick, self.depth_mid, color=color_init, label='Initial')
+        for i in range(np.size(self.iceintervals_duration)):
+            y1=self.iceintervals_depthtop[i]
+            y2=self.iceintervals_depthbot[i]
+            x1=(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
+            x2=(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
+            yserie=np.array([y1,y1,y2,y2,y1])
+            xserie=np.array([x1,x2,x2,x1,x1])
+            if i==0:
+                mpl.plot(xserie,yserie, color=color_obs, label="observations")
+            else:
+                mpl.plot(xserie,yserie, color=color_obs)
 
         mpl.figure(self.label+' accumulation')
         mpl.title(self.label+' accumulation')
@@ -398,8 +405,8 @@ class Drilling:
         mpl.xlabel('age (yr b1950)')
         mpl.ylabel('depth (m)')
         if show_initial:
-            mpl.plot(self.age, self.depth, color=self.color_init, label='Initial')
-        mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=self.color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+            mpl.plot(self.age, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
 
         mpl.figure(self.label+' gas age')
@@ -407,8 +414,8 @@ class Drilling:
         mpl.xlabel('age (yr b1950)')
         mpl.ylabel('depth (m)')
         if show_initial:
-            mpl.plot(self.gage, self.depth, color=self.color_init, label='Initial')
-        mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=self.color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+            mpl.plot(self.gage, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
         
         mpl.figure(self.label+' Ddepth')
@@ -416,17 +423,17 @@ class Drilling:
         mpl.xlabel('$\Delta$depth (m)')
         mpl.ylabel('depth (m)')
         if show_initial:
-            mpl.plot(self.Ddepth, self.depth, color=self.color_init, label='Initial')
-        mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=self.color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
+            mpl.plot(self.Ddepth, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
         
     def display_final(self):
 
 
         mpl.figure(self.label+' thinning')
-        mpl.plot(self.tau, self.depth_mid, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.plot(self.tau_model, self.depth_mid, color=self.color_mod, label='Model')
-        mpl.fill_betweenx(self.depth_mid, self.tau-self.sigma_tau, self.tau+self.sigma_tau, color=self.color_ci)
+        mpl.plot(self.tau_model, self.depth_mid, color=color_mod, label='Model')
+        mpl.plot(self.tau, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_betweenx(self.depth_mid, self.tau-self.sigma_tau, self.tau+self.sigma_tau, color=color_ci)
 #        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
@@ -437,12 +444,26 @@ class Drilling:
         pp.savefig(mpl.figure(self.label+' thinning'))
         pp.close()
 
+        mpl.figure(self.label+' ice layer thickness')
+        mpl.plot(self.icelayerthick_model, self.depth_mid, color=color_mod, label='Model')
+        mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
+#        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
+#        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
+        x1,x2,y1,y2 = mpl.axis()
+        mpl.axis((x1,x2,self.depth_min,self.depth_max))
+        mpl.legend(loc=4)
+        mpl.ylim(mpl.ylim()[::-1])
+        pp=PdfPages(self.label+'/icelayerthick.pdf')
+        pp.savefig(mpl.figure(self.label+' ice layer thickness'))
+        pp.close()
+
         mpl.figure(self.label+' accumulation')
         if show_initial:
-            mpl.step(self.age, np.concatenate((self.a_init, np.array([self.a_init[-1]]))), color=self.color_init, where='post', label='Initial')
-        mpl.step(self.age, np.concatenate((self.a_model, np.array([self.a_model[-1]]))), color=self.color_mod, where='post', label='Model')
-        mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]]))), color=self.color_opt, where='post', label='Corrected +/-$\sigma$')
-        mpl.fill_between(self.age[:-1], self.a-self.sigma_a, self.a+self.sigma_a, color=self.color_ci)
+            mpl.step(self.age, np.concatenate((self.a_init, np.array([self.a_init[-1]]))), color=color_init, where='post', label='Initial')
+        mpl.step(self.age, np.concatenate((self.a_model, np.array([self.a_model[-1]]))), color=color_mod, where='post', label='Model')
+        mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]]))), color=color_opt, where='post', label='Corrected +/-$\sigma$')
+        mpl.fill_between(self.age[:-1], self.a-self.sigma_a, self.a+self.sigma_a, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
@@ -452,10 +473,10 @@ class Drilling:
 
         mpl.figure(self.label+' LID')
         if show_initial:
-            mpl.plot(self.age, self.LID_init, color=self.color_init, label='Initial')
-        mpl.plot(self.age, self.LID_model, color=self.color_mod, label='Model')
-        mpl.plot(self.age, self.LID, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.fill_between(self.age, self.LID-self.sigma_LID, self.LID+self.sigma_LID, color=self.color_ci)
+            mpl.plot(self.age, self.LID_init, color=color_init, label='Initial')
+        mpl.plot(self.age, self.LID_model, color=color_mod, label='Model')
+        mpl.plot(self.age, self.LID, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_between(self.age, self.LID-self.sigma_LID, self.LID+self.sigma_LID, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
@@ -464,11 +485,11 @@ class Drilling:
         pp.close()
 
         mpl.figure(self.label+' ice age')
-        mpl.plot(self.age, self.depth, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.plot(self.age_model, self.depth, color=self.color_mod, label='Model')
-        mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=self.color_ci)
+        mpl.plot(self.age_model, self.depth, color=color_mod, label='Model')
+        mpl.plot(self.age, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=color_ci)
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_age*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')   
+        mpl.plot(self.sigma_age*10, self.depth, color=color_sigma, label='$\sigma$ x10')   
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((x1,x2,self.depth_min,self.depth_max))    
         mpl.legend()
@@ -479,12 +500,12 @@ class Drilling:
         pp.close()
 
         mpl.figure(self.label+' gas age')
-        mpl.plot(self.gage, self.depth, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.plot(self.gage_model, self.depth, color=self.color_mod, label='Model')
-        mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=self.color_ci)
+        mpl.plot(self.gage_model, self.depth, color=color_mod, label='Model')
+        mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=color_ci)
+        mpl.plot(self.gage, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
 #        mpl.plot(self.gage+self.sigma_gage, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.gage-self.sigma_gage, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_gage*10, self.depth, color=self.color_sigma, label='$\sigma$ x10')  
+        mpl.plot(self.sigma_gage*10, self.depth, color=color_sigma, label='$\sigma$ x10')  
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((x1,x2,self.depth_min,self.depth_max))    
         mpl.legend()
@@ -495,9 +516,9 @@ class Drilling:
         pp.close()
 
         mpl.figure(self.label+' Ddepth')
-        mpl.plot(self.Ddepth_model, self.depth, color=self.color_mod, label='Model')
-        mpl.plot(self.Ddepth, self.depth, color=self.color_opt, label='Corrected +/-$\sigma$')
-        mpl.fill_betweenx(self.depth, self.Ddepth-self.sigma_Ddepth, self.Ddepth+self.sigma_Ddepth, color=self.color_ci)
+        mpl.plot(self.Ddepth_model, self.depth, color=color_mod, label='Model')
+        mpl.plot(self.Ddepth, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
+        mpl.fill_betweenx(self.depth, self.Ddepth-self.sigma_Ddepth, self.Ddepth+self.sigma_Ddepth, color=color_ci)
 #        mpl.plot(self.Ddepth+self.sigma_Ddepth, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()

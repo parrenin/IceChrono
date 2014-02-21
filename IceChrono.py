@@ -10,7 +10,6 @@ from scipy import interpolate
 from scipy.optimize import leastsq
 from os import chdir
 
-import IceChronoModule as icm
 
 ###Reading parameters directory
 datadir=sys.argv[1]
@@ -22,6 +21,8 @@ start_time = time.time()
 
 ##Parameters
 execfile('./parameters.py')
+
+import IceChronoModule as icm
 
 ##Global
 variables=np.array([])
