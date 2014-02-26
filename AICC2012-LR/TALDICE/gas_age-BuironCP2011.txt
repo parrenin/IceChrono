@@ -1,0 +1,46 @@
+#The confidence intervals are incorrect. They are the CH4 synchronisation uncertainty x5.				
+#depth (m)	age (yr BP)	1s (yr)	#	Origin
+420	5200	1000	#	From Buiron et al.. CP. 2011. table 1
+553	8250	750	#	From Buiron et al.. CP. 2011. table 1
+684	11300	1000	#	From Buiron et al.. CP. 2011. table 1
+695	11650	500	#	From Buiron et al.. CP. 2011. table 1
+738	12850	500	#	From Buiron et al.. CP. 2011. table 1
+784	14680	500	#	From Buiron et al.. CP. 2011. table 1
+820	16550	2500	#	From Buiron et al.. CP. 2011. table 1
+844	17650	1500	#	From Buiron et al.. CP. 2011. table 1
+935	27550	1500	#	From Buiron et al.. CP. 2011. table 1
+953	28900	1000	#	From Buiron et al.. CP. 2011. table 1
+985	32100	1000	#	From Buiron et al.. CP. 2011. table 1
+994	33250	1000	#	From Buiron et al.. CP. 2011. table 1
+1006	33850	1000	#	From Buiron et al.. CP. 2011. table 1
+1015	34800	1000	#	From Buiron et al.. CP. 2011. table 1
+1025	35450	1000	#	From Buiron et al.. CP. 2011. table 1
+1040	36700	1000	#	From Buiron et al.. CP. 2011. table 1
+1062	38350	1000	#	From Buiron et al.. CP. 2011. table 1
+1070	38650	1000	#	From Buiron et al.. CP. 2011. table 1
+1082	39800	1000	#	From Buiron et al.. CP. 2011. table 1
+1095	40850	1000	#	From Buiron et al.. CP. 2011. table 1
+1099	41600	1000	#	From Buiron et al.. CP. 2011. table 1
+1111	42100	1000	#	From Buiron et al.. CP. 2011. table 1
+1123	43300	1000	#	From Buiron et al.. CP. 2011. table 1
+1135	44400	1000	#	From Buiron et al.. CP. 2011. table 1
+1170	47200	1000	#	From Buiron et al.. CP. 2011. table 1
+1191	49270	2000	#	From Buiron et al.. CP. 2011. table 1
+1228	53500	1000	#	From Buiron et al.. CP. 2011
+1239	55150	1000	#	From Buiron et al.. CP. 2011
+1264	59800	5000	#	From Buiron et al.. CP. 2011
+1302	69600	2000	#	From Buiron et al.. CP. 2011
+1308	71200	5000	#	From Buiron et al.. CP. 2011
+1316	75000	5000	#	From Buiron et al.. CP. 2011
+1326	80000	4000	#	From Buiron et al.. CP. 2011
+1333	83400	4000	#	From Buiron et al.. CP. 2011
+1345	89500	2500	#	From Buiron et al.. CP. 2011
+1356	96000	2500	#	From Buiron et al.. CP. 2011
+1370	103000	4000	#	From Buiron et al.. CP. 2011
+1373	105000	7500	#	From Buiron et al.. CP. 2011
+1380	112000	5000	#	From Buiron et al.. CP. 2011
+1385	115200	7500	#	From Buiron et al.. CP. 2011
+1394	121700	10000	#	From Buiron et al.. CP. 2011
+1410	128500	5000	#	From Buiron et al.. CP. 2011
+1420	132000	10000	#	From Buiron et al.. CP. 2011
+1428	141000	10000	#	From Buiron et al.. CP. 2011
