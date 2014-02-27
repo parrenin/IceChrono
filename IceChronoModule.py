@@ -93,11 +93,10 @@ class Drilling:
         self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
 
 
-        readarray=np.loadtxt(self.label+'/udepth.txt')
-        self.thicknes_ie_init=readarray[0]
-        self.udepth_init=readarray[1:]
-        
         self.depth_mid=np.arange(self.depth_min+self.step/2, self.depth_max, self.step)
+        self.Ddepth=np.empty_like(self.depth)
+        self.udepth=np.empty_like(self.depth)
+
 #        print 'depth_mid ', np.size(self.depth_mid)
         self.zeta=(self.thickness-self.depth_mid)/self.thickness
 #        print 'zeta ', np.size(self.zeta)
@@ -107,13 +106,22 @@ class Drilling:
             self.tau_model=np.loadtxt(self.label+'/thinning-prior.txt')
             self.tau=self.tau_model
 
+
+        if self.calc_udepth_init:
+            self.raw_model()
+            self.udepth_init=self.udepth_model
+        else:
+            readarray=np.loadtxt(self.label+'/udepth.txt')
+            self.udepth_init=readarray
+            self.udepth_min=self.udepth_init[0]
+
         self.corr_tau_depth=np.arange(self.depth_min, self.depth_max+0.01, (self.depth_max-self.depth_min)/(np.size(self.corr_tau)-1))
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
 #        f=interpolate.interp1d(self.depth,self.udepth_init)
         f=interpolate.interp1d(self.depth,self.udepth_init, bounds_error=False, fill_value=self.udepth_init[-1]) #We should not need the bounds_error option. Check what is the problem.
-        self.sigmap_corr_tau=self.k/self.thicknes_ie_init*f(self.corr_tau_depth)
+        self.sigmap_corr_tau=self.k/self.thickness_ie*f(self.corr_tau_depth)
         correlation_corr_tau=np.empty((np.size(self.corr_tau),np.size(self.corr_tau)))
         g=interpolate.interp1d(np.array([0,self.lambda_tau,5000]),np.array([1, 0, 0]))
         correlation_corr_tau=g(np.abs(np.ones((np.size(self.corr_tau_depth),np.size(self.corr_tau_depth)))*self.corr_tau_depth-np.transpose(np.ones((np.size(self.corr_tau_depth),np.size(self.corr_tau_depth)))*self.corr_tau_depth)))
@@ -121,8 +129,6 @@ class Drilling:
 
 
 
-        self.Ddepth=np.empty_like(self.depth)
-        self.udepth=np.empty_like(self.depth)
 
 
         self.variables=np.array([])
@@ -198,26 +204,7 @@ class Drilling:
             self.Ddepth_sigma=np.array([])
 
 
-
-    def model(self, variables):
-        index=0
-        if self.calc_a==True:
-            self.A0=variables[index]
-            self.beta=variables[index+1]
-            index=index+2
-        if self.calc_tau==True:
-#            self.p=-1+m.exp(variables[index])
-#            self.s=variables[index+1]
-#            self.mu=variables[index+2]
-#            index=index+3
-            self.p=-1+m.exp(variables[index])
-            self.mu=variables[index+1]
-            index=index+2
-        self.corr_tau=variables[index:index+np.size(self.corr_tau)]
-        self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
-        self.corr_LID=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LID)]
-
-        ##Raw model
+    def raw_model(self):
 
         #Accumulation
         if self.calc_a:
@@ -225,12 +212,13 @@ class Drilling:
 
         #Thinning
         if self.calc_tau:
+            self.p=-1+m.exp(self.pprime)
             omega_D=1-(self.p+2)/(self.p+1)*(1-self.zeta)+1/(self.p+1)*(1-self.zeta)**(self.p+2)	#Parrenin et al. (CP, 2007a) 2.2 (3)
             omega=self.s*self.zeta+(1-self.s)*omega_D   #Parrenin et al. (CP, 2007a) 2.2 (2)
             self.tau_model=(1-self.mu)*omega+self.mu 
 
         #udepth
-        self.udepth_model=self.udepth_init[0]+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
+        self.udepth_model=self.udepth_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
@@ -244,22 +232,21 @@ class Drilling:
         f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #gas age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_init[0], self.udepth_model-self.ULIDIE_model, np.nan))  #FIXME: we assume surface is at depth=0. We might define a depth_surf in the future.
+        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_min, self.udepth_model-self.ULIDIE_model, np.nan))  
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
         self.gaslayerthick_model=1/np.diff(self.gage_model)
 
-
-        ##Corrected model
+    def corrected_model(self):
 
         #Accu
         j=interpolate.interp1d(self.corr_a_age, np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a, bounds_error=False, fill_value=self.corr_a[-1])
-        self.a=self.a_model*np.exp(j(self.age_model[:-1])) #fixme: we should use mid-age and not age
+        self.a=self.a_model*np.exp(j(self.age_model[:-1])) #FIXME: we should use mid-age and not age
 
         #Thinning
         h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
-        self.udepth=self.udepth_init[0]+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
+        self.udepth=self.udepth_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
         j=interpolate.interp1d(self.corr_LID_age, np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
         self.LID=self.LID_model*np.exp(j(self.age_model))
@@ -272,10 +259,37 @@ class Drilling:
         self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
         f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
-        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_init[0], self.udepth-self.LIDIE, np.nan))
+        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_min, self.udepth-self.LIDIE, np.nan))
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
         self.gaslayerthick=1/np.diff(self.gage)
+
+
+    def model(self, variables):
+        index=0
+        if self.calc_a==True:
+            self.A0=variables[index]
+            self.beta=variables[index+1]
+            index=index+2
+        if self.calc_tau==True:
+#            self.p=-1+m.exp(variables[index])
+#            self.s=variables[index+1]
+#            self.mu=variables[index+2]
+#            index=index+3
+            self.pprime=variables[index]
+            self.mu=variables[index+1]
+            index=index+2
+        self.corr_tau=variables[index:index+np.size(self.corr_tau)]
+        self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
+        self.corr_LID=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LID)]
+
+        ##Raw model
+
+        self.raw_model()
+
+        ##Corrected model
+
+        self.corrected_model()
 
 
         return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick,self.gaslayerthick)) 

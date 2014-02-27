@@ -1,5 +1,4 @@
 #udepth from Huybrecht et al. (CP, 2007)
-3000
 0
 0.34375
 0.70370

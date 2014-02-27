@@ -4,6 +4,7 @@ self.dim=1
 self.calc_a=True
 self.calc_tau=True
 self.calc_LID=True
+self.calc_udepth_init=False
 self.age_min=-50.
 self.depth_min=0.
 self.depth_max=3190.

@@ -1,5 +1,4 @@
 #udepth calculé à partir des données du fichier VK-FTG1.tsv
-3736.367
 0
 0.37799201793451
 0.76319925540522
