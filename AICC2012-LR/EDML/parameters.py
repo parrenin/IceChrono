@@ -1,13 +1,13 @@
 #Parameters specific to the EDML ice core
-#TODO: udepth.txt is incorrect
 self.dim=2
 self.calc_a=False
 self.calc_tau=False
 self.calc_LID=False
-self.calc_udepth_init=False
-self.age_min=-47
-self.depth_min=0.
-self.depth_max=2416.
+self.calc_udepth_init=True
+self.udepth_min=8.54025
+self.age_min=70.
+self.depth_min=18.
+self.depth_max=2564.
 self.thickness=3000
 self.step=1
 #self.gamma_source=3.4
