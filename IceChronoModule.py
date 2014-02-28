@@ -240,7 +240,8 @@ class Drilling:
     def corrected_model(self):
 
         #Accu
-        j=interpolate.interp1d(self.corr_a_age, np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a, bounds_error=False, fill_value=self.corr_a[-1])
+        corr=np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a
+        j=interpolate.interp1d(self.corr_a_age, corr, bounds_error=False, fill_value=corr[-1])
         self.a=self.a_model*np.exp(j(self.age_model[:-1])) #FIXME: we should use mid-age and not age
 
         #Thinning
@@ -248,7 +249,8 @@ class Drilling:
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
         self.udepth=self.udepth_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
-        j=interpolate.interp1d(self.corr_LID_age, np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
+        corr=np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID
+        j=interpolate.interp1d(self.corr_LID_age, corr, bounds_error=False, fill_value=corr[-1])
         self.LID=self.LID_model*np.exp(j(self.age_model))
         self.LIDIE=self.LID*self.Dfirn
         self.ULIDIE=g(self.LIDIE)
