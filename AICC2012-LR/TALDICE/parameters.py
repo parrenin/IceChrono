@@ -4,13 +4,14 @@
 #TODO: TALDICE does not run alone. Check what is the problem.
 
 self.dim=1
-self.calc_a=True
-self.calc_tau=True
-self.calc_LID=True
-self.calc_udepth_init=False
+self.calc_a=False
+self.calc_tau=False
+self.calc_LID=False
+self.calc_udepth_init=True
+self.udepth_min=0.
 self.age_min=-50
 self.depth_min=0.
-self.depth_max=1620.
+self.depth_max=1486.
 self.step=1.
 self.gamma_source=3.4 #Same as DC, need to check with B. Stenni if there is a better value
 self.beta_source=1.5  #Same as DC, need to check with B. Stenni if there is a better value

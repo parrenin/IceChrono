@@ -3,13 +3,3 @@
 1462	162000	2000	#	From Buiron et al.. CP. 2011
 1471	169000	2000	#	From Buiron et al.. CP. 2011
 1480	172000	2000	#	From Buiron et al.. CP. 2011
-1484	177500	2000	#	From Buiron et al.. CP. 2011
-1493	187300	2000	#	From Buiron et al.. CP. 2011
-1495	189000	2000	#	From Buiron et al.. CP. 2011
-1500	197500	2000	#	From Buiron et al.. CP. 2011
-1512	203000	3000	#	From Buiron et al.. CP. 2011
-1516	206500	3000	#	From Buiron et al.. CP. 2011
-1526	222000	3000	#	From Buiron et al.. CP. 2011
-1545	243200	4000	#	From Buiron et al.. CP. 2011
-1548	247000	4000	#	From Buiron et al.. CP. 2011
-1558	290000	5000	#	From Buiron et al.. CP. 2011
