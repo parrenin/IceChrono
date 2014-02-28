@@ -23,7 +23,7 @@ self.corr_a=np.zeros(31)
 self.corr_LID=np.zeros(31)
 self.LID_value=98.
 self.Dfirn=0.698    #This is the EDC value
-self.corr_tau=np.zeros(101)
+self.corr_tau=np.zeros(51)
 self.restart=False
 
 

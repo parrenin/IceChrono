@@ -29,5 +29,5 @@ self.corr_a=np.zeros(101)
 self.corr_LID=np.zeros(101)
 self.LID_value=98.
 self.Dfirn=0.698    #From Parrenin et al. (CP, 2012b)
-self.corr_tau=np.zeros(101)
+self.corr_tau=np.zeros(51)
 self.restart=False
