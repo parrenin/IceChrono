@@ -1,4 +1,4 @@
-#From Parrenin et al. (JGR, 2004)
+#Accu for VK from AICC2012.
 0.021888
 0.021889
 0.021891

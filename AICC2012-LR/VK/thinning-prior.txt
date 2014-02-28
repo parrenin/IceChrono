@@ -1,5 +1,4 @@
-#tau_model de Vostok tiré du fichier gnumeric VK-FGT1.tsv
-#thinning
+#Thinning for VK from AICC2012.
 0.99473
 0.99427
 0.99381
