@@ -1,5 +1,0 @@
-#depth (m)	age (yr BP)	1s (yr)	#	Origin
-1443	159200	2000	#	From Buiron et al.. CP. 2011
-1462	162000	2000	#	From Buiron et al.. CP. 2011
-1471	169000	2000	#	From Buiron et al.. CP. 2011
-1480	172000	2000	#	From Buiron et al.. CP. 2011
