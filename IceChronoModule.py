@@ -601,7 +601,7 @@ class DrillingCouple:
 
     def init(self):
         self.label=self.D1.label+'-'+self.D2.label
-        print 'Initialization of drilling couple ',self.label
+#        print 'Initialization of drilling couple ',self.label
 
 
 #TODO: allow to have either dlabel1+'-'dlabel2 or dlbel2+'-'dlabel1 as directory

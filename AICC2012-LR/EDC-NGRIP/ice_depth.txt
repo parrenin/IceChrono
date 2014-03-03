@@ -1,0 +1,3 @@
+#EDC-NGRIP ice links from AICC2012.
+735.5	2110.1	110
+744.8	2127.5	111
