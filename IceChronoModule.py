@@ -502,7 +502,7 @@ class Drilling:
         mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((0,2*max(self.gaslayerthick,self.gaslayerthick_model),self.depth_min,self.depth_max))
+        mpl.axis((0, 2*max(self.icelayerthick),self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(self.label+'/gaslayerthick.pdf')

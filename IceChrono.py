@@ -118,5 +118,5 @@ for i,dlabel in enumerate(list_drillings):
             
 ###Program execution time
 print 'Program execution time: ', time.time() - start_time, 'seconds' 
-quit()
+
 
