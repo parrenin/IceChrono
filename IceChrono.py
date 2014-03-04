@@ -9,15 +9,17 @@ import multiprocessing
 from scipy import interpolate
 from scipy.optimize import leastsq
 from os import chdir
-import IceChronoModule as icm
+#import IceChronoModule as icm
+
+
+
+###Registration of start time
+start_time = time.time()
 
 ###Reading parameters directory
 datadir=sys.argv[1]
 print 'Parameters directory is: ',datadir
 chdir(datadir)
-
-###Registration of start time
-start_time = time.time()
 
 ##Parameters
 execfile('./parameters.py')
@@ -28,7 +30,12 @@ variables=np.array([])
 D={}
 DC={}
 
-##Functions
+##Functions and Classes
+
+
+execfile('../IceChronoClasses.py')
+
+
 def residuals(var):
     """Calculate the residuals."""
     resi=np.array([])
@@ -67,7 +74,7 @@ for i,dlabel in enumerate(list_drillings):
 
     print 'Initialization of drilling '+dlabel
         
-    D[dlabel]=icm.Drilling(dlabel)
+    D[dlabel]=Drilling(dlabel)
     D[dlabel].init()
     D[dlabel].model(D[dlabel].variables)
     D[dlabel].a_init=D[dlabel].a
@@ -79,7 +86,7 @@ for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
             print 'Initialization of drilling couple '+dlabel2+'-'+dlabel
-            DC[dlabel2+'-'+dlabel]=icm.DrillingCouple(D[dlabel2],D[dlabel])
+            DC[dlabel2+'-'+dlabel]=DrillingCouple(D[dlabel2],D[dlabel])
             DC[dlabel2+'-'+dlabel].init()
             DC[dlabel2+'-'+dlabel].display_init()
 

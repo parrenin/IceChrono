@@ -16,14 +16,6 @@ from scipy.optimize import leastsq
 
 
 
-color_init='c'
-color_obs='r'
-color_opt='k'
-color_mod='b'
-color_ci='0.8'
-color_sigma='m'
-show_initial=True
-
 class Drilling:
 
     def __init__(self, dlabel):
@@ -33,7 +25,7 @@ class Drilling:
 
 #        print 'Initialization of drilling '+self.label
 
-        
+        execfile('parameters-AllDrillings.py')
         execfile(self.label+'/parameters.py')
 
         if self.calc_a:
@@ -107,7 +99,7 @@ class Drilling:
             self.tau=self.tau_model
 
 
-        if self.calc_udepth_init:
+        if self.calc_udepth:
             self.raw_model()
             self.udepth_init=self.udepth_model
         else:
@@ -582,10 +574,8 @@ class Drilling:
 
 
     def save(self):
-        output=np.vstack((self.depth,np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),\
-        np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),self.LID,\
-        self.sigma_LID,self.age,self.sigma_age,self.gage,self.sigma_gage,self.Ddepth,self.sigma_Ddepth))
-        np.savetxt(self.label+'/output.txt',np.transpose(output), header='depth thinning sigma_thinning accu sigma_accu LID sigma_LID age sigma_age gas_age sigma_gas_age Ddepth sigma_Ddepth')
+        output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID,self.Ddepth,self.sigma_Ddepth))
+        np.savetxt(self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth')
         np.savetxt(self.label+'/restart.txt',np.transpose(self.variables))
     
     def udepth_save(self):
