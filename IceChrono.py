@@ -14,7 +14,7 @@ from os import chdir
 
 
 ###Registration of start time
-start_time = time.time()
+start_time = time.time()      #Use time.clock() for processor time
 
 ###Reading parameters directory
 datadir=sys.argv[1]
