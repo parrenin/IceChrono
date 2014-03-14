@@ -27,11 +27,11 @@ class Drilling:
 
 #        print 'Initialization of drilling '+self.label
 
-        execfile('parameters-AllDrillings.py')
-        execfile(self.label+'/parameters.py')
+        execfile(datadir+'parameters-AllDrillings.py')
+        execfile(datadir+self.label+'/parameters.py')
 
         if self.calc_a:
-            readarray=np.loadtxt(self.label+'/isotopes.txt')
+            readarray=np.loadtxt(datadir+self.label+'/isotopes.txt')
             self.depthtop=readarray[:,0]
             self.d18Oice=readarray[:,1]
             self.deutice=readarray[:,2]
@@ -43,7 +43,7 @@ class Drilling:
             self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
             self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
         else:
-            self.a_model=np.loadtxt(self.label+'/accu-prior.txt')
+            self.a_model=np.loadtxt(datadir+self.label+'/accu-prior.txt')
             self.a=self.a_model
             
 
@@ -67,7 +67,7 @@ class Drilling:
         self.gage=np.empty_like(self.depth)
         
 
-        readarray=np.loadtxt(self.label+'/density-prior.txt')
+        readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
 #        self.density_depth=readarray[:,0]
         self.D=readarray
         self.iedepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D)))
@@ -83,7 +83,7 @@ class Drilling:
             f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
             self.LID_model=f(self.depth)
         else:
-            self.LID_model=np.loadtxt(self.label+'/LID-prior.txt')
+            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
         self.corr_LID=np.zeros(np.size(self.corr_LID))
         self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
@@ -109,7 +109,7 @@ class Drilling:
         if self.calc_tau:
             self.tau=np.empty_like(self.depth_mid)
         else:
-            self.tau_model=np.loadtxt(self.label+'/thinning-prior.txt')
+            self.tau_model=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
             self.tau=self.tau_model
 
 
@@ -117,7 +117,7 @@ class Drilling:
             self.raw_model()
             self.udepth_init=self.udepth_model
         else:
-            readarray=np.loadtxt(self.label+'/udepth.txt')
+            readarray=np.loadtxt(datadir+self.label+'/udepth.txt')
             self.udepth_init=readarray
             self.udepth_min=self.udepth_init[0]
 
@@ -152,12 +152,12 @@ class Drilling:
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
 
         if self.restart:
-            self.variables=np.loadtxt(self.label+'/restart.txt')
+            self.variables=np.loadtxt(datadir+self.label+'/restart.txt')
 
 
 #Reading of observations
 
-        filename=self.label+'/ice_age.txt'
+        filename=datadir+self.label+'/ice_age.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.icemarkers_depth=readarray[:,0]
@@ -168,7 +168,7 @@ class Drilling:
             self.icemarkers_age=np.array([])
             self.icemarkers_sigma=np.array([])
 
-        filename=self.label+'/gas_age.txt'
+        filename=datadir+self.label+'/gas_age.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.gasmarkers_depth=readarray[:,0]
@@ -179,7 +179,7 @@ class Drilling:
             self.gasmarkers_age=np.array([])
             self.gasmarkers_sigma=np.array([])
 
-        filename=self.label+'/ice_age_intervals.txt'
+        filename=datadir+self.label+'/ice_age_intervals.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.iceintervals_depthtop=readarray[:,0]
@@ -192,7 +192,7 @@ class Drilling:
             self.iceintervals_duration=np.array([])
             self.iceintervals_sigma=np.array([])
 
-        filename=self.label+'/gas_age_intervals.txt'
+        filename=datadir+self.label+'/gas_age_intervals.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.gasintervals_depthtop=readarray[:,0]
@@ -205,7 +205,7 @@ class Drilling:
             self.gasintervals_duration=np.array([])
             self.gasintervals_sigma=np.array([])
 
-        filename=self.label+'/Ddepth.txt'
+        filename=datadir+self.label+'/Ddepth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.Ddepth_depth=readarray[:,0]
@@ -439,7 +439,7 @@ class Drilling:
             yserie=np.array([y1,y1,y2,y2,y1])
             xserie=np.array([x1,x2,x2,x1,x1])
             if i==0:
-                mpl.plot(xserie,yserie, color=color_obs, label="observations")
+                mpl.plot(xserie,yserie, color=color_obs, label='observations')
             else:
                 mpl.plot(xserie,yserie, color=color_obs)
 
@@ -494,7 +494,7 @@ class Drilling:
         mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
-        pp=PdfPages(self.label+'/thinning.pdf')
+        pp=PdfPages(datadir+self.label+'/thinning.pdf')
         pp.savefig(mpl.figure(self.label+' thinning'))
         pp.close()
 
@@ -506,7 +506,7 @@ class Drilling:
         mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
-        pp=PdfPages(self.label+'/icelayerthick.pdf')
+        pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' ice layer thickness'))
         pp.close()
 
@@ -518,7 +518,7 @@ class Drilling:
         mpl.axis((0, 2*max(self.icelayerthick),self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
-        pp=PdfPages(self.label+'/gaslayerthick.pdf')
+        pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' gas layer thickness'))
         pp.close()
 
@@ -531,7 +531,7 @@ class Drilling:
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
-        pp=PdfPages(self.label+'/accumulation.pdf')
+        pp=PdfPages(datadir+self.label+'/accumulation.pdf')
         pp.savefig(mpl.figure(self.label+' accumulation'))
         pp.close()
 
@@ -544,7 +544,7 @@ class Drilling:
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y1,y2))
         mpl.legend()
-        pp=PdfPages(self.label+'/LID.pdf')
+        pp=PdfPages(datadir+self.label+'/LID.pdf')
         pp.savefig(mpl.figure(self.label+' LID'))
         pp.close()
 
@@ -559,7 +559,7 @@ class Drilling:
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y2,y1))
-        pp=PdfPages(self.label+'/ice_age.pdf')
+        pp=PdfPages(datadir+self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
         pp.close()
 
@@ -575,7 +575,7 @@ class Drilling:
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_min,x2,y2,y1))
-        pp=PdfPages(self.label+'/gas_age.pdf')
+        pp=PdfPages(datadir+self.label+'/gas_age.pdf')
         pp.savefig(mpl.figure(self.label+' gas age'))
         pp.close()
 
@@ -589,18 +589,18 @@ class Drilling:
         mpl.axis((x1,x2,self.depth_min,self.depth_max))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
-        pp=PdfPages(self.label+'/Ddepth.pdf')
+        pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
         pp.savefig(mpl.figure(self.label+' Ddepth'))
         pp.close()
 
 
     def save(self):
         output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID,self.Ddepth,self.sigma_Ddepth))
-        np.savetxt(self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth')
-        np.savetxt(self.label+'/restart.txt',np.transpose(self.variables))
+        np.savetxt(datadir+self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth')
+        np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
     def udepth_save(self):
-        np.savetxt(self.label+'/udepth.txt',self.udepth)
+        np.savetxt(datadir+self.label+'/udepth.txt',self.udepth)
         return
 
 class DrillingCouple:
@@ -616,7 +616,7 @@ class DrillingCouple:
 
 
 #TODO: allow to have either dlabel1+'-'dlabel2 or dlbel2+'-'dlabel1 as directory
-        filename=self.D1.label+'-'+self.D2.label+'/ice_depth.txt'
+        filename=datadir+self.D1.label+'-'+self.D2.label+'/ice_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.icemarkers_depth1=readarray[:,0]
@@ -627,7 +627,7 @@ class DrillingCouple:
             self.icemarkers_depth2=np.array([])
             self.icemarkers_sigma=np.array([])
 
-        filename=self.D1.label+'-'+self.D2.label+'/gas_depth.txt'
+        filename=datadir+self.D1.label+'-'+self.D2.label+'/gas_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.gasmarkers_depth1=readarray[:,0]
@@ -638,7 +638,7 @@ class DrillingCouple:
             self.gasmarkers_depth2=np.array([])
             self.gasmarkers_sigma=np.array([])
 
-        filename=self.D1.label+'-'+self.D2.label+'/icegas_depth.txt'
+        filename=datadir+self.D1.label+'-'+self.D2.label+'/icegas_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.icegasmarkers_depth1=readarray[:,0]
@@ -649,7 +649,7 @@ class DrillingCouple:
             self.icegasmarkers_depth2=np.array([])
             self.icegasmarkers_sigma=np.array([])
 
-        filename=self.D1.label+'-'+self.D2.label+'/gasice_depth.txt'
+        filename=datadir+self.D1.label+'-'+self.D2.label+'/gasice_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
             self.gasicemarkers_depth1=readarray[:,0]
@@ -704,8 +704,8 @@ class DrillingCouple:
 
     def display_final(self):
 
-        if not os.path.isdir(self.label):
-            os.mkdir(self.label)
+        if not os.path.isdir(datadir+self.label):
+            os.mkdir(datadir+self.label)
 
 
         mpl.figure(self.label+' ice-ice')
@@ -718,7 +718,7 @@ class DrillingCouple:
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
         mpl.legend(loc=4)
-        pp=PdfPages(self.label+'/ice-ice.pdf')
+        pp=PdfPages(datadir+self.label+'/ice-ice.pdf')
         pp.savefig(mpl.figure(self.label+' ice-ice'))
         pp.close()
 
@@ -732,7 +732,7 @@ class DrillingCouple:
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
         mpl.legend(loc=4)
-        pp=PdfPages(self.label+'/gas-gas.pdf')
+        pp=PdfPages(datadir+self.label+'/gas-gas.pdf')
         pp.savefig(mpl.figure(self.label+' gas-gas'))
         pp.close()
 
@@ -746,7 +746,7 @@ class DrillingCouple:
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
         mpl.legend(loc=4)
-        pp=PdfPages(self.label+'/ice-gas.pdf')
+        pp=PdfPages(datadir+self.label+'/ice-gas.pdf')
         pp.savefig(mpl.figure(self.label+' ice-gas'))
         pp.close()
 
@@ -760,7 +760,7 @@ class DrillingCouple:
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
         mpl.legend(loc=4)
-        pp=PdfPages(self.label+'/gas-ice.pdf')
+        pp=PdfPages(datadir+self.label+'/gas-ice.pdf')
         pp.savefig(mpl.figure(self.label+' gas-ice'))
         pp.close()
         

@@ -19,10 +19,10 @@ start_time = time.time()      #Use time.clock() for processor time
 ###Reading parameters directory
 datadir=sys.argv[1]
 print 'Parameters directory is: ',datadir
-chdir(datadir)
+#chdir(datadir)
 
 ##Parameters
-execfile('./parameters.py')
+execfile(datadir+'/parameters.py')
 
 
 ##Global
@@ -33,7 +33,7 @@ DC={}
 ##Functions and Classes
 
 
-execfile('../IceChronoClasses.py')
+execfile('IceChronoClasses.py')
 
 
 def residuals(var):
