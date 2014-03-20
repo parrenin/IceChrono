@@ -34,15 +34,50 @@ AICC2012_LID=readarray[:,7]/0.7
 f=interpolate.interp1d(AICC2012_depth,AICC2012_age, bounds_error=False, fill_value=np.nan)
 mpl.figure('Ice Age')
 mpl.plot(IC_age-f(IC_depth),IC_depth)
+mpl.xlabel('IceChrono - AICC2012 ice age difference (yr)')
+mpl.ylabel('depth (m)') 
+x1,x2,y1,y2 = mpl.axis()
+mpl.axis((x1, x2, y2, y1))
 pp=PdfPages('AICC2012-age.pdf')
 pp.savefig(mpl.figure('Ice Age'))
 pp.close()
 
+
+f=interpolate.interp1d(AICC2012_depth,AICC2012_age_sigma, bounds_error=False, fill_value=np.nan)
+mpl.figure('Ice Age confidence interval')
+mpl.plot(IC_age_sigma-f(IC_depth),IC_depth)
+mpl.xlabel('IceChrono - AICC2012 ice age confidence interval difference (yr)')
+mpl.ylabel('depth (m)') 
+x1,x2,y1,y2 = mpl.axis()
+mpl.axis((x1, x2, y2, y1))
+pp=PdfPages('AICC2012-age_sigma.pdf')
+pp.savefig(mpl.figure('Ice Age confidence interval'))
+pp.close()
+
+
 g=interpolate.interp1d(AICC2012_depth,AICC2012_gage, bounds_error=False, fill_value=np.nan)
 mpl.figure('Gas Age')
 mpl.plot(IC_gage-g(IC_depth),IC_depth)
+mpl.xlabel('IceChrono - AICC2012 gas age difference (yr)')
+mpl.ylabel('depth (m)') 
+x1,x2,y1,y2 = mpl.axis()
+mpl.axis((x1, x2, y2, y1))
 pp=PdfPages('AICC2012-gage.pdf')
 pp.savefig(mpl.figure('Gas Age'))
 pp.close()
+
+
+g=interpolate.interp1d(AICC2012_depth,AICC2012_gage_sigma, bounds_error=False, fill_value=np.nan)
+mpl.figure('Gas Age confidence interval')
+mpl.plot(IC_gage_sigma-g(IC_depth),IC_depth)
+mpl.xlabel('IceChrono - AICC2012 gas age confidence interval difference (yr)')
+mpl.ylabel('depth (m)') 
+x1,x2,y1,y2 = mpl.axis()
+mpl.axis((x1, x2, y2, y1))
+pp=PdfPages('AICC2012-gage_sigma.pdf')
+pp.savefig(mpl.figure('Gas Age confidence interval'))
+pp.close()
+
+
 
 mpl.show()

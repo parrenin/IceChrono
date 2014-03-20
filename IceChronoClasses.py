@@ -30,6 +30,8 @@ class Drilling:
         execfile(datadir+'parameters-AllDrillings.py')
         execfile(datadir+self.label+'/parameters.py')
 
+## We set up the raw model
+
         if self.calc_a:
             readarray=np.loadtxt(datadir+self.label+'/isotopes.txt')
             self.depthtop=readarray[:,0]
@@ -45,21 +47,6 @@ class Drilling:
         else:
             self.a_model=np.loadtxt(datadir+self.label+'/accu-prior.txt')
             self.a=self.a_model
-            
-
-        self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))
-        self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
-        if self.shape_a=='Triangle':
-            f=interpolate.interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
-            self.correlation_corr_a=f(np.abs(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age)))
-        elif self.shape_a=='Gaussian':
-            self.correlation_corr_a=gaussian(np.abs(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age))/self.lambda_a)
-        else:
-            print 'Not recognized shape for accumulation correlation matrix'
-            quit()
-
-        self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
-
 
         
         self.depth=np.arange(self.depth_min, self.depth_max+0.01, self.step)
@@ -84,19 +71,7 @@ class Drilling:
             self.LID_model=f(self.depth)
         else:
             self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
-        self.corr_LID=np.zeros(np.size(self.corr_LID))
-        self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
-        self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
-        if self.shape_LID=='Triangle':
-            f=interpolate.interp1d(np.array([0,self.lambda_LID,10000000]),np.array([1, 0, 0]))
-            self.correlation_corr_LID=f(np.abs(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age-np.transpose(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age)))
-        elif self.shape_LID=='Gaussian':
-            self.correlation_corr_LID=gaussian(np.abs(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age-np.transpose(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age))/self.lambda_LID)
-        else:
-            print 'Not recognized shape for LID correlation matrix'
-            quit()
 
-        self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
 
 
         self.depth_mid=np.arange(self.depth_min+self.step/2, self.depth_max, self.step)
@@ -112,22 +87,51 @@ class Drilling:
             self.tau_model=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
             self.tau=self.tau_model
 
+        self.raw_model()
+
+## Now we set up the correction functions
 
         if self.calc_udepth:
-            self.raw_model()
             self.udepth_init=self.udepth_model
         else:
             readarray=np.loadtxt(datadir+self.label+'/udepth.txt')
             self.udepth_init=readarray
             self.udepth_min=self.udepth_init[0]
 
+
+        self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))
+        self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
+
+        if self.shape_a=='Triangle':
+            f=interpolate.interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
+            self.correlation_corr_a=f(np.abs(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age)))
+        elif self.shape_a=='Gaussian':
+            self.correlation_corr_a=gaussian(np.abs(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age))/self.lambda_a)
+        else:
+            print 'Not recognized shape for accumulation correlation matrix'
+            quit()
+        self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
+
+        self.corr_LID=np.zeros(np.size(self.corr_LID))
+        self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
+        self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
+        if self.shape_LID=='Triangle':
+            f=interpolate.interp1d(np.array([0,self.lambda_LID,10000000]),np.array([1, 0, 0]))
+            self.correlation_corr_LID=f(np.abs(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age-np.transpose(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age)))
+        elif self.shape_LID=='Gaussian':
+            self.correlation_corr_LID=gaussian(np.abs(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age-np.transpose(np.ones((np.size(self.corr_LID_age),np.size(self.corr_LID_age)))*self.corr_LID_age))/self.lambda_LID)
+        else:
+            print 'Not recognized shape for LID correlation matrix'
+            quit()
+        self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
+
+
+
         self.corr_tau_depth=np.arange(self.depth_min, self.depth_max+0.01, (self.depth_max-self.depth_min)/(np.size(self.corr_tau)-1))
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
-#        f=interpolate.interp1d(self.depth,self.udepth_init)
-        f=interpolate.interp1d(self.depth,self.udepth_init, bounds_error=False, fill_value=self.udepth_init[-1]) #We should not need the bounds_error option. Check what is the problem.
-        self.sigmap_corr_tau=self.k/self.thickness_ie*f(self.corr_tau_depth)
+
         correlation_corr_tau=np.empty((np.size(self.corr_tau),np.size(self.corr_tau)))
         if self.shape_tau=='Triangle':
             g=interpolate.interp1d(np.array([0,self.lambda_tau,5000]),np.array([1, 0, 0]))
@@ -137,9 +141,12 @@ class Drilling:
         else:
             print 'Not recognized shape for LID correlation matrix'
             quit()
-
         self.chol_tau=np.linalg.cholesky(correlation_corr_tau)
 
+
+## Definition of the confidence intervals on the background
+
+        execfile(datadir+'parameters-sigmaback-AllDrillings.py')
 
 
 

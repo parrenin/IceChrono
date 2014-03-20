@@ -23,4 +23,7 @@ self.corr_a=np.zeros(101)
 self.corr_LID=np.zeros(101)
 self.LID_value=98.
 self.Dfirn=0.698    #From Parrenin et al. (CP, 2012b)
+self.cT2=0.000030
+self.sigmabA=0.7
+self.cA1=0.
 self.restart=False

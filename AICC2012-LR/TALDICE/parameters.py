@@ -26,4 +26,7 @@ self.corr_a=np.zeros(51)
 self.corr_LID=np.zeros(51)
 self.LID_value=76.
 self.Dfirn=0.698    #This is the EDC value
+self.cT2=0.000268
+self.sigmabA=0.6
+self.cA1=0.
 self.restart=False
