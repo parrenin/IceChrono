@@ -26,4 +26,5 @@ self.Dfirn=0.698    #From Parrenin et al. (CP, 2012b)
 self.cT2=0.000030
 self.sigmabA=0.7
 self.cA1=0.
+self.sigmabL=0.7
 self.restart=False

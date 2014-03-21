@@ -20,6 +20,7 @@ self.Dfirn=0.698    #This is the EDC value
 self.cT2=0.000078
 self.sigmabA=0.5
 self.cA1=1.
+self.sigmabL=0.6
 self.restart=False
 
 

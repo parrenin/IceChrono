@@ -18,6 +18,7 @@ from scipy.optimize import leastsq
 def gaussian(x):
     return np.exp(-x**2/2)
 
+
 class Drilling:
 
     def __init__(self, dlabel):

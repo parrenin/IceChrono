@@ -1,5 +1,6 @@
 self.sigmap_corr_LID=0.5
 self.cT1=0.01
+self.cT3=0.15
 self.sigmam=0.15
 self.corr_tau=np.zeros(51)
 self.lambda_tau=70
