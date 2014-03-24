@@ -6,11 +6,12 @@ import math as m
 import numpy as np
 import matplotlib.pyplot as mpl
 import multiprocessing
+import operator
+import warnings
+import os
 from scipy import interpolate
 from scipy.optimize import leastsq
-from os import chdir
-#import IceChronoModule as icm
-
+from matplotlib.backends.backend_pdf import PdfPages
 
 
 ###Registration of start time
@@ -19,7 +20,7 @@ start_time = time.time()      #Use time.clock() for processor time
 ###Reading parameters directory
 datadir=sys.argv[1]
 print 'Parameters directory is: ',datadir
-#chdir(datadir)
+#os.chdir(datadir)
 
 ##Parameters
 execfile(datadir+'/parameters.py')

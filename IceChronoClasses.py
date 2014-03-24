@@ -3,16 +3,6 @@
 #TODO: is there an elegant way to unpack the variables vector in the model function?
 #TODO: allow to save the correction vector to be able to restart while changing the resolution
 #TODO: include some checks for when dDdepth/dz>1
-    
-import operator
-import math as m
-import numpy as np
-import matplotlib.pyplot as mpl
-import warnings
-import os
-from matplotlib.backends.backend_pdf import PdfPages
-from scipy import interpolate
-from scipy.optimize import leastsq
 
 
 def gaussian(x):
