@@ -1,10 +1,6 @@
 #Parameters specific to the EDC ice core
 #TODO: Check these parameters with Parrenin et al. (CP, 2007), especially ice thickness
 self.dim=1
-self.calc_a=False
-self.calc_tau=False
-self.calc_LID=False
-self.calc_udepth=False
 self.udepth_min=0.
 self.age_min=-55.
 self.depth_min=0.

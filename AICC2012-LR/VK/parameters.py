@@ -1,9 +1,5 @@
 #Parameters specific to the Vostok ice core
 self.dim=2
-self.calc_a=False
-self.calc_tau=False
-self.calc_LID=False
-self.calc_udepth=True
 self.udepth_min=0.
 self.age_min=-50.
 self.depth_min=0.

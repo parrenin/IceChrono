@@ -1,3 +1,10 @@
+self.calc_a=False
+self.calc_tau=False
+self.calc_LID=False
+self.calc_udepth=True
+self.calc_a_sigma=False
+self.calc_tau_sigma=False
+self.calc_LID_sigma=False
 self.sigmap_corr_LID=0.5
 self.cT1=0.01
 self.cT3=0.15

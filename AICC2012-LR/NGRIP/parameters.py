@@ -1,9 +1,5 @@
 #Parameters specific to the NGRIP ice core
 self.dim=1
-self.calc_a=False
-self.calc_tau=False
-self.calc_LID=False
-self.calc_udepth=True
 self.udepth_min=3.313966267738
 self.age_min=-30.
 self.depth_min=8.

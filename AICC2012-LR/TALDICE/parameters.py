@@ -4,10 +4,6 @@
 #TODO: TALDICE does not run alone. Check what is the problem.
 
 self.dim=1
-self.calc_a=False
-self.calc_tau=False
-self.calc_LID=False
-self.calc_udepth=True
 self.udepth_min=0.
 self.age_min=-54.
 self.depth_min=0.

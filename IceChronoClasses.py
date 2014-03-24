@@ -147,9 +147,22 @@ class Drilling:
 
 ## Definition of the confidence intervals on the background
 
-        execfile(datadir+'parameters-sigmaback-AllDrillings.py')
+        filename=datadir+'parameters-sigmaback-AllDrillings.py'
+        if os.path.isfile(filename):
+            execfile(filename)
 
-
+        if not self.calc_a_sigma:
+            readarray=np.loadtxt(datadir+self.label+'/accu-sigma-prior.txt')
+            f=interpolate.interp1d(self.age_model[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
+            self.sigmap_corr_a=f(self.corr_a_age)
+        if not self.calc_tau_sigma:
+            readarray=np.loadtxt(datadir+self.label+'/thinning-sigma-prior.txt')
+            f=interpolate.interp1d(self.depth[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
+            self.sigmap_corr_tau=f(self.corr_tau_depth)
+        if not self.calc_LID_sigma:
+            readarray=np.loadtxt(datadir+self.label+'/LID-sigma-prior.txt')
+            f=interpolate.interp1d(self.age_model,readarray, bounds_error=False, fill_value=readarray[-1])
+            self.sigmap_corr_LID=f(self.corr_LID_age)
 
 
         self.variables=np.array([])
@@ -603,7 +616,7 @@ class Drilling:
 
 
     def save(self):
-        output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID,self.Ddepth,self.sigma_Ddepth))
+        output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth))
         np.savetxt(datadir+self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
