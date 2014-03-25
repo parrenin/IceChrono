@@ -111,7 +111,7 @@ class Drilling:
 
 ## Definition of the confidence intervals on the background
 
-        filename=datadir+'parameters-CovarianceBackground-AllDrillings.py'
+        filename=datadir+'parameters-CovariancePrior-AllDrillings.py'
         if os.path.isfile(filename):
             execfile(filename)
 
