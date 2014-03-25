@@ -6,7 +6,6 @@ import math as m
 import numpy as np
 import matplotlib.pyplot as mpl
 import multiprocessing
-import operator
 import warnings
 import os
 from scipy import interpolate
