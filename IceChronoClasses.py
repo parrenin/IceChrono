@@ -82,12 +82,7 @@ class Drilling:
 
 ## Now we set up the correction functions
 
-        if self.calc_udepth:
-            self.udepth_init=self.udepth_model
-        else:
-            readarray=np.loadtxt(datadir+self.label+'/udepth.txt')
-            self.udepth_init=readarray
-            self.udepth_min=self.udepth_init[0]
+        self.udepth_init=self.udepth_model
 
 
         self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))

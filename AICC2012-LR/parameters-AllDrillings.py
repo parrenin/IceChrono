@@ -1,7 +1,6 @@
 self.calc_a=False
 self.calc_tau=False
 self.calc_LID=False
-self.calc_udepth=True
 self.calc_a_sigma=False
 self.calc_tau_sigma=False
 self.calc_LID_sigma=False
@@ -13,6 +12,3 @@ self.corr_tau=np.zeros(51)
 self.lambda_tau=70
 self.lambda_a=4000
 self.lambda_LID=4000
-self.shape_tau='Triangle'
-self.shape_a='Triangle'
-self.shape_LID='Triangle'
