@@ -82,8 +82,6 @@ class Drilling:
 
 ## Now we set up the correction functions
 
-        self.udepth_init=self.udepth_model
-
 
         self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))
         self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
@@ -104,15 +102,22 @@ class Drilling:
 
 
 
-## Definition of the confidence intervals on the background
+## Definition of the covariance matrix of the background
 
-        filename=datadir+'parameters-CovariancePrior-AllDrillings.py'
+        self.correlation_corr_a_before=self.correlation_corr_a+0
+        self.correlation_corr_LID_before=self.correlation_corr_LID+0
+        self.correlation_corr_tau_before=self.correlation_corr_tau+0
+
+        filename=datadir+'parameters-CovariancePrior-AllDrillings-init.py'
         if os.path.isfile(filename):
             execfile(filename)
 
-        self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
-        self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
-        self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
+        if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
+            self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
+        if (self.correlation_corr_LID_before!=self.correlation_corr_LID).any():
+            self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
+        if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
+            self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
 
 
         if not self.calc_a_sigma:
@@ -204,6 +209,8 @@ class Drilling:
 
     def raw_model(self):
 
+
+
         #Accumulation
         if self.calc_a:
             self.a_model=self.A0*np.exp(self.beta*(self.deutice_fullcorr-self.deutice_fullcorr[0])) #Parrenin et al. (CP, 2007a) 2.3 (6)
@@ -236,6 +243,22 @@ class Drilling:
         self.gaslayerthick_model=1/np.diff(self.gage_model)
 
     def corrected_model(self):
+
+        self.correlation_corr_a_before=self.correlation_corr_a+0
+        self.correlation_corr_LID_before=self.correlation_corr_LID+0
+        self.correlation_corr_tau_before=self.correlation_corr_tau+0
+
+        filename=datadir+'parameters-CovariancePrior-AllDrillings.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+
+        if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
+            self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
+        if (self.correlation_corr_LID_before!=self.correlation_corr_LID).any():
+            self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
+        if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
+            self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
+
 
         #Accu
         corr=np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a
