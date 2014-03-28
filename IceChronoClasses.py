@@ -138,7 +138,7 @@ class Drilling:
         if self.calc_a==True:
             self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
         if self.calc_tau==True:
-            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.mu])))
+            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.muprime])))
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
 
         if self.restart:
@@ -218,6 +218,8 @@ class Drilling:
         #Thinning
         if self.calc_tau:
             self.p=-1+m.exp(self.pprime)
+            self.mu=m.exp(self.muprime)
+#            self.s=m.tanh(self.sprime)
             omega_D=1-(self.p+2)/(self.p+1)*(1-self.zeta)+1/(self.p+1)*(1-self.zeta)**(self.p+2)	#Parrenin et al. (CP, 2007a) 2.2 (3)
             omega=self.s*self.zeta+(1-self.s)*omega_D   #Parrenin et al. (CP, 2007a) 2.2 (2)
             self.tau_model=(1-self.mu)*omega+self.mu 
@@ -300,7 +302,7 @@ class Drilling:
 #            self.mu=variables[index+2]
 #            index=index+3
             self.pprime=variables[index]
-            self.mu=variables[index+1]
+            self.muprime=variables[index+1]
             index=index+2
         self.corr_tau=variables[index:index+np.size(self.corr_tau)]
         self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
