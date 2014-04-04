@@ -4,6 +4,7 @@ self.age_top=-55.                       #age at the top of the core
 self.depth_top=0.                       #depth at the top of the core
 self.depth_bot=3259.3                   #depth at the bottom of the core
 self.step=0.55                          #step for the age grid
+self.depth=np.arange(self.depth_top, self.depth_bot+0.01, self.step)        #Define the grid for the age
 self.thickness=3273.                    #Real thickness
 self.age_bot=1000000.+self.age_top      #Upper bound of the age at bottom (for the definition of the accu and thinning correction functions)
 self.corr_a=np.zeros(101)               #Number of nodes for accu correction

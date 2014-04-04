@@ -21,6 +21,9 @@ class Drilling:
         execfile(datadir+'parameters-AllDrillings.py')
         execfile(datadir+self.label+'/parameters.py')
 
+        self.depth_mid=(self.depth[1:]+self.depth[:-1])/2
+        self.depth_inter=(self.depth[1:]-self.depth[:-1])
+
 ## We set up the raw model
 
         if self.calc_a:
@@ -40,7 +43,6 @@ class Drilling:
             self.a=self.a_model
 
         
-        self.depth=np.arange(self.depth_top, self.depth_bot+0.01, self.step)
         self.age=np.empty_like(self.depth)
         self.gage=np.empty_like(self.depth)
         
@@ -48,7 +50,7 @@ class Drilling:
         readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
 #        self.density_depth=readarray[:,0]
         self.D=readarray
-        self.iedepth=self.step*np.cumsum(np.concatenate((np.array([0]), self.D)))
+        self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
@@ -65,7 +67,6 @@ class Drilling:
 
 
 
-        self.depth_mid=np.arange(self.depth_top+self.step/2, self.depth_bot, self.step)
         self.Ddepth=np.empty_like(self.depth)
         self.udepth=np.empty_like(self.depth)
 
@@ -225,7 +226,7 @@ class Drilling:
             self.tau_model=(1-self.mu)*omega+self.mu 
 
         #udepth
-        self.udepth_model=self.udepth_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
+        self.udepth_model=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model*self.depth_inter)))
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
@@ -234,7 +235,7 @@ class Drilling:
 
         #Ice age
         self.icelayerthick_model=self.tau_model*self.a_model/self.D
-        self.age_model=self.age_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
+        self.age_model=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model*self.depth_inter)))
             
         f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
@@ -270,7 +271,7 @@ class Drilling:
         #Thinning
         h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
-        self.udepth=self.udepth_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
+        self.udepth=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau*self.depth_inter)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
         corr=np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID
         j=interpolate.interp1d(self.corr_LID_age, corr, bounds_error=False, fill_value=corr[-1])
@@ -281,7 +282,7 @@ class Drilling:
 
         #Ice age
         self.icelayerthick=self.tau*self.a/self.D
-        self.age=self.age_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
+        self.age=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a*self.depth_inter)))
         f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
         self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_top, self.udepth-self.LIDIE, np.nan))
