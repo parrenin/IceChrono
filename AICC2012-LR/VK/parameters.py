@@ -8,7 +8,6 @@ self.step=1
 self.age_max=800000.+self.age_min
 self.corr_a=np.zeros(81)
 self.corr_LID=np.zeros(81)
-self.Dfirn=0.698    #This is the EDC value
 self.cT2=0.000084
 self.sigmabA=0.6
 self.cA1=1.

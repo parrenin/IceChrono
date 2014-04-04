@@ -8,7 +8,6 @@ self.thickness=3085. #From NGRIP community members (2004)
 self.age_max=150000.+self.age_min
 self.corr_a=np.zeros(16)
 self.corr_LID=np.zeros(16)
-self.Dfirn=0.698    #From Parrenin et al. (CP, 2012b)
 self.cT2=0.000016
 self.sigmabA=0.6
 self.cA1=0.
