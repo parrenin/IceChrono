@@ -1,11 +1,11 @@
 #Parameters specific to the EDML ice core
-self.udepth_min=8.54025
-self.age_min=70.
-self.depth_min=18.
-self.depth_max=2564.
+self.udepth_top=8.54025
+self.age_top=70.
+self.depth_top=18.
+self.depth_bot=2564.
 self.thickness=3000
 self.step=1
-self.age_max=300000.+self.age_min
+self.age_bot=300000.+self.age_top
 self.corr_a=np.zeros(31)
 self.corr_LID=np.zeros(31)
 self.cT2=0.000078

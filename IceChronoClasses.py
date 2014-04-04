@@ -40,7 +40,7 @@ class Drilling:
             self.a=self.a_model
 
         
-        self.depth=np.arange(self.depth_min, self.depth_max+0.01, self.step)
+        self.depth=np.arange(self.depth_top, self.depth_bot+0.01, self.step)
         self.age=np.empty_like(self.depth)
         self.gage=np.empty_like(self.depth)
         
@@ -52,11 +52,11 @@ class Drilling:
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
-            if self.depth_min<self.LID_value:
-                self.LID_depth=np.array([self.depth_min, self.LID_value, self.depth_max])
-                self.LID_LID=np.array([self.depth_min, self.LID_value, self.LID_value])
+            if self.depth_top<self.LID_value:
+                self.LID_depth=np.array([self.depth_top, self.LID_value, self.depth_bot])
+                self.LID_LID=np.array([self.depth_top, self.LID_value, self.LID_value])
             else:
-                self.LID_depth=np.array([self.depth_min, self.depth_max])
+                self.LID_depth=np.array([self.depth_top, self.depth_bot])
                 self.LID_LID=np.array([self.LID_value, self.LID_value])
             f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
             self.LID_model=f(self.depth)
@@ -65,7 +65,7 @@ class Drilling:
 
 
 
-        self.depth_mid=np.arange(self.depth_min+self.step/2, self.depth_max, self.step)
+        self.depth_mid=np.arange(self.depth_top+self.step/2, self.depth_bot, self.step)
         self.Ddepth=np.empty_like(self.depth)
         self.udepth=np.empty_like(self.depth)
 
@@ -83,17 +83,17 @@ class Drilling:
 ## Now we set up the correction functions
 
 
-        self.corr_a_age=np.arange(self.age_min, self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_a)-1))
+        self.corr_a_age=np.arange(self.age_top, self.age_bot+0.1, (self.age_bot-self.age_top)/(np.size(self.corr_a)-1))
         self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
 
 
 
         self.corr_LID=np.zeros(np.size(self.corr_LID))
-        self.corr_LID_age=np.arange(self.age_min,self.age_max+0.1, (self.age_max-self.age_min)/(np.size(self.corr_LID)-1))
+        self.corr_LID_age=np.arange(self.age_top,self.age_bot+0.1, (self.age_bot-self.age_top)/(np.size(self.corr_LID)-1))
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
 
 
-        self.corr_tau_depth=np.arange(self.depth_min, self.depth_max+0.01, (self.depth_max-self.depth_min)/(np.size(self.corr_tau)-1))
+        self.corr_tau_depth=np.arange(self.depth_top, self.depth_bot+0.01, (self.depth_bot-self.depth_top)/(np.size(self.corr_tau)-1))
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
@@ -225,7 +225,7 @@ class Drilling:
             self.tau_model=(1-self.mu)*omega+self.mu 
 
         #udepth
-        self.udepth_model=self.udepth_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
+        self.udepth_model=self.udepth_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model)))
         
         g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
@@ -234,12 +234,12 @@ class Drilling:
 
         #Ice age
         self.icelayerthick_model=self.tau_model*self.a_model/self.D
-        self.age_model=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
+        self.age_model=self.age_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model)))
             
         f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #gas age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_min, self.udepth_model-self.ULIDIE_model, np.nan))  
+        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_top, self.udepth_model-self.ULIDIE_model, np.nan))  
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
         self.gage_model=f_model(self.ice_equiv_depth_model)
         self.gaslayerthick_model=1/np.diff(self.gage_model)
@@ -270,7 +270,7 @@ class Drilling:
         #Thinning
         h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
-        self.udepth=self.udepth_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
+        self.udepth=self.udepth_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau)))
         g=interpolate.interp1d(self.iedepth, self.udepth)
         corr=np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID
         j=interpolate.interp1d(self.corr_LID_age, corr, bounds_error=False, fill_value=corr[-1])
@@ -281,10 +281,10 @@ class Drilling:
 
         #Ice age
         self.icelayerthick=self.tau*self.a/self.D
-        self.age=self.age_min+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
+        self.age=self.age_top+self.step*np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a)))
         f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
-        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_min, self.udepth-self.LIDIE, np.nan))
+        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_top, self.udepth-self.LIDIE, np.nan))
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.gage=f(self.ice_equiv_depth)
         self.gaslayerthick=1/np.diff(self.gage)
@@ -501,7 +501,7 @@ class Drilling:
 #        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_min,self.depth_max))
+        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/thinning.pdf')
@@ -513,7 +513,7 @@ class Drilling:
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_min,self.depth_max))
+        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
@@ -525,7 +525,7 @@ class Drilling:
         mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((0, 2*max(self.icelayerthick),self.depth_min,self.depth_max))
+        mpl.axis((0, 2*max(self.icelayerthick),self.depth_top,self.depth_bot))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
@@ -539,7 +539,7 @@ class Drilling:
         mpl.step(self.age, np.concatenate((self.a, np.array([self.a[-1]]))), color=color_opt, where='post', label='Corrected +/-$\sigma$')
         mpl.fill_between(self.age[:-1], self.a-self.sigma_a, self.a+self.sigma_a, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_min,x2,y1,y2))
+        mpl.axis((self.age_top,x2,y1,y2))
         mpl.legend()
         pp=PdfPages(datadir+self.label+'/accumulation.pdf')
         pp.savefig(mpl.figure(self.label+' accumulation'))
@@ -552,7 +552,7 @@ class Drilling:
         mpl.plot(self.age, self.LID, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_between(self.age, self.LID-self.sigma_LID, self.LID+self.sigma_LID, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_min,x2,y1,y2))
+        mpl.axis((self.age_top,x2,y1,y2))
         mpl.legend()
         pp=PdfPages(datadir+self.label+'/LID.pdf')
         pp.savefig(mpl.figure(self.label+' LID'))
@@ -565,10 +565,10 @@ class Drilling:
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_age*10, self.depth, color=color_sigma, label='$\sigma$ x10')   
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_min,self.depth_max))    
+        mpl.axis((x1,x2,self.depth_top,self.depth_bot))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_min,x2,y2,y1))
+        mpl.axis((self.age_top,x2,y2,y1))
         pp=PdfPages(datadir+self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
         pp.close()
@@ -581,10 +581,10 @@ class Drilling:
 #        mpl.plot(self.gage-self.sigma_gage, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_gage*10, self.depth, color=color_sigma, label='$\sigma$ x10')  
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_min,self.depth_max))    
+        mpl.axis((x1,x2,self.depth_top,self.depth_bot))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((self.age_min,x2,y2,y1))
+        mpl.axis((self.age_top,x2,y2,y1))
         pp=PdfPages(datadir+self.label+'/gas_age.pdf')
         pp.savefig(mpl.figure(self.label+' gas age'))
         pp.close()
@@ -596,7 +596,7 @@ class Drilling:
 #        mpl.plot(self.Ddepth+self.sigma_Ddepth, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_min,self.depth_max))
+        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
@@ -722,8 +722,8 @@ class DrillingCouple:
         mpl.errorbar(self.D1.fct_age_model(self.icemarkers_depth1),self.D2.fct_age_model(self.icemarkers_depth2), color=color_mod, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_opt, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
-        x1=self.D1.age_min
-        y1=self.D2.age_min
+        x1=self.D1.age_top
+        y1=self.D2.age_top
         mpl.axis((x1,x2,y1,y2))
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -736,8 +736,8 @@ class DrillingCouple:
         mpl.errorbar(self.D1.fct_gage_model(self.gasmarkers_depth1),self.D2.fct_gage_model(self.gasmarkers_depth2), color=color_mod, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_opt, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
-        x1=self.D1.age_min
-        y1=self.D2.age_min
+        x1=self.D1.age_top
+        y1=self.D2.age_top
         mpl.axis((x1,x2,y1,y2))
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -750,8 +750,8 @@ class DrillingCouple:
         mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
-        x1=self.D1.age_min
-        y1=self.D2.age_min
+        x1=self.D1.age_top
+        y1=self.D2.age_top
         mpl.axis((x1,x2,y1,y2))
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
@@ -764,8 +764,8 @@ class DrillingCouple:
         mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
-        x1=self.D1.age_min
-        y1=self.D2.age_min
+        x1=self.D1.age_top
+        y1=self.D2.age_top
         mpl.axis((x1,x2,y1,y2))
         range=np.array([max(x1,y1),min(x2,y2)])
         mpl.plot(range,range, color=color_obs, label='perfect agreement')
