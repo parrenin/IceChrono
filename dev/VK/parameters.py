@@ -1,14 +1,12 @@
 #Parameters specific to the Vostok ice core
 self.dim=2
-self.udepth_min=0.
+self.udepth_top=0.
 self.calc_a=False
 self.calc_tau=False
 self.calc_LID=False
-self.age_min=-47
-self.depth_min=0.
-self.depth_max=3501.
+self.age_top=-47
+self.depth=np.arange(0., 3501.+0.01, 1.)
 self.thickness=3767.
-self.step=1
 #self.gamma_source=3.4
 #self.beta_source=1.5
 self.lambda_a=4000
@@ -17,7 +15,7 @@ self.k=0.1
 self.lambda_tau=70
 self.lambda_LID=4000
 self.sigmap_corr_LID=0.4
-self.age_max=800000.+self.age_min
+self.age_bot=800000.+self.age_top
 self.corr_a=np.zeros(81)
 self.corr_LID=np.zeros(81)
 self.LID_value=98.   #TODO: change this EDC value

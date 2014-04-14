@@ -1,15 +1,13 @@
 #Parameters specific to the EDC ice core
 #TODO: Check these parameters with Parrenin et al. (CP, 2007), especially ice thickness
 self.dim=1
-self.udepth_min=0.
+self.udepth_top=0.
 self.calc_a=True
 self.calc_tau=True
 self.calc_LID=True
 self.calc_udepth=False
-self.age_min=-50.
-self.depth_min=0.
-self.depth_max=3190.
-self.step=0.55
+self.age_top=-50.
+self.depth=np.arange(0., 3190.+0.01, 0.55)
 self.gamma_source=3.4
 self.beta_source=1.5
 self.A0=3.30e-02
@@ -24,7 +22,7 @@ self.k=0.1
 self.lambda_tau=70
 self.lambda_LID=4000
 self.sigmap_corr_LID=0.4
-self.age_max=1000000.+self.age_min
+self.age_bot=1000000.+self.age_top
 self.corr_a=np.zeros(101)
 self.corr_LID=np.zeros(101)
 self.LID_value=98.

@@ -1,10 +1,7 @@
 #Parameters specific to the NGRIP ice core
 self.udepth_top=3.313966267738
 self.age_top=-30.
-self.depth_top=8.
-self.depth_bot=3084.
-self.step=1
-self.depth=np.arange(self.depth_top, self.depth_bot+0.01, self.step)
+self.depth=np.arange(8., 3084.+0.01, 1.)
 self.thickness=3085. #From NGRIP community members (2004)
 self.age_bot=150000.+self.age_top
 self.corr_a=np.zeros(16)

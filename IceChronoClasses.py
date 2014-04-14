@@ -54,11 +54,11 @@ class Drilling:
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
-            if self.depth_top<self.LID_value:
-                self.LID_depth=np.array([self.depth_top, self.LID_value, self.depth_bot])
-                self.LID_LID=np.array([self.depth_top, self.LID_value, self.LID_value])
+            if self.depth[0]<self.LID_value:
+                self.LID_depth=np.array([self.depth[0], self.LID_value, self.depth[-1]])
+                self.LID_LID=np.array([self.depth[0], self.LID_value, self.LID_value])
             else:
-                self.LID_depth=np.array([self.depth_top, self.depth_bot])
+                self.LID_depth=np.array([self.depth[0], self.depth[-1]])
                 self.LID_LID=np.array([self.LID_value, self.LID_value])
             f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
             self.LID_model=f(self.depth)
@@ -94,7 +94,7 @@ class Drilling:
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
 
 
-        self.corr_tau_depth=np.arange(self.depth_top, self.depth_bot+0.01, (self.depth_bot-self.depth_top)/(np.size(self.corr_tau)-1))
+        self.corr_tau_depth=np.arange(self.depth[0], self.depth[-1]+0.01, (self.depth[-1]-self.depth[0])/(np.size(self.corr_tau)-1))
         self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
@@ -502,7 +502,7 @@ class Drilling:
 #        mpl.plot(self.tau+self.sigma_tau, self.depth_mid, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.tau-self.sigma_tau, self.depth_mid, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
+        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/thinning.pdf')
@@ -514,7 +514,7 @@ class Drilling:
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
+        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
@@ -526,7 +526,7 @@ class Drilling:
         mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((0, 2*max(self.icelayerthick),self.depth_top,self.depth_bot))
+        mpl.axis((0, 2*max(self.icelayerthick),self.depth[0],self.depth[-1]))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
@@ -566,7 +566,7 @@ class Drilling:
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_age*10, self.depth, color=color_sigma, label='$\sigma$ x10')   
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_top,self.depth_bot))    
+        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_top,x2,y2,y1))
@@ -582,7 +582,7 @@ class Drilling:
 #        mpl.plot(self.gage-self.sigma_gage, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_gage*10, self.depth, color=color_sigma, label='$\sigma$ x10')  
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_top,self.depth_bot))    
+        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))    
         mpl.legend()
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_top,x2,y2,y1))
@@ -597,7 +597,7 @@ class Drilling:
 #        mpl.plot(self.Ddepth+self.sigma_Ddepth, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth_top,self.depth_bot))
+        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))
         mpl.legend(loc=4)
         mpl.ylim(mpl.ylim()[::-1])
         pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
