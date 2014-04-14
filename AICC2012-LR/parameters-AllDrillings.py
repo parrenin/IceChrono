@@ -8,6 +8,7 @@ self.cT1=0.01
 self.cT3=0.15
 self.sigmam=0.15
 self.corr_tau=np.zeros(51)  #Define the number of nodes of the thinning function.
+self.age_step=10000.
 self.lambda_tau=70
 self.lambda_a=4000
 self.lambda_LID=4000

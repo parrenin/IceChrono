@@ -83,14 +83,13 @@ class Drilling:
 
 ## Now we set up the correction functions
 
+        self.corr_a=np.zeros(np.size(self.corr_a_age))
+        self.corr_LID=np.zeros(np.size(self.corr_LID_age))
 
-        self.corr_a_age=np.arange(self.age_top, self.age_bot+0.1, (self.age_bot-self.age_top)/(np.size(self.corr_a)-1))
         self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
 
 
 
-        self.corr_LID=np.zeros(np.size(self.corr_LID))
-        self.corr_LID_age=np.arange(self.age_top,self.age_bot+0.1, (self.age_bot-self.age_top)/(np.size(self.corr_LID)-1))
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
 
 

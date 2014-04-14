@@ -2,9 +2,8 @@
 self.udepth_top=0.
 self.age_top=-50.
 self.depth=np.arange(0., 3501+0.01, 1.)
-self.age_bot=800000.+self.age_top
-self.corr_a=np.zeros(81)
-self.corr_LID=np.zeros(81)
+self.corr_a_age=np.arange(-50, 800000-50+0.01, self.age_step)
+self.corr_LID_age=np.arange(-50, 800000-50+0.01, self.age_step)
 self.cT2=0.000084
 self.thickness=3767.
 self.sigmabA=0.6
