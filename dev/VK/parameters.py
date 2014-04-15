@@ -16,11 +16,10 @@ self.lambda_tau=70
 self.lambda_LID=4000
 self.sigmap_corr_LID=0.4
 self.age_bot=800000.+self.age_top
-self.corr_a=np.zeros(81)
-self.corr_LID=np.zeros(81)
+self.corr_a_age=np.arange(-50, 800000-50+0.01, self.age_step)
+self.corr_LID_age=np.arange(-50, 800000-50+0.01, self.age_step)
 self.LID_value=98.   #TODO: change this EDC value
 self.Dfirn=0.698    #This is the EDC value
-self.corr_tau=np.zeros(101)
 self.restart=False
 
 
