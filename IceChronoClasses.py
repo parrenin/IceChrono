@@ -85,6 +85,7 @@ class Drilling:
 
         self.corr_a=np.zeros(np.size(self.corr_a_age))
         self.corr_LID=np.zeros(np.size(self.corr_LID_age))
+        self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
 
         self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
 
@@ -93,8 +94,6 @@ class Drilling:
         self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
 
 
-        self.corr_tau_depth=np.arange(self.depth[0], self.depth[-1]+0.01, (self.depth[-1]-self.depth[0])/(np.size(self.corr_tau)-1))
-        self.corr_tau=np.zeros(np.size(self.corr_tau))
 #        print 'depth ', np.size(self.depth)
 #        print 'udepth_init ', np.size(self.udepth_init)
 
