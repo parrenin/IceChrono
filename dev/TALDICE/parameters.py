@@ -18,7 +18,6 @@ self.thickness=1620. #1650 is the documented value but we need 1620 for the code
 self.pprime=m.log(1.47+1)
 self.s=0.
 self.muprime=m.log(1.57e-02)
-self.k=0.1
 self.corr_a_age=np.arange(-50, 500000-50+0.01, self.age_step)
 self.corr_LID_age=np.arange(-50, 500000-50+0.01, self.age_step)
 self.corr_tau_depth=np.arange(self.depth[0], self.depth[-1]+0.01, (self.depth[-1]-self.depth[0])/(self.corr_tau_nodes-1))

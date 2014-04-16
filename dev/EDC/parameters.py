@@ -12,7 +12,7 @@ self.beta_source=1.5
 self.A0=3.30e-02
 self.beta=1.65e-02
 self.thickness=3273.
-self.pprime=1.59
+self.pprime==m.log(2.3+1)
 self.s=-2.82e-01
 self.muprime=m.log(5.34e-02)
 self.corr_a_age=np.arange(-55, 1000000-55+0.01, self.age_step)      #Age grid for the accu correction function
