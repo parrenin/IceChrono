@@ -9,17 +9,10 @@ self.depth=np.arange(0., 3501.+0.01, 1.)
 self.thickness=3767.
 #self.gamma_source=3.4
 #self.beta_source=1.5
-self.lambda_a=4000
-self.sigmap_corr_a=0.2
-self.k=0.1
-self.lambda_tau=70
-self.lambda_LID=4000
-self.sigmap_corr_LID=0.4
-self.age_bot=800000.+self.age_top
 self.corr_a_age=np.arange(-50, 800000-50+0.01, self.age_step)
 self.corr_LID_age=np.arange(-50, 800000-50+0.01, self.age_step)
+self.corr_tau_depth=np.arange(self.depth[0], self.depth[-1]+0.01, (self.depth[-1]-self.depth[0])/(self.corr_tau_nodes-1))
 self.LID_value=98.   #TODO: change this EDC value
-self.Dfirn=0.698    #This is the EDC value
 self.restart=False
 
 
