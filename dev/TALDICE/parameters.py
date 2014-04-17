@@ -5,6 +5,7 @@
 
 self.dim=1
 self.calc_a=True
+self.calc_a_method='fullcorr'
 self.calc_tau=True
 self.calc_LID=True
 self.udepth_top=0.

@@ -3,6 +3,7 @@
 self.dim=1
 self.udepth_top=0.
 self.calc_a=True
+self.calc_a_method='fullcorr'
 self.calc_tau=True
 self.calc_LID=True
 self.age_top=-50.

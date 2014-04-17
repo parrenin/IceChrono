@@ -28,16 +28,23 @@ class Drilling:
 
         if self.calc_a:
             readarray=np.loadtxt(datadir+self.label+'/isotopes.txt')
-            self.depthtop=readarray[:,0]
-            self.d18Oice=readarray[:,1]
-            self.deutice=readarray[:,2]
-            self.d18Osw=readarray[:,3]
-            self.excess=self.deutice-8*self.d18Oice   # dans Uemura : d=excess
-            self.a=np.empty_like(self.deutice)
-            self.d18Oice_corr=self.d18Oice-self.d18Osw*(1+self.d18Oice/1000)/(1+self.d18Osw/1000)	#Uemura (1)
-            self.deutice_corr=self.deutice-8*self.d18Osw*(1+self.deutice/1000)/(1+8*self.d18Osw/1000)	#Uemura et al. (CP, 2012) (2) 
-            self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
-            self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
+            if self.calc_a_method=='fullcorr':
+                self.d18Oice=readarray[:,0]
+                self.deutice=readarray[:,1]
+                self.d18Osw=readarray[:,2]
+                self.excess=self.deutice-8*self.d18Oice   # dans Uemura : d=excess
+                self.a=np.empty_like(self.deutice)
+                self.d18Oice_corr=self.d18Oice-self.d18Osw*(1+self.d18Oice/1000)/(1+self.d18Osw/1000)	#Uemura (1)
+                self.deutice_corr=self.deutice-8*self.d18Osw*(1+self.deutice/1000)/(1+8*self.d18Osw/1000)	#Uemura et al. (CP, 2012) (2) 
+                self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
+                self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
+            elif self.calc_a_method=='deut':
+                self.deutice_fullcorr=readarray
+            elif selc.calc_a_method=='d18O':
+                self.deutice_fullcorr=8*readarray
+            else:
+                print 'Accumulation method not recognized'
+                quit()
         else:
             self.a_model=np.loadtxt(datadir+self.label+'/accu-prior.txt')
             self.a=self.a_model
