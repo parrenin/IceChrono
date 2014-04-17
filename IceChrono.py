@@ -18,6 +18,8 @@ start_time = time.time()      #Use time.clock() for processor time
 
 ###Reading parameters directory
 datadir=sys.argv[1]
+if datadir[-1]!='/':
+    datadir=datadir+'/'
 print 'Parameters directory is: ',datadir
 #os.chdir(datadir)
 
