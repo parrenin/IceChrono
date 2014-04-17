@@ -101,6 +101,8 @@ if opt_method=='leastsq':
 elif opt_method=='leastsq-parallel':
     print 'Optimization by leastsq-parallel'
     variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+elif opt_method=='none':
+    hess=np.zeros((np.size(variables),np.size(variables)))
 else:
     print opt_method,': Optimization method not recognized.'
     quit()
