@@ -156,7 +156,7 @@ class Drilling:
         filename=datadir+self.label+'/ice_age.txt'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
+            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename)):
                 readarray=np.loadtxt(filename)
                 self.icemarkers_depth=readarray[:,0]
                 self.icemarkers_age=readarray[:,1]
@@ -169,7 +169,7 @@ class Drilling:
         filename=datadir+self.label+'/gas_age.txt'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
+            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename)):
                 readarray=np.loadtxt(filename)
                 self.gasmarkers_depth=readarray[:,0]
                 self.gasmarkers_age=readarray[:,1]
@@ -182,7 +182,7 @@ class Drilling:
         filename=datadir+self.label+'/ice_age_intervals.txt'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
+            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename)):
                 readarray=np.loadtxt(filename)
                 self.iceintervals_depthtop=readarray[:,0]
                 self.iceintervals_depthbot=readarray[:,1]
@@ -197,7 +197,7 @@ class Drilling:
         filename=datadir+self.label+'/gas_age_intervals.txt'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
+            if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename)):
                 readarray=np.loadtxt(filename)
                 self.gasintervals_depthtop=readarray[:,0]
                 self.gasintervals_depthbot=readarray[:,1]
