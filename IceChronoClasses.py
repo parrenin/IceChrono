@@ -416,9 +416,6 @@ class Drilling:
         index=index+np.size(self.icelayerthick)
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
         self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
-        index=index+np.size(self.gaslayerthick)
-        
-        return self.sigma_age, self.sigma_gage, self.sigma_Ddepth, self.sigma_a, self.sigma_tau, self.sigma_LID, self.sigma_icelayerthick
 
     
 
@@ -627,7 +624,7 @@ class Drilling:
     
     def udepth_save(self):
         np.savetxt(datadir+self.label+'/udepth.txt',self.udepth)
-        return
+
 
 class DrillingCouple:
 
@@ -686,7 +683,6 @@ class DrillingCouple:
             self.gasicemarkers_depth2=np.array([])
             self.gasicemarkers_sigma=np.array([])
 
-        return
 
     def residuals(self):
 
@@ -724,7 +720,6 @@ class DrillingCouple:
         if show_initial:
             mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
-        return
 
 
 
@@ -789,5 +784,4 @@ class DrillingCouple:
         pp=PdfPages(datadir+self.label+'/gas-ice.pdf')
         pp.savefig(mpl.figure(self.label+' gas-ice'))
         pp.close()
-        
-        return
+
