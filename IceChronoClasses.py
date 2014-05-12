@@ -126,20 +126,6 @@ class Drilling:
             self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
 
 
-        if not self.calc_a_sigma:
-            readarray=np.loadtxt(datadir+self.label+'/accu-sigma-prior.txt')
-            f=interpolate.interp1d(self.age_model[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
-            self.sigmap_corr_a=f(self.corr_a_age)
-        if not self.calc_tau_sigma:
-            readarray=np.loadtxt(datadir+self.label+'/thinning-sigma-prior.txt')
-            f=interpolate.interp1d(self.depth[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
-            self.sigmap_corr_tau=f(self.corr_tau_depth)
-        if not self.calc_LID_sigma:
-            readarray=np.loadtxt(datadir+self.label+'/LID-sigma-prior.txt')
-            f=interpolate.interp1d(self.age_model,readarray, bounds_error=False, fill_value=readarray[-1])
-            self.sigmap_corr_LID=f(self.corr_LID_age)
-
-
         self.variables=np.array([])
         if self.calc_a==True:
             self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
@@ -417,6 +403,8 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
         self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
 
+
+        
     
 
     def display_init(self):
