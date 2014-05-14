@@ -1,6 +1,6 @@
 list_drillings=['EDC','VK','TALDICE','EDML','NGRIP']
 
-opt_method='leastsq'  #leastsq, leastsq-parallel (EXPERIMENTAL)
+opt_method='leastsq'  #leastsq, leastsq-parallel (EXPERIMENTAL), none
 nb_nodes=6
 
 color_init='c'

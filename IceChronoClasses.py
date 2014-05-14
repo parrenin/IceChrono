@@ -403,6 +403,12 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
         self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
 
+        f=interpolate.interp1d(self.corr_a_age, self.sigmap_corr_a, bounds_error=False, fill_value=self.corr_a[-1])
+        self.sigma_a_model=f((self.age_model[1:]+self.age_model[:-1])/2)
+        f=interpolate.interp1d(self.corr_LID_age, self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
+        self.sigma_LID_model=f(self.age_model)
+        f=interpolate.interp1d(self.corr_tau_depth, self.sigmap_corr_tau, bounds_error=False, fill_value=self.corr_tau[-1])
+        self.sigma_tau_model=f(self.depth_mid)
 
         
     
@@ -606,8 +612,8 @@ class Drilling:
 
 
     def save(self):
-        output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth))
-        np.savetxt(datadir+self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth')
+        output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth,np.concatenate((self.a_model,np.array([self.a_model[-1]]))),np.concatenate((self.sigma_a_model,np.array([self.sigma_a_model[-1]]))),np.concatenate((self.tau_model,np.array([self.tau_model[-1]]))),np.concatenate((self.sigma_tau_model,np.array([self.sigma_tau_model[-1]]))),self.LID_model,self.sigma_LID_model))
+        np.savetxt(datadir+self.label+'/output.txt',np.transpose(output), header='depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth accu_model sigma_accu_model thinning_model sigma_thinning_model LID_model sigma_LID_model')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
     def udepth_save(self):
