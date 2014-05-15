@@ -1,0 +1,32 @@
+Les sous-répertoires AICC2012-LR/EDC et ../exp-v1/AICC2012-VHR/EDC sont identiques
+Les sous-répertoires AICC2012-LR/EDC-EDML et ../exp-v1/AICC2012-VHR/EDC-EDML sont identiques
+Les sous-répertoires AICC2012-LR/EDC-NGRIP et ../exp-v1/AICC2012-VHR/EDC-NGRIP sont identiques
+Les sous-répertoires AICC2012-LR/EDC-TALDICE et ../exp-v1/AICC2012-VHR/EDC-TALDICE sont identiques
+Les sous-répertoires AICC2012-LR/EDC-VK et ../exp-v1/AICC2012-VHR/EDC-VK sont identiques
+Les sous-répertoires AICC2012-LR/EDML et ../exp-v1/AICC2012-VHR/EDML sont identiques
+Les sous-répertoires AICC2012-LR/EDML-NGRIP et ../exp-v1/AICC2012-VHR/EDML-NGRIP sont identiques
+Les sous-répertoires AICC2012-LR/NGRIP et ../exp-v1/AICC2012-VHR/NGRIP sont identiques
+diff AICC2012-LR/parameters-AllDrillings.py ../exp-v1/AICC2012-VHR/parameters-AllDrillings.py
+7,8c7,8
+< self.corr_tau_nodes=51  #Define the number of nodes of the thinning function.
+< self.age_step=100.
+---
+> self.corr_tau_nodes=501  #Define the number of nodes of the thinning function.
+> self.age_step=1000.
+diff AICC2012-LR/parameters-AllDrillings.py~ ../exp-v1/AICC2012-VHR/parameters-AllDrillings.py~
+7c7
+< self.corr_tau_nodes=501  #Define the number of nodes of the thinning function.
+---
+> self.corr_tau_nodes=51  #Define the number of nodes of the thinning function.
+diff AICC2012-LR/parameters-CovariancePrior-AllDrillings-init.py~ ../exp-v1/AICC2012-VHR/parameters-CovariancePrior-AllDrillings-init.py~
+71c71
+< self.sigmap_corr_LID=self.sigmabL/self.sigmabA*g(self.corr_LID_age)/(1+f(self.corr_LID_age)/max(mAloc))
+---
+> self.sigmap_corr_LID=0.22+self.sigmabL/self.sigmabA*g(self.corr_LID_age)/(1+f(self.corr_LID_age)/max(mAloc))
+Les sous-répertoires AICC2012-LR/TALDICE et ../exp-v1/AICC2012-VHR/TALDICE sont identiques
+Les sous-répertoires AICC2012-LR/TALDICE-EDML et ../exp-v1/AICC2012-VHR/TALDICE-EDML sont identiques
+Les sous-répertoires AICC2012-LR/TALDICE-NGRIP et ../exp-v1/AICC2012-VHR/TALDICE-NGRIP sont identiques
+Les sous-répertoires AICC2012-LR/VK et ../exp-v1/AICC2012-VHR/VK sont identiques
+Les sous-répertoires AICC2012-LR/VK-EDML et ../exp-v1/AICC2012-VHR/VK-EDML sont identiques
+Les sous-répertoires AICC2012-LR/VK-NGRIP et ../exp-v1/AICC2012-VHR/VK-NGRIP sont identiques
+Les sous-répertoires AICC2012-LR/VK-TALDICE et ../exp-v1/AICC2012-VHR/VK-TALDICE sont identiques
