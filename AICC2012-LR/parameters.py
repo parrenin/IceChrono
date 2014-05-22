@@ -1,7 +1,7 @@
 list_drillings=['EDC','VK','TALDICE','EDML','NGRIP']
 
-opt_method='leastsq'  #leastsq, leastsq-parallel (EXPERIMENTAL), none
-nb_nodes=6
+opt_method='none'  #leastsq, leastsq-parallel (EXPERIMENTAL), none
+nb_nodes=6         #Number of nodes for the leastsq-parallel mode
 
 color_init='c'
 color_obs='r'
