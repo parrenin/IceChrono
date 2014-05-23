@@ -5,6 +5,12 @@
 #TODO: include some checks for when dDdepth/dz>1
 
 
+def interp1d_extrap(x,y):
+    def f(xp):
+        g=interp1d(x,y, bounds_error=False)
+        return np.where(xp<x[0],y[0],np.where(xp>x[-1],y[-1],g(xp)))    
+    return f
+
 
 class Drilling:
 
@@ -64,7 +70,7 @@ class Drilling:
             else:
                 self.LID_depth=np.array([self.depth[0], self.depth[-1]])
                 self.LID_LID=np.array([self.LID_value, self.LID_value])
-            f=interpolate.interp1d(self.LID_depth, self.LID_LID, bounds_error=False, fill_value=self.LID_LID[-1])
+            f=interp1d_extrap(self.LID_depth, self.LID_LID)
             self.LID_model=f(self.depth)
         else:
             self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
@@ -226,16 +232,16 @@ class Drilling:
         #udepth
         self.udepth_model=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model*self.depth_inter)))
         
-        g_model=interpolate.interp1d(self.iedepth, self.udepth_model)
+        g_model=interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
         self.ULIDIE_model=g_model(self.LIDIE_model)
-        i_model=interpolate.interp1d(self.udepth_model, self.depth)
+        i_model=interp1d(self.udepth_model, self.depth)
 
         #Ice age
         self.icelayerthick_model=self.tau_model*self.a_model/self.D
         self.age_model=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model*self.depth_inter)))
             
-        f_model=interpolate.interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
+        f_model=interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #gas age
         self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_top, self.udepth_model-self.ULIDIE_model, np.nan))  
@@ -263,25 +269,25 @@ class Drilling:
 
         #Accu
         corr=np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a
-        j=interpolate.interp1d(self.corr_a_age, corr, bounds_error=False, fill_value=corr[-1])
+        j=interp1d_extrap(self.corr_a_age, corr)
         self.a=self.a_model*np.exp(j(self.age_model[:-1])) #FIXME: we should use mid-age and not age
 
         #Thinning
-        h=interpolate.interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
+        h=interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
         self.tau=self.tau_model*np.exp(h(self.depth_mid))
         self.udepth=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau*self.depth_inter)))
-        g=interpolate.interp1d(self.iedepth, self.udepth)
+        g=interp1d(self.iedepth, self.udepth)
         corr=np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID
-        j=interpolate.interp1d(self.corr_LID_age, corr, bounds_error=False, fill_value=corr[-1])
+        j=interp1d_extrap(self.corr_LID_age, corr)
         self.LID=self.LID_model*np.exp(j(self.age_model))
         self.LIDIE=self.LID*self.Dfirn
         self.ULIDIE=g(self.LIDIE)
-        i=interpolate.interp1d(self.udepth, self.depth)
+        i=interp1d(self.udepth, self.depth)
 
         #Ice age
         self.icelayerthick=self.tau*self.a/self.D
         self.age=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a*self.depth_inter)))
-        f=interpolate.interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
+        f=interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
         self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_top, self.udepth-self.LIDIE, np.nan))
         self.Ddepth=self.depth-self.ice_equiv_depth
@@ -319,23 +325,23 @@ class Drilling:
         return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick,self.gaslayerthick)) 
 
     def fct_age(self, depth):
-        f=interpolate.interp1d(self.depth,self.age)
+        f=interp1d(self.depth,self.age)
         return f(depth)
    
     def fct_age_model(self, depth):
-        f=interpolate.interp1d(self.depth,self.age_model)
+        f=interp1d(self.depth,self.age_model)
         return f(depth)
    
     def fct_gage(self, depth):
-        f=interpolate.interp1d(self.depth,self.gage)
+        f=interp1d(self.depth,self.gage)
         return f(depth)
 
     def fct_gage_model(self, depth):
-        f=interpolate.interp1d(self.depth,self.gage_model)
+        f=interp1d(self.depth,self.gage_model)
         return f(depth)
 
     def fct_Ddepth(self, depth):
-        f=interpolate.interp1d(self.depth,self.Ddepth)
+        f=interp1d(self.depth,self.Ddepth)
         return f(depth)
 
     def residuals(self, variables):
@@ -400,11 +406,11 @@ class Drilling:
         c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
         self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
 
-        f=interpolate.interp1d(self.corr_a_age, self.sigmap_corr_a, bounds_error=False, fill_value=self.corr_a[-1])
+        f=interp1d_extrap(self.corr_a_age, self.sigmap_corr_a)
         self.sigma_a_model=f((self.age_model[1:]+self.age_model[:-1])/2)
-        f=interpolate.interp1d(self.corr_LID_age, self.sigmap_corr_LID, bounds_error=False, fill_value=self.corr_LID[-1])
+        f=interp1d_extrap(self.corr_LID_age, self.sigmap_corr_LID)
         self.sigma_LID_model=f(self.age_model)
-        f=interpolate.interp1d(self.corr_tau_depth, self.sigmap_corr_tau, bounds_error=False, fill_value=self.corr_tau[-1])
+        f=interp1d_extrap(self.corr_tau_depth, self.sigmap_corr_tau)
         self.sigma_tau_model=f(self.depth_mid)
 
         

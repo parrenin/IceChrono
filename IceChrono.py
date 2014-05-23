@@ -8,7 +8,7 @@ import matplotlib.pyplot as mpl
 import multiprocessing
 import warnings
 import os
-from scipy import interpolate
+from scipy.interpolate import interp1d
 from scipy.optimize import leastsq
 from matplotlib.backends.backend_pdf import PdfPages
 
