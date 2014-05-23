@@ -18,3 +18,5 @@ self.correlation_corr_tau=g(np.abs(np.ones((np.size(self.corr_tau_depth),np.size
 f=interp1d(self.depth,self.iedepth, bounds_error=False, fill_value=self.iedepth[-1]) #We should not need the bounds_error option. Check what is the problem.
 self.sigmap_corr_tau=self.k/self.thickness_ie*f(self.corr_tau_depth)
 
+self.sigmap_corr_a=self.sigmap_corr_a*np.ones(np.size(self.corr_a_age))
+self.sigmap_corr_LID=self.sigmap_corr_LID*np.ones(np.size(self.corr_LID_age))

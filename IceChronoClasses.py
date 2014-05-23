@@ -11,6 +11,22 @@ def interp1d_extrap(x,y):
         return np.where(xp<x[0],y[0],np.where(xp>x[-1],y[-1],g(xp)))    
     return f
 
+def interp1d_stair_aver_extrap(x, y):
+    def f(xp):
+        xmod=x+0
+        ymod=y+0
+        if xp[0]<x[0]:
+            xmod=np.concatenate((np.array([xp[0]]),xmod))
+            ymod=np.concatenate((np.array([y[0]]),ymod))
+        if xp[-1]>x[-1]:
+            xmod=np.concatenate((xmod,np.array([xp[-1]])))
+            ymod=np.concatenate((ymod,np.array([y[-1]])))
+        yint=np.cumsum(np.concatenate((np.array([0]),ymod[:-1]*(xmod[1:]-xmod[:-1]))))
+        g=interp1d(xmod,yint)
+        yp=(g(xp[1:])-g(xp[:-1]))/(xp[1:]-xp[:-1])     #Maybe this is suboptimal since we compute twice g(xp[i])
+        return yp
+
+    return f
 
 
 class Drilling:
@@ -50,7 +66,11 @@ class Drilling:
                 print 'Accumulation method not recognized'
                 quit()
         else:
-            self.a_model=np.loadtxt(datadir+self.label+'/accu-prior.txt')
+            readarray=np.loadtxt(datadir+self.label+'/accu-prior.txt')
+            self.a_depth=readarray[:,0]
+            self.a_a=readarray[:,1]
+            f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
+            self.a_model=f(self.depth)
             self.a=self.a_model
 
         
@@ -60,7 +80,11 @@ class Drilling:
 
         readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
 #        self.density_depth=readarray[:,0]
-        self.D=readarray
+        self.D_depth=readarray[:,0]
+        self.D_D=readarray[:,1]
+        f=interp1d_extrap(self.D_depth, self.D_D)
+        self.D=f(self.depth_mid)
+
         self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
         self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
@@ -71,10 +95,14 @@ class Drilling:
             else:
                 self.LID_depth=np.array([self.depth[0], self.depth[-1]])
                 self.LID_LID=np.array([self.LID_value, self.LID_value])
-            f=interp1d_extrap(self.LID_depth, self.LID_LID)
-            self.LID_model=f(self.depth)
         else:
-            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+#            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+            readarray=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+            self.LID_depth=readarray[:,0]
+            self.LID_LID=readarray[:,1]
+        f=interp1d_extrap(self.LID_depth, self.LID_LID)
+        self.LID_model=f(self.depth)
+
 
 
 
@@ -87,7 +115,11 @@ class Drilling:
         if self.calc_tau:
             self.tau=np.empty_like(self.depth_mid)
         else:
-            self.tau_model=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
+            readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
+            self.tau_depth=readarray[:,0]
+            self.tau_tau=readarray[:,1]
+            f=interp1d_extrap(self.tau_depth, self.tau_tau)
+            self.tau_model=f(self.depth_mid)
             self.tau=self.tau_model
 
         self.raw_model()
