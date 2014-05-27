@@ -17,6 +17,7 @@ IceChrono is a python2 software, using the following modules:
 - multiprocessing
 - warnings
 - scipy
+
 It has been tested on debian 7 (with an update of matplotlib>0.11) and on ubuntu 13.10.
 
 
@@ -31,7 +32,7 @@ where `exp_directory` is the name of the directory where you have set up your ex
 
 `python IceChrono.py AICC2012-LR`
 
-It takes about 10 mn to run on a recent computer. It is an AICC2012-like experiment, albeit which a Low Resolution.
+It takes about 10 mn to run on a recent computer. It is an AICC2012-like experiment, albeit whith a Low Resolution.
 
 
 What is the structure of an experiment directory?
@@ -59,3 +60,28 @@ Then you have one directory per drilling couple, which contains:
 - `gas_depth.txt`       : depth1 / depth2 / sigma on age for gas-gas stratigraphic links
 - `icegas_depth.txt`    : depth1 / depth2 / sigma on age for ice-gas stratigraphic links
 - `gasice_depth.txt`    : depth1 / depth2 / sigma on age for gas-ice stratigraphic links
+
+What is the structure of the general `parameters.py` file?
+--------------------------------------------------------
+
+Have a look at the file `AICC2012-LR/parameters.py`, it is commented.
+
+What is the structure of a drilling `parameters.py` file?
+---------------------------------------------------------
+
+Have a look at the files `AICC2012-LR/EDC/parameters.py`, it is commented.
+
+How to set up the `parameters-CovariancePrior-AllDrillings-init.py` file:
+-------------------------------------------------------------------------
+
+This is the most difficult part of an experiment. You need to define:
+
+- `self.correlation_corr_a`: the correlation matix for the accu correction function
+- `self.correlation_corr_LID`: the correlation matix for the LID correction function
+- `self.correlation_corr_tau`: the correlation matix for the thinning correction function
+- `self.sigmap_corr_a`: the standard deviation of the accu correction function
+- `self.sigmap_corr_LID`: the standard deviation of the LID correction function
+- `self.sigmap_corr_tau`: the standard deviation of the thinning correction function
+
+Have a look at the `AICC2012-LR` experiment, it is the easiest way to understand how it works.
+Feel free to contact the author if you are blocked.
