@@ -665,8 +665,8 @@ class Drilling:
             np.savetxt(f,np.transpose(output), delimiter='\t')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
-#    def udepth_save(self):
-#        np.savetxt(datadir+self.label+'/udepth.txt',self.udepth)
+    def udepth_save(self):
+        np.savetxt(datadir+self.label+'/udepth.txt',self.udepth)
 
 
 class DrillingCouple:
