@@ -56,11 +56,14 @@ Then you have one directory per drilling, which contains:
 - `Ddepth.txt`          : depth / Delta-depth / sigma for Delta-depth observations
 
 Then you have one directory per drilling couple, which contains:
-- `ice_depth.txt`       : depth1 / depth2 / sigma on age for ice-ice stratigraphic links
-- `gas_depth.txt`       : depth1 / depth2 / sigma on age for gas-gas stratigraphic links
-- `icegas_depth.txt`    : depth1 / depth2 / sigma on age for ice-gas stratigraphic links
-- `gasice_depth.txt`    : depth1 / depth2 / sigma on age for gas-ice stratigraphic links
+- `ice_depth.txt`       : depth1 / depth2 / sigma on age for ice-ice stratigraphic links observations
+- `gas_depth.txt`       : depth1 / depth2 / sigma on age for gas-gas stratigraphic links observations
+- `icegas_depth.txt`    : depth1 / depth2 / sigma on age for ice-gas stratigraphic links observations
+- `gasice_depth.txt`    : depth1 / depth2 / sigma on age for gas-ice stratigraphic links observations
+- `ice_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated ice intervals observations
+- `gas_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated gas intervals observations
 
+ 
 What is the structure of the general `parameters.py` file?
 --------------------------------------------------------
 
