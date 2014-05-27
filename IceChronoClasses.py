@@ -48,10 +48,17 @@ class Drilling:
 
         if self.calc_a:
             readarray=np.loadtxt(datadir+self.label+'/isotopes.txt')
+            self.iso_depth=readarray[:,0]
             if self.calc_a_method=='fullcorr':
-                self.d18Oice=readarray[:,0]
-                self.deutice=readarray[:,1]
-                self.d18Osw=readarray[:,2]
+                self.iso_d18Oice=readarray[:,1]
+                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Oice)
+                self.d18Oice=f(self.depth)
+                self.iso_deutice=readarray[:,2]
+                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_deutice)
+                self.deutice=f(self.depth)
+                self.iso_d18Osw=readarray[:,3]
+                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Osw)
+                self.d18Osw=f(self.depth)
                 self.excess=self.deutice-8*self.d18Oice   # dans Uemura : d=excess
                 self.a=np.empty_like(self.deutice)
                 self.d18Oice_corr=self.d18Oice-self.d18Osw*(1+self.d18Oice/1000)/(1+self.d18Osw/1000)	#Uemura (1)
@@ -59,9 +66,13 @@ class Drilling:
                 self.excess_corr=self.deutice_corr-8*self.d18Oice_corr
                 self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
             elif self.calc_a_method=='deut':
-                self.deutice_fullcorr=readarray
+                self.iso_deutice=readarray[:,1]
+                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_deutice)
+                self.deutice_fullcorr=f(self.depth)
             elif selc.calc_a_method=='d18O':
-                self.deutice_fullcorr=8*readarray
+                self.d18Oice=readarray[:,1]
+                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Oice)
+                self.deutice_fullcorr=8*f(depth)
             else:
                 print 'Accumulation method not recognized'
                 quit()
@@ -650,8 +661,8 @@ class Drilling:
     def save(self):
         output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth,np.concatenate((self.a_model,np.array([self.a_model[-1]]))),np.concatenate((self.sigma_a_model,np.array([self.sigma_a_model[-1]]))),np.concatenate((self.tau_model,np.array([self.tau_model[-1]]))),np.concatenate((self.sigma_tau_model,np.array([self.sigma_tau_model[-1]]))),self.LID_model,self.sigma_LID_model))
         with open(datadir+self.label+'/output.txt','w') as f:
-            f.write('depth age sigma_age gas_age sigma_gas_age accu sigma_accu thinning sigma_thinning LID sigma_LID Ddepth sigma_Ddepth accu_model sigma_accu_model thinning_model sigma_thinning_model LID_model sigma_LID_model\n')
-            np.savetxt(f,np.transpose(output))
+            f.write('depth\tage\tsigma_age\tgas_age\tsigma_gas_age\taccu\tsigma_accu\tthinning\tsigma_thinning\tLID\tsigma_LID\tDdepth\tsigma_Ddepth\taccu_model\tsigma_accu_model\tthinning_model\tsigma_thinning_model\tLID_model\tsigma_LID_model\n')
+            np.savetxt(f,np.transpose(output), delimiter='\t')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
     def udepth_save(self):
