@@ -1,3 +1,5 @@
+#TODO: From the EDC-DF synchronisation paper, it is better to remove the excess correction for the calculation of the SMB ratio.
+
 list_drillings=['EDC','VK','TALDICE','EDML','NGRIP']
 
 opt_method='leastsq'  #leastsq, leastsq-parallel (EXPERIMENTAL)

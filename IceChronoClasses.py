@@ -164,6 +164,9 @@ class Drilling:
         filename=datadir+'parameters-CovariancePrior-AllDrillings-init.py'
         if os.path.isfile(filename):
             execfile(filename)
+        filename=datadir+self.label+'parameters-CovariancePrior-init.py'
+        if os.path.isfile(filename):
+            execfile(filename)
 
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
             self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
@@ -256,6 +259,34 @@ class Drilling:
                 self.Ddepth_sigma=np.array([])
 
 
+        self.icemarkers_correlation=np.diag(np.ones(np.size(self.icemarkers_depth)))
+        self.gasmarkers_correlation=np.diag(np.ones(np.size(self.gasmarkers_depth)))
+        self.iceintervals_correlation=np.diag(np.ones(np.size(self.iceintervals_depthtop)))
+        self.gasintervals_correlation=np.diag(np.ones(np.size(self.gasintervals_depthtop)))
+        self.Ddepth_correlation=np.diag(np.ones(np.size(self.Ddepth_depth)))
+#        print self.icemarkers_correlation
+        filename=datadir+'parameters-CovarianceObservations-AllDrillings.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+        filename=datadir+self.label+'parameters-CovarianceObservations.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+        if np.size(self.icemarkers_depth)>0:
+            self.icemarkers_chol=np.linalg.cholesky(self.icemarkers_correlation)
+            self.icemarkers_lu_piv=scipy.linalg.lu_factor(self.icemarkers_chol)  #FIXME: we LU factor a triangular matrix. This is suboptimal. We should set lu_piv directly instead.
+        if np.size(self.gasmarkers_depth)>0:
+            self.gasmarkers_chol=np.linalg.cholesky(self.gasmarkers_correlation)
+            self.gasmarkers_lu_piv=scipy.linalg.lu_factor(self.gasmarkers_chol)
+        if np.size(self.iceintervals_depthtop)>0:
+            self.iceintervals_chol=np.linalg.cholesky(self.iceintervals_correlation)
+            self.iceintervals_lu_piv=scipy.linalg.lu_factor(self.iceintervals_chol)
+        if np.size(self.gasintervals_depthtop)>0:
+            self.gasintervals_chol=np.linalg.cholesky(self.gasintervals_correlation)
+            self.gasintervals_lu_piv=scipy.linalg.lu_factor(self.gasintervals_chol)
+        if np.size(self.Ddepth_depth)>0:
+            self.Ddepth_chol=np.linalg.cholesky(self.Ddepth_correlation)
+            self.Ddepth_lu_piv=scipy.linalg.lu_factor(self.Ddepth_chol)
+
     def raw_model(self):
 
 
@@ -300,6 +331,9 @@ class Drilling:
         self.correlation_corr_tau_before=self.correlation_corr_tau+0
 
         filename=datadir+'parameters-CovariancePrior-AllDrillings.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+        filename=datadir+self.label+'parameters-CovariancePrior.py'
         if os.path.isfile(filename):
             execfile(filename)
 
@@ -390,26 +424,36 @@ class Drilling:
 
     def residuals(self, variables):
         self.model(variables)
-        resi_age=(self.fct_age(self.icemarkers_depth)-self.icemarkers_age)/self.icemarkers_sigma
-        resi_gage=(self.fct_gage(self.gasmarkers_depth)-self.gasmarkers_age)/self.gasmarkers_sigma
-        resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma
-        resi_iceint=(self.fct_age(self.iceintervals_depthbot)-self.fct_age(self.iceintervals_depthtop)-self.iceintervals_duration)/self.iceintervals_sigma
-        resi_gasint=(self.fct_gage(self.gasintervals_depthbot)-self.fct_gage(self.gasintervals_depthtop)-self.gasintervals_duration)/self.gasintervals_sigma
-        resi_corr_tau=self.corr_tau
         resi_corr_a=self.corr_a
         resi_corr_LID=self.corr_LID
-        return np.concatenate((resi_age,resi_gage, resi_Ddepth, resi_iceint, resi_gasint, resi_corr_tau, resi_corr_a, resi_corr_LID))
+        resi_corr_tau=self.corr_tau
+        resi_age=(self.fct_age(self.icemarkers_depth)-self.icemarkers_age)/self.icemarkers_sigma
+        if np.size(self.icemarkers_depth)>0:
+            resi_age=scipy.linalg.lu_solve(self.icemarkers_lu_piv,resi_age)
+        resi_gage=(self.fct_gage(self.gasmarkers_depth)-self.gasmarkers_age)/self.gasmarkers_sigma
+        if np.size(self.gasmarkers_depth)>0:
+            resi_gage=scipy.linalg.lu_solve(self.gasmarkers_lu_piv,resi_gage)
+        resi_iceint=(self.fct_age(self.iceintervals_depthbot)-self.fct_age(self.iceintervals_depthtop)-self.iceintervals_duration)/self.iceintervals_sigma
+        if np.size(self.iceintervals_depthtop)>0:
+            resi_iceint=scipy.linalg.lu_solve(self.iceintervals_lu_piv,resi_iceint)
+        resi_gasint=(self.fct_gage(self.gasintervals_depthbot)-self.fct_gage(self.gasintervals_depthtop)-self.gasintervals_duration)/self.gasintervals_sigma
+        if np.size(self.gasintervals_depthtop)>0:
+            resi_gasint=scipy.linalg.lu_solve(self.gasintervals_lu_piv,resi_gasint)
+        resi_Ddepth=(self.fct_Ddepth(self.Ddepth_depth)-self.Ddepth_Ddepth)/self.Ddepth_sigma
+        if np.size(self.Ddepth_depth)>0:
+            resi_Ddepth=scipy.linalg.lu_solve(self.Ddepth_lu_piv,resi_Ddepth)
+        return np.concatenate((resi_corr_a, resi_corr_LID, resi_corr_tau, resi_age,resi_gage, resi_iceint, resi_gasint, resi_Ddepth))
 
 
     def jacobian(self):
         epsilon=np.sqrt(np.diag(self.hess))/100000000.
         model0=self.model(self.variables)
-        jacob=np.empty((np.size(self.variables), np.size(model0)))
+        jacob=np.empty((np.size(model0), np.size(self.variables)))
         for i in np.arange(np.size(self.variables)):
             var=self.variables+0
             var[i]=var[i]+epsilon[i]
             model1=self.model(var)
-            jacob[i]=(model1-model0)/epsilon[i]
+            jacob[:,i]=(model1-model0)/epsilon[i]
         model0=self.model(self.variables)
 
         return jacob
@@ -426,28 +470,28 @@ class Drilling:
         jacob=self.jacobian()
 
         index=0
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.age)]),np.dot(self.hess,jacob[:,index:index+np.size(self.age)]))
+        c_model=np.dot(jacob[index:index+np.size(self.age),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.age),:])))
         self.sigma_age=np.sqrt(np.diag(c_model))
         index=index+np.size(self.age)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gage)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gage)]))
+        c_model=np.dot(jacob[index:index+np.size(self.gage),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.gage),:])))
         self.sigma_gage=np.sqrt(np.diag(c_model))
         index=index+np.size(self.gage)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.Ddepth)]),np.dot(self.hess,jacob[:,index:index+np.size(self.Ddepth)]))
+        c_model=np.dot(jacob[index:index+np.size(self.Ddepth),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.Ddepth),:])))
         self.sigma_Ddepth=np.sqrt(np.diag(c_model))
         index=index+np.size(self.Ddepth)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.a)]),np.dot(self.hess,jacob[:,index:index+np.size(self.a)]))
+        c_model=np.dot(jacob[index:index+np.size(self.a),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.a),:])))
         self.sigma_a=np.sqrt(np.diag(c_model))
         index=index+np.size(self.a)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.tau)]),np.dot(self.hess,jacob[:,index:index+np.size(self.tau)]))
+        c_model=np.dot(jacob[index:index+np.size(self.tau),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.tau),:])))
         self.sigma_tau=np.sqrt(np.diag(c_model))
         index=index+np.size(self.tau)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.LID)]),np.dot(self.hess,jacob[:,index:index+np.size(self.LID)]))
+        c_model=np.dot(jacob[index:index+np.size(self.LID),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.LID),:])))
         self.sigma_LID=np.sqrt(np.diag(c_model))
         index=index+np.size(self.LID)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.icelayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.icelayerthick)]))
+        c_model=np.dot(jacob[index:index+np.size(self.icelayerthick),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.icelayerthick),:])))
         self.sigma_icelayerthick=np.sqrt(np.diag(c_model))
         index=index+np.size(self.icelayerthick)
-        c_model=np.dot(np.transpose(jacob[:,index:index+np.size(self.gaslayerthick)]),np.dot(self.hess,jacob[:,index:index+np.size(self.gaslayerthick)]))
+        c_model=np.dot(jacob[index:index+np.size(self.gaslayerthick),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.gaslayerthick),:])))
         self.sigma_gaslayerthick=np.sqrt(np.diag(c_model))
 
         f=interp1d_extrap(self.corr_a_age, self.sigmap_corr_a)
@@ -661,7 +705,7 @@ class Drilling:
     def save(self):
         output=np.vstack((self.depth,self.age,self.sigma_age,self.gage,self.sigma_gage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth,np.concatenate((self.a_model,np.array([self.a_model[-1]]))),np.concatenate((self.sigma_a_model,np.array([self.sigma_a_model[-1]]))),np.concatenate((self.tau_model,np.array([self.tau_model[-1]]))),np.concatenate((self.sigma_tau_model,np.array([self.sigma_tau_model[-1]]))),self.LID_model,self.sigma_LID_model))
         with open(datadir+self.label+'/output.txt','w') as f:
-            f.write('depth\tage\tsigma_age\tgas_age\tsigma_gas_age\taccu\tsigma_accu\tthinning\tsigma_thinning\tLID\tsigma_LID\tDdepth\tsigma_Ddepth\taccu_model\tsigma_accu_model\tthinning_model\tsigma_thinning_model\tLID_model\tsigma_LID_model\n')
+            f.write('#depth\tage\tsigma_age\tgas_age\tsigma_gas_age\taccu\tsigma_accu\tthinning\tsigma_thinning\tLID\tsigma_LID\tDdepth\tsigma_Ddepth\taccu_model\tsigma_accu_model\tthinning_model\tsigma_thinning_model\tLID_model\tsigma_LID_model\n')
             np.savetxt(f,np.transpose(output), delimiter='\t')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     
@@ -685,24 +729,24 @@ class DrillingCouple:
         filename=datadir+self.D1.label+'-'+self.D2.label+'/ice_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
-            self.icemarkers_depth1=readarray[:,0]
-            self.icemarkers_depth2=readarray[:,1]
-            self.icemarkers_sigma=readarray[:,2]
+            self.iceicemarkers_depth1=readarray[:,0]
+            self.iceicemarkers_depth2=readarray[:,1]
+            self.iceicemarkers_sigma=readarray[:,2]
         else:
-            self.icemarkers_depth1=np.array([])
-            self.icemarkers_depth2=np.array([])
-            self.icemarkers_sigma=np.array([])
+            self.iceicemarkers_depth1=np.array([])
+            self.iceicemarkers_depth2=np.array([])
+            self.iceicemarkers_sigma=np.array([])
 
         filename=datadir+self.D1.label+'-'+self.D2.label+'/gas_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
             readarray=np.loadtxt(filename)
-            self.gasmarkers_depth1=readarray[:,0]
-            self.gasmarkers_depth2=readarray[:,1]
-            self.gasmarkers_sigma=readarray[:,2]
+            self.gasgasmarkers_depth1=readarray[:,0]
+            self.gasgasmarkers_depth2=readarray[:,1]
+            self.gasgasmarkers_sigma=readarray[:,2]
         else:
-            self.gasmarkers_depth1=np.array([])
-            self.gasmarkers_depth2=np.array([])
-            self.gasmarkers_sigma=np.array([])
+            self.gasgasmarkers_depth1=np.array([])
+            self.gasgasmarkers_depth2=np.array([])
+            self.gasgasmarkers_sigma=np.array([])
 
         filename=datadir+self.D1.label+'-'+self.D2.label+'/icegas_depth.txt'
         if os.path.isfile(filename) and open(filename).read():
@@ -727,13 +771,45 @@ class DrillingCouple:
             self.gasicemarkers_sigma=np.array([])
 
 
+        self.iceicemarkers_correlation=np.diag(np.ones(np.size(self.iceicemarkers_depth1)))
+        self.gasgasmarkers_correlation=np.diag(np.ones(np.size(self.gasgasmarkers_depth1)))
+        self.icegasmarkers_correlation=np.diag(np.ones(np.size(self.icegasmarkers_depth1)))
+        self.gasicemarkers_correlation=np.diag(np.ones(np.size(self.gasicemarkers_depth1)))
+        filename=datadir+'parameters-CovarianceObservations-AllDrillingCouples.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+        filename=datadir+self.label+'parameters-CovarianceObservations.py'
+        if os.path.isfile(filename):
+            execfile(filename)
+        if np.size(self.iceicemarkers_depth1)>0:
+            self.iceicemarkers_chol=np.linalg.cholesky(self.iceicemarkers_correlation)
+            self.iceicemarkers_lu_piv=scipy.linalg.lu_factor(self.iceicemarkers_chol)
+        if np.size(self.gasgasmarkers_depth1)>0:
+            self.gasgasmarkers_chol=np.linalg.cholesky(self.gasgasmarkers_correlation)
+            self.gasgasmarkers_lu_piv=scipy.linalg.lu_factor(self.gasgasmarkers_chol)
+        if np.size(self.icegasmarkers_depth1)>0:
+            self.icegasmarkers_chol=np.linalg.cholesky(self.icegasmarkers_correlation)
+            self.icegasmarkers_lu_piv=scipy.linalg.lu_factor(self.icegasmarkers_chol)
+        if np.size(self.gasicemarkers_depth1)>0:
+            self.gasicemarkers_chol=np.linalg.cholesky(self.gasicemarkers_correlation)
+            self.gasicemarkers_lu_piv=scipy.linalg.lu_factor(self.gasicemarkers_chol)
+
+
     def residuals(self):
 
-        resi_ice=(self.D1.fct_age(self.icemarkers_depth1)-self.D2.fct_age(self.icemarkers_depth2))/self.icemarkers_sigma
-        resi_gas=(self.D1.fct_gage(self.gasmarkers_depth1)-self.D2.fct_gage(self.gasmarkers_depth2))/self.gasmarkers_sigma
+        resi_iceice=(self.D1.fct_age(self.iceicemarkers_depth1)-self.D2.fct_age(self.iceicemarkers_depth2))/self.iceicemarkers_sigma
+        if np.size(self.iceicemarkers_depth1)>0:
+            resi_iceice=scipy.linalg.lu_solve(self.iceicemarkers_lu_piv,resi_iceice)
+        resi_gasgas=(self.D1.fct_gage(self.gasgasmarkers_depth1)-self.D2.fct_gage(self.gasgasmarkers_depth2))/self.gasgasmarkers_sigma
+        if np.size(self.gasgasmarkers_depth1)>0:
+            resi_gasgas=scipy.linalg.lu_solve(self.gasgasmarkers_lu_piv,resi_gasgas)
         resi_icegas=(self.D1.fct_age(self.icegasmarkers_depth1)-self.D2.fct_gage(self.icegasmarkers_depth2))/self.icegasmarkers_sigma
+        if np.size(self.icegasmarkers_depth1)>0:
+            resi_icegas=scipy.linalg.lu_solve(self.icegasmarkers_lu_piv,resi_icegas)
         resi_gasice=(self.D1.fct_gage(self.gasicemarkers_depth1)-self.D2.fct_age(self.gasicemarkers_depth2))/self.gasicemarkers_sigma
-        resi=np.concatenate((resi_ice,resi_gas,resi_icegas,resi_gasice))
+        if np.size(self.gasicemarkers_depth1)>0:
+            resi_gasice=scipy.linalg.lu_solve(self.gasicemarkers_lu_piv,resi_gasice)
+        resi=np.concatenate((resi_iceice,resi_gasgas,resi_icegas,resi_gasice))
         
         return resi
     
@@ -743,13 +819,13 @@ class DrillingCouple:
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' ice age')
         if show_initial:
-            mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_init, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' gas-gas')
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' gas age')
         if show_initial:
-            mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_init, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
         mpl.figure(self.label+' ice-gas')
         mpl.xlabel(self.D1.label+' ice age')
@@ -773,8 +849,8 @@ class DrillingCouple:
 
 
         mpl.figure(self.label+' ice-ice')
-        mpl.errorbar(self.D1.fct_age_model(self.icemarkers_depth1),self.D2.fct_age_model(self.icemarkers_depth2), color=color_mod, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_age(self.icemarkers_depth1),self.D2.fct_age(self.icemarkers_depth2), color=color_opt, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        mpl.errorbar(self.D1.fct_age_model(self.iceicemarkers_depth1),self.D2.fct_age_model(self.iceicemarkers_depth2), color=color_mod, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+        mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_opt, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
@@ -787,8 +863,8 @@ class DrillingCouple:
         pp.close()
 
         mpl.figure(self.label+' gas-gas')
-        mpl.errorbar(self.D1.fct_gage_model(self.gasmarkers_depth1),self.D2.fct_gage_model(self.gasmarkers_depth2), color=color_mod, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_gage(self.gasmarkers_depth1),self.D2.fct_gage(self.gasmarkers_depth2), color=color_opt, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        mpl.errorbar(self.D1.fct_gage_model(self.gasgasmarkers_depth1),self.D2.fct_gage_model(self.gasgasmarkers_depth2), color=color_mod, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+        mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_opt, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
