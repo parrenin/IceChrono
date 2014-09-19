@@ -15,7 +15,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 
 ###Registration of start time
-start_time = time.time()      #Use time.clock() for processor time
+start_time = time.clock()      #Use time.clock() for processor time
+
 
 ###Reading parameters directory
 datadir=sys.argv[1]
@@ -23,6 +24,9 @@ if datadir[-1]!='/':
     datadir=datadir+'/'
 print 'Parameters directory is: ',datadir
 #os.chdir(datadir)
+
+###Opening of output.txt file
+output_file = open(datadir+'output.txt','a')
 
 ##Parameters
 execfile(datadir+'/parameters.py')
@@ -129,6 +133,7 @@ for i,dlabel in enumerate(list_drillings):
             DC[dlabel2+'-'+dlabel].display_final()
             
 ###Program execution time
-print 'Program execution time: ', time.time() - start_time, 'seconds' 
-
+message='Program execution time: '+str(time.clock()-start_time)+' seconds.' 
+print  message
+output_file.write(message)
 
