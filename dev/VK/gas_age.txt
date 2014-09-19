@@ -1,0 +1,37 @@
+#gas age markers:			
+#Depth (m)	Gas Age (a B1950)	Uncertainty (a)	Source
+401.9	17500	6000 	# Suwa et Bender 2008
+540.2	30000	6000	# Suwa et Bender 2008
+685	41800	6000	# Suwa et Bender 2008
+829.9	53000	6000	# Suwa et Bender 2008
+985.5	65500	6000	# Suwa et Bender 2008
+1187.4	78200	6000	# Suwa et Bender 2008
+1348.6	89700	6000	# Suwa et Bender 2008
+1484.3	100400	6000	# Suwa et Bender 2008
+1602.4	110600	6000	# Suwa et Bender 2008
+1764.6	121900	6000	# Suwa et Bender 2008
+1941.6	133500	6000	# Suwa et Bender 2008
+2057.4	145400	6000	# Suwa et Bender 2008
+2168.6	157300	6000	# Suwa et Bender 2008
+2285.6	169600	6000	# Suwa et Bender 2008
+2380.5	181500	6000	# Suwa et Bender 2008
+2475.1	193300	6000	# Suwa et Bender 2008
+2556.8	203900	6000	# Suwa et Bender 2008
+2642.2	214700	6000	# Suwa et Bender 2008
+2701.2	225600	6000	# Suwa et Bender 2008
+2747.6	237100	6000	# Suwa et Bender 2008
+2802	248200	6000	# Suwa et Bender 2008
+2845	259300	6000	# Suwa et Bender 2008
+2887	272900	6000	# Suwa et Bender 2008
+2947.6	285900	6000	# Suwa et Bender 2008
+2990.3	297500	6000	# Suwa et Bender 2008
+3026.9	308300	6000	# Suwa et Bender 2008
+3062.5	318300	6000	# Suwa et Bender 2008
+3101.4	329000	6000	# Suwa et Bender 2008
+3146.2	340300	6000	# Suwa et Bender 2008
+3173.8	351000	6000	# Suwa et Bender 2008
+3191.9	359300	6000	# Suwa et Bender 2008
+3210.2	367500	6000	# Suwa et Bender 2008
+3222.6	377200	6000	# Suwa et Bender 2008
+3232.8	385400	6000	# Suwa et Bender 2008
+3256.5	393500	6000	# Suwa et Bender 2008
