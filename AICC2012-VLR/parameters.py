@@ -10,8 +10,4 @@ color_opt='k'
 color_mod='b'
 color_ci='0.8'
 color_sigma='m'
-<<<<<<< HEAD:AICC2012-VLR/parameters.py
 show_initial=False
-=======
-show_initial=True 
->>>>>>> 120589f0eeb5fb54c32bc83455a81190bbe0e854:AICC2012-VLR/parameters.py
