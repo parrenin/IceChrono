@@ -18,8 +18,16 @@ IceChrono is a python2 software, using the following modules:
 - warnings
 - scipy
 
+Usually, all you need to do is to install numpy, scipy and matplotlib. In general, the other modules are included by default with python.
 It has been tested on debian 7 (with an update of matplotlib>0.11) and on ubuntu 13.10.
 
+
+How to download IceChrono?
+--------------------------
+
+Go here:
+https://github.com/parrenin/IceChrono/releases
+and choose the release you want to download (usually the latest one).
 
 How to run IceChrono?
 ---------------------
