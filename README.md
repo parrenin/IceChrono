@@ -4,6 +4,12 @@ IceChrono
 A statistical and physical model to optimize chronologies of deep polar ice cores.
 
 
+Where can I get help on IceChrono?
+----------------------------------
+
+A mailing list has been set up on Google Groups:
+https://groups.google.com/forum/?hl=en#!forum/icechrono
+
 What do I need to run IceChrono?
 --------------------------------
 
@@ -18,8 +24,11 @@ IceChrono is a python2 software, using the following modules:
 - warnings
 - scipy
 
-Usually, all you need to do is to install numpy, scipy and matplotlib. In general, the other modules are included by default with python.
-It has been tested on debian 7 (with an update of matplotlib>0.11) and on ubuntu 13.10.
+If you installed a distribution of scipy:
+http://scipy.org/install.html
+all these modules should be included.
+
+IceChrono has been tested on debian 7 (with an update of matplotlib>0.11) and on ubuntu 13.10/14.04.
 
 
 How to download IceChrono?
