@@ -28,6 +28,8 @@ def interp1d_stair_aver_extrap(x, y):
 
     return f
 
+def gaussian(x):
+    return np.exp(-x**2/2)
 
 class Drilling:
 
