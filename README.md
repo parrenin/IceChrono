@@ -59,7 +59,7 @@ sys.argv=['IceChrono.py','exp_directory']
 execfile('IceChrono.py')
 ```
 
-The `AICC2012-VLR` experiment is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
+The `AICC2012-VLR` experiment directory is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
 
 
 What is the structure of an experiment directory?
