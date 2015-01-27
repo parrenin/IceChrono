@@ -43,15 +43,19 @@ IceChrono has been tested on debian 7 (with an update of matplotlib>=0.11) and o
 How to run IceChrono?
 ---------------------
 
-Go into your IceChrono directory and run the following command:
+There are two ways of runing IceChrono. Assuming `exp_directory` is the name of your experiment directory, you can: 
+
+1) open a shell terminal, go into your IceChrono directory and run the following command:
 
 `python IceChrono.py exp_directory`
 
-where `exp_directory` is the name of the directory where you have set up your experiment (it contains the observations, the background scenarios and all the other parameters). For example, you can test IceChrono using the `AICC2012-VLR` experiment provided for your convenience:
+2) You can open a python shell (for example if you are using a distribution of python like Anaconda), go to the IceChrono directory and run the following command:
 
-`python IceChrono.py AICC2012-VLR`
+`import sys`
+`sys.argv=['IceChrono.py','exp_directory']`
+`execfile('IceChrono.py')`
 
-It takes about 10 mn to run on a recent computer. It is an AICC2012-like experiment, albeit whith a Very Low Resolution.
+The `AICC2012-VLR` experiment is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
 
 
 What is the structure of an experiment directory?

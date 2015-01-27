@@ -171,11 +171,11 @@ class Drilling:
             execfile(filename)
 
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
-            self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
+            self.chol_a=cholesky(self.correlation_corr_a)
         if (self.correlation_corr_LID_before!=self.correlation_corr_LID).any():
-            self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
+            self.chol_LID=cholesky(self.correlation_corr_LID)
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
-            self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
+            self.chol_tau=cholesky(self.correlation_corr_tau)
 
 
         self.variables=np.array([])
@@ -274,19 +274,19 @@ class Drilling:
         if os.path.isfile(filename):
             execfile(filename)
         if np.size(self.icemarkers_depth)>0:
-            self.icemarkers_chol=np.linalg.cholesky(self.icemarkers_correlation)
+            self.icemarkers_chol=cholesky(self.icemarkers_correlation)
             self.icemarkers_lu_piv=scipy.linalg.lu_factor(self.icemarkers_chol)  #FIXME: we LU factor a triangular matrix. This is suboptimal. We should set lu_piv directly instead.
         if np.size(self.gasmarkers_depth)>0:
-            self.gasmarkers_chol=np.linalg.cholesky(self.gasmarkers_correlation)
+            self.gasmarkers_chol=cholesky(self.gasmarkers_correlation)
             self.gasmarkers_lu_piv=scipy.linalg.lu_factor(self.gasmarkers_chol)
         if np.size(self.iceintervals_depthtop)>0:
-            self.iceintervals_chol=np.linalg.cholesky(self.iceintervals_correlation)
+            self.iceintervals_chol=cholesky(self.iceintervals_correlation)
             self.iceintervals_lu_piv=scipy.linalg.lu_factor(self.iceintervals_chol)
         if np.size(self.gasintervals_depthtop)>0:
-            self.gasintervals_chol=np.linalg.cholesky(self.gasintervals_correlation)
+            self.gasintervals_chol=cholesky(self.gasintervals_correlation)
             self.gasintervals_lu_piv=scipy.linalg.lu_factor(self.gasintervals_chol)
         if np.size(self.Ddepth_depth)>0:
-            self.Ddepth_chol=np.linalg.cholesky(self.Ddepth_correlation)
+            self.Ddepth_chol=cholesky(self.Ddepth_correlation)
             self.Ddepth_lu_piv=scipy.linalg.lu_factor(self.Ddepth_chol)
 
     def raw_model(self):
@@ -340,11 +340,11 @@ class Drilling:
             execfile(filename)
 
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
-            self.chol_a=np.linalg.cholesky(self.correlation_corr_a)
+            self.chol_a=cholesky(self.correlation_corr_a)
         if (self.correlation_corr_LID_before!=self.correlation_corr_LID).any():
-            self.chol_LID=np.linalg.cholesky(self.correlation_corr_LID)
+            self.chol_LID=cholesky(self.correlation_corr_LID)
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
-            self.chol_tau=np.linalg.cholesky(self.correlation_corr_tau)
+            self.chol_tau=cholesky(self.correlation_corr_tau)
 
 
         #Accu
@@ -784,16 +784,16 @@ class DrillingCouple:
         if os.path.isfile(filename):
             execfile(filename)
         if np.size(self.iceicemarkers_depth1)>0:
-            self.iceicemarkers_chol=np.linalg.cholesky(self.iceicemarkers_correlation)
+            self.iceicemarkers_chol=cholesky(self.iceicemarkers_correlation)
             self.iceicemarkers_lu_piv=scipy.linalg.lu_factor(self.iceicemarkers_chol)
         if np.size(self.gasgasmarkers_depth1)>0:
-            self.gasgasmarkers_chol=np.linalg.cholesky(self.gasgasmarkers_correlation)
+            self.gasgasmarkers_chol=cholesky(self.gasgasmarkers_correlation)
             self.gasgasmarkers_lu_piv=scipy.linalg.lu_factor(self.gasgasmarkers_chol)
         if np.size(self.icegasmarkers_depth1)>0:
-            self.icegasmarkers_chol=np.linalg.cholesky(self.icegasmarkers_correlation)
+            self.icegasmarkers_chol=cholesky(self.icegasmarkers_correlation)
             self.icegasmarkers_lu_piv=scipy.linalg.lu_factor(self.icegasmarkers_chol)
         if np.size(self.gasicemarkers_depth1)>0:
-            self.gasicemarkers_chol=np.linalg.cholesky(self.gasicemarkers_correlation)
+            self.gasicemarkers_chol=cholesky(self.gasicemarkers_correlation)
             self.gasicemarkers_lu_piv=scipy.linalg.lu_factor(self.gasicemarkers_chol)
 
 

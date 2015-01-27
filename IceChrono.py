@@ -12,6 +12,7 @@ import scipy.linalg
 from scipy.interpolate import interp1d
 from scipy.optimize import leastsq
 from matplotlib.backends.backend_pdf import PdfPages
+from scipy.linalg import cholesky
 
 
 ###Registration of start time
