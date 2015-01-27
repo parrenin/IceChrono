@@ -35,9 +35,9 @@ IceChrono is a python2 software, using the following modules:
 
 If you installed a distribution of scipy:
 http://scipy.org/install.html
-all these modules should be included.
+all these modules should be included by default.
 
-IceChrono has been tested on debian 7 (with an update of matplotlib>=0.11) and on ubuntu 13.10/14.04.
+IceChrono has been tested on debian 7 (with an update of matplotlib>=0.11), on debian 8, on ubuntu 13.10/14.04 and on Anaconda 2.1.0.
 
 
 How to run IceChrono?
