@@ -51,8 +51,8 @@ There are two ways of runing IceChrono. Assuming `exp_directory` is the name of 
 
 2) You can open a python shell (for example if you are using a distribution of python like Anaconda), go to the IceChrono directory and run the following command:
 
-`import sys`
-`sys.argv=['IceChrono.py','exp_directory']`
+`import sys`\\
+`sys.argv=['IceChrono.py','exp_directory']`\\
 `execfile('IceChrono.py')`
 
 The `AICC2012-VLR` experiment is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
