@@ -47,7 +47,9 @@ There are two ways of runing IceChrono. Assuming `exp_directory` is the name of 
 
 1) open a shell terminal, go into your IceChrono directory and run the following command:
 
-`python IceChrono.py exp_directory`
+```
+python IceChrono.py exp_directory
+```
 
 2) You can open a python shell (for example if you are using a distribution of python like Anaconda), go to the IceChrono directory and run the following command:
 
