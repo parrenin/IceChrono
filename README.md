@@ -7,16 +7,23 @@ A statistical and physical model to optimize chronologies of deep polar ice core
 Where can I get help on IceChrono?
 ----------------------------------
 
-A mailing list has been set up on Google Groups:
-https://groups.google.com/forum/?hl=en#!forum/icechrono
-
+A mailing list has been set up on Google Groups:  
+https://groups.google.com/forum/?hl=en#!forum/icechrono  
+You just need a google account to access this mailing list.
 
 How to download IceChrono?
 --------------------------
 
-Go here:
-https://github.com/parrenin/IceChrono/releases
-and choose the release you want to download (usually the latest one).
+Go here:  
+https://github.com/parrenin/IceChrono/releases  
+and choose the release you want to download (usually the latest one).  
+In the downloaded folder, you will find the following files:
+- README.md		: is the current documentation of IceChrono.
+- LICENCE		: is the IceChrono licence file.
+- IceChrono.py		: is the main IceChrono program that you will run.
+- IceChronoClasses	: is a set of instructions used by IceChrono.py
+- Clean.py		: is a python script to clean all experiment sub-directories
+- AICC2012-VLR		: is an example experiment directory for the AICC2012 dating experiment: it contains all the necessary numerical settings, prior information and observations for the different ice cores. It has a very low resolution (VLR) and takes about 5 mn to run an a recent computer.
 
 
 What do I need to run IceChrono?
@@ -59,8 +66,34 @@ sys.argv=['IceChrono.py','exp_directory']
 execfile('IceChrono.py')
 ```
 
-The `AICC2012-VLR` experiment directory is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
+The `AICC2012-VLR` experiment directory is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 5 mn to run on a recent computer.
 
+
+What are the outputs of a run:
+------------------------------
+
+If the run went correctly, it has created output files.
+
+In the main directory, you have the following output file:
+- `output.txt`		: only contains the program execution time for now.
+
+In each drilling directory, you have the following output files:
+- `output.txt`			: is the main output file. It gives you the posterior estimates and uncertainties of the three input variables (accumulation, LID and thinning) and of the output variables (ice age, gas age, Δdepth, etc.)
+- `restart.txt`			: is a restart file, which can be used to restart the optimization experiment where it ended last time.
+- `accumulation.pdf`	: is the accumulation figure (with prior and posterior estimates)
+- `Ddepth.pdf`			: is the Δdepth figure (with prior estimates, observations and posterior estimates)
+- `gas_age.pdf`			: is the gas age figure (with prior estimates, observations and posterior estimates)
+- `gaslayerthick.pdf`	: is the gas layer thickness figure (with prior estimates, observations of dated intervals and posterior estimates)
+- `ice_age.pdf`			: is the ice age figure (with prior estimates, observations and posterior estimates)
+- `icelayerthick.pdf`	: is the ice layer thickness figure (with prior estimates, observations of dated intervals and posterior estimates)
+- `LID.pdf`				: is the Lock-In Depth figure (with prior estimates, observations and posterior estimates)
+- `thinning.pdf`		: is the thinning figure (with prior and posterior estimates)
+
+In each drilling-couple directory, you have the following output files:
+- `gas-gas.pdf`		: is the air-air stratigraphic links figure (with prior and posterior estimates)
+- `gas-ice.pdf`		: is the air-ice stratigraphic links figure (with prior and posterior estimates)
+- `ice-gas.pdf`		: is the ice-air stratigraphic links figure (with prior and posterior estimates)
+- `ice-ice.pdf`		: is the ice-ice stratigraphic links figure (with prior and posterior estimates)
 
 How to clean an experiment directory after a run?
 -------------------------------------------------
@@ -100,6 +133,8 @@ Then you have one directory per drilling, which contains:
 - `ice_age.txt`                             : depth / age / sigma for ice age observations
 - `gas_age.txt`                             : depth / age / sigma for gas age observations
 - `Ddepth.txt`                              : depth / Delta-depth / sigma for Delta-depth observations
+- `ice_age_intervals.txt`		   			: depth\_top / depth\_bottom / duration / sigma for dated ice intervals observations
+- `gas_age_intervals.txt`   		    	: depth\_top / depth\_bottom / duration / sigma for dated gas intervals observations
 
 Then you have one directory per drilling couple, which contains:
 - `parameters-CovarianceObservations.py`    : this file allows to define the correlation of drilling couple specific observations
@@ -107,8 +142,6 @@ Then you have one directory per drilling couple, which contains:
 - `gas_depth.txt`           : depth1 / depth2 / sigma on age for gas-gas stratigraphic links observations
 - `icegas_depth.txt`        : depth1 / depth2 / sigma on age for ice-gas stratigraphic links observations
 - `gasice_depth.txt`        : depth1 / depth2 / sigma on age for gas-ice stratigraphic links observations
-- `ice_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated ice intervals observations
-- `gas_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated gas intervals observations
 
 A few things you need to know to use Icechrono:
 1) You can use whatever units you want but they need to be consistent. For example, if you use meters for the depths and years for the dated horizons, you need to use meters per years for the accumulation rates. 
@@ -121,12 +154,14 @@ A few things you need to know to use Icechrono:
 What is the structure of the general `parameters.py` file?
 --------------------------------------------------------
 
+It contains the list of drillings, the optimization method to be used and some settings for the figures.
 Have a look at the file `AICC2012-VLR/parameters.py`, it is commented.
 
 
 What is the structure of a drilling `parameters.py` file?
 ---------------------------------------------------------
 
+It defines age at the top of the core, the age equation grid and the correction functions grids. You can also define other parameters that are used to defined the covariance matrices of the priors.
 Have a look at the files `AICC2012-VLR/EDC/parameters.py`, it is commented.
 
 
@@ -134,7 +169,7 @@ How to set up correlation matrices for the observations?
 --------------------------------------------------------
 
 You need to know a little bit of python to do that.
-Feel free to contact the author if you need assistance.
+Feel free to send an email on the mailing list if you need assistance.
 
 For drilling specific observations, you set up the correlation matrices in the file `parameters-CovarianceObservations.py` in the drilling directory.
 - `self.icemarkers_correlation`     : for ice dated horizons
@@ -155,7 +190,7 @@ How to set up the `parameters-CovariancePrior-AllDrillings-init.py` file?
 
 You need to know a little bit of python to do that.
 Have a look at the `AICC2012-VLR` experiment, it is the easiest way to understand how it works.
-Feel free to contact the author if you need assistance.
+Feel free to send an email to the mailing list if you need assistance.
 
 You need to define:
 - `self.correlation_corr_a`     : the correlation matix for the accu correction function
