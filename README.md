@@ -45,7 +45,7 @@ How to run IceChrono?
 
 There are two ways of runing IceChrono. Assuming `exp_directory` is the name of your experiment directory, you can: 
 
-1) open a shell terminal, go into your IceChrono directory and run the following command:
+1) open an os shell, go into your IceChrono directory and run the following command:
 
 ```
 python IceChrono.py exp_directory
@@ -62,15 +62,31 @@ execfile('IceChrono.py')
 The `AICC2012-VLR` experiment directory is provided for you convenience. It is an AICC2012-like experiment, albeit whith a Very Low Resolution. It takes about 10 mn to run on a recent computer.
 
 
+How to clean an experiment directory after a run?
+-------------------------------------------------
+
+If your run was successful, it has produced output files and figure files. If your experiment directory is placed under the IceChrono main directory, you can run the following command in an os shell:
+
+```
+python Clean.py
+```
+
+or in a python shell:
+
+```
+execfile('Clean.py')
+```
+
+
 What is the structure of an experiment directory?
 -------------------------------------------------
 
 You can have a look at the provided `AICC2012-LR` directory.
 
-You have three general files:
+You have five general files:
 - `parameters.py`                                           : contains general parameters for the experiment
-- `parameters-CovariancePrior-AllDrillings-init.py`         : defines the covariance matrices of the background
 - `parameters-AllDrillings.py`                              : defines drilling parameters that are the same for all drillings (there are overidded by drilling specific parameters).
+- `parameters-CovariancePrior-AllDrillings-init.py`         : defines the covariance matrices of the background
 - `parameters-CovarianceObservations-AllDrillings.py`       : defines the covariance of the observations that are the same for all drillings  (there are overidded by drilling specific parameters).
 - `parameters-CovarianceObservations-AllDrillingCouples.py` : defines the covariance for the observations that are the same for all drilling couples  (there are overidded by drilling couple specific parameters).
 
@@ -94,7 +110,12 @@ Then you have one directory per drilling couple, which contains:
 - `ice_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated ice intervals observations
 - `gas_age_intervals.txt`   : depth\_top / depth\_bottom / duration / sigma for dated gas intervals observations
 
-You can use whatever units you want but they need to be consistent. For example, if you use meters for the depths and years for the dated horizons, you need to use meters per years for the accumulation rates.
+A few things you need to know to use Icechrono:
+1) You can use whatever units you want but they need to be consistent. For example, if you use meters for the depths and years for the dated horizons, you need to use meters per years for the accumulation rates. 
+2) The drilling specific parameters override the general parameters for all drillings. In the very same way, the drilling-couple specific parameters override the general parameters for all drilling-couples.
+3) The standard deviations defined in the parameters-Covariance*.py override the standard deviation defined in the observation or prior files.
+4) Most of these files are optional. If there is no file for an certain type of observations, that means that there is no observation of this type. If a covariance matrix is not defined for a prior or an observation type, that means that the correlation matrix is supposed to be equal to identity and that the standard deviation is given in the prior or observation file.
+
 
  
 What is the structure of the general `parameters.py` file?
