@@ -23,7 +23,7 @@ In the downloaded folder, you will find the following files:
 - IceChrono.py		: is the main IceChrono program that you will run.
 - IceChronoClasses	: is a set of instructions used by IceChrono.py
 - Clean.py		: is a python script to clean all experiment sub-directories
-- AICC2012-VLR		: is an example experiment directory for the AICC2012 dating experiment: it contains all the necessary numerical settings, prior information and observations for the different ice cores. It has a very low resolution (VLR) and takes about 5 mn to run an a recent computer.
+- AICC2012-VLR		: is an example experiment directory for the AICC2012 dating experiment: it contains all the necessary numerical settings, prior information and observations for the different ice cores. It has a Very Low Resolution (VLR) and takes about 5 mn to run an a recent computer.
 
 
 What do I need to run IceChrono?
@@ -40,8 +40,8 @@ IceChrono is a python2 software, using the following modules:
 - warnings
 - scipy
 
-If you installed a distribution of scipy:
-http://scipy.org/install.html
+If you installed a distribution of scipy:  
+http://scipy.org/install.html  
 all these modules should be included by default.
 
 IceChrono has been tested on debian 7 (with an update of matplotlib>=0.11), on debian 8, on ubuntu 13.10/14.04 and on Anaconda 2.1.0.

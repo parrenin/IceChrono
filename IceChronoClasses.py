@@ -143,17 +143,13 @@ class Drilling:
         self.corr_LID=np.zeros(np.size(self.corr_LID_age))
         self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
 
-        self.correlation_corr_a=np.empty((np.size(self.corr_a),np.size(self.corr_a)))
+        self.correlation_corr_a=np.diag(np.ones(np.size(self.corr_a)))
+        self.correlation_corr_LID=np.diag(np.ones(np.size(self.corr_LID)))
+        self.correlation_corr_tau=np.diag(np.ones(np.size(self.corr_tau)))
 
-
-
-        self.correlation_corr_LID=np.empty((np.size(self.corr_LID),np.size(self.corr_LID)))
-
-
-#        print 'depth ', np.size(self.depth)
-#        print 'udepth_init ', np.size(self.udepth_init)
-
-        self.correlation_corr_tau=np.empty((np.size(self.corr_tau),np.size(self.corr_tau)))
+        self.chol_a=np.diag(np.ones(np.size(self.corr_a)))
+        self.chol_LID=np.diag(np.ones(np.size(self.corr_LID)))
+        self.chol_tau=np.diag(np.ones(np.size(self.corr_tau)))
 
 
 
@@ -169,6 +165,7 @@ class Drilling:
         filename=datadir+self.label+'parameters-CovariancePrior-init.py'
         if os.path.isfile(filename):
             execfile(filename)
+
 
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
             self.chol_a=cholesky(self.correlation_corr_a)
