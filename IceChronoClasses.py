@@ -644,7 +644,8 @@ class Drilling:
         mpl.ylabel('depth (m)')
         if show_initial:
             mpl.plot(self.age_init, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+        if (np.size(self.icemarkers_depth)>0):
+            mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.age_model, self.depth, color=color_mod, label='Model')
         mpl.plot(self.age, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
@@ -667,7 +668,8 @@ class Drilling:
         mpl.ylabel('depth (m)')
         if show_initial:
             mpl.plot(self.gage_init, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+        if (np.size(self.gasmarkers_depth)>0):
+            mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.gage_model, self.depth, color=color_mod, label='Model')
         mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=color_ci)
@@ -691,7 +693,8 @@ class Drilling:
         mpl.ylabel('depth (m)')
         if show_initial:
             mpl.plot(self.Ddepth_init, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
+        if (np.size(self.Ddepth_depth)>0):
+            mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.Ddepth_model, self.depth, color=color_mod, label='Model')
         mpl.plot(self.Ddepth, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
@@ -700,7 +703,7 @@ class Drilling:
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((x1,x2,self.depth[-1],self.depth[0]))
-        mpl.legend()
+        mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
         pp.savefig(mpl.figure(self.label+' Ddepth'))
         pp.close()
@@ -828,10 +831,11 @@ class DrillingCouple:
         mpl.figure(self.label+' ice-ice')
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' ice age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_age_init(self.iceicemarkers_depth1),self.D2.fct_age_init(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-        mpl.errorbar(self.D1.fct_age_model(self.iceicemarkers_depth1),self.D2.fct_age_model(self.iceicemarkers_depth2), color=color_mod, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_opt, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        if (np.size(self.iceicemarkers_depth1)>0):
+            if show_initial:
+                mpl.errorbar(self.D1.fct_age_init(self.iceicemarkers_depth1),self.D2.fct_age_init(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_age_model(self.iceicemarkers_depth1),self.D2.fct_age_model(self.iceicemarkers_depth2), color=color_mod, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+            mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_opt, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
@@ -847,10 +851,11 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-gas')
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' gas age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_gage_init(self.gasgasmarkers_depth1),self.D2.fct_gage_init(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-        mpl.errorbar(self.D1.fct_gage_model(self.gasgasmarkers_depth1),self.D2.fct_gage_model(self.gasgasmarkers_depth2), color=color_mod, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_opt, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        if (np.size(self.gasgasmarkers_depth1)>0):
+            if show_initial:
+                mpl.errorbar(self.D1.fct_gage_init(self.gasgasmarkers_depth1),self.D2.fct_gage_init(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_gage_model(self.gasgasmarkers_depth1),self.D2.fct_gage_model(self.gasgasmarkers_depth2), color=color_mod, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+            mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_opt, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
@@ -866,10 +871,11 @@ class DrillingCouple:
         mpl.figure(self.label+' ice-gas')
         mpl.xlabel(self.D1.label+' ice age')
         mpl.ylabel(self.D2.label+' gas age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_age_init(self.icegasmarkers_depth1),self.D2.fct_gage_init(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-        mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        if (np.size(self.icegasmarkers_depth1)>0):
+            if show_initial:
+                mpl.errorbar(self.D1.fct_age_init(self.icegasmarkers_depth1),self.D2.fct_gage_init(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+            mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
@@ -885,10 +891,11 @@ class DrillingCouple:
         mpl.figure(self.label+' gas-ice')
         mpl.xlabel(self.D1.label+' gas age')
         mpl.ylabel(self.D2.label+' ice age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_gage_init(self.gasicemarkers_depth1),self.D2.fct_age_init(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-        mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
-        mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
+        if (np.size(self.gasicemarkers_depth1)>0):
+            if show_initial:
+                mpl.errorbar(self.D1.fct_gage_init(self.gasicemarkers_depth1),self.D2.fct_age_init(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
+            mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
+            mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
         x1=self.D1.age_top
         y1=self.D2.age_top
