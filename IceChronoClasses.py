@@ -286,6 +286,7 @@ class Drilling:
             self.Ddepth_chol=cholesky(self.Ddepth_correlation)
             self.Ddepth_lu_piv=scipy.linalg.lu_factor(self.Ddepth_chol)
 
+
     def raw_model(self):
 
 
@@ -398,11 +399,25 @@ class Drilling:
 
         self.corrected_model()
 
-
         return np.concatenate((self.age,self.gage,self.Ddepth,self.a,self.tau,self.LID,self.icelayerthick,self.gaslayerthick)) 
+
+
+    def write_init(self):
+        self.a_init=self.a
+        self.LID_init=self.LID
+        self.tau_init=self.tau
+        self.icelayerthick_init=self.icelayerthick
+        self.gaslayerthick_init=self.gaslayerthick
+        self.age_init=self.age
+        self.gage_init=self.gage
+        self.Ddepth_init=self.Ddepth
 
     def fct_age(self, depth):
         f=interp1d(self.depth,self.age)
+        return f(depth)
+
+    def fct_age_init(self, depth):
+        f=interp1d(self.depth,self.age_init)
         return f(depth)
    
     def fct_age_model(self, depth):
@@ -411,6 +426,10 @@ class Drilling:
    
     def fct_gage(self, depth):
         f=interp1d(self.depth,self.gage)
+        return f(depth)
+
+    def fct_gage_init(self, depth):
+        f=interp1d(self.depth,self.gage_init)
         return f(depth)
 
     def fct_gage_model(self, depth):
@@ -503,95 +522,16 @@ class Drilling:
         
     
 
-    def display_init(self):
         
-    
+    def figures(self):
+
 
         mpl.figure(self.label+' thinning')
         mpl.title(self.label+' thinning')
         mpl.xlabel('Thinning')
         mpl.ylabel('Depth')
         if show_initial:
-            mpl.plot(self.tau, self.depth_mid, color=color_init, label='Initial')
-
-        mpl.figure(self.label+' ice layer thickness')
-        mpl.title(self.label+' ice layer thickness')
-        mpl.xlabel('thickness of annual layers (m/yr)')
-        mpl.ylabel('Depth')
-        if show_initial:
-            mpl.plot(self.icelayerthick, self.depth_mid, color=color_init, label='Initial')
-        for i in range(np.size(self.iceintervals_duration)):
-            y1=self.iceintervals_depthtop[i]
-            y2=self.iceintervals_depthbot[i]
-            x1=(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
-            x2=(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
-            yserie=np.array([y1,y1,y2,y2,y1])
-            xserie=np.array([x1,x2,x2,x1,x1])
-            if i==0:
-                mpl.plot(xserie,yserie, color=color_obs, label="observations")
-            else:
-                mpl.plot(xserie,yserie, color=color_obs)
-
-        mpl.figure(self.label+' gas layer thickness')
-        mpl.title(self.label+' gas layer thickness')
-        mpl.xlabel('thickness of annual layers (m/yr)')
-        mpl.ylabel('Depth')
-        if show_initial:
-            mpl.plot(self.gaslayerthick, self.depth_mid, color=color_init, label='Initial')
-        for i in range(np.size(self.gasintervals_duration)):
-            y1=self.gasintervals_depthtop[i]
-            y2=self.gasintervals_depthbot[i]
-            x1=(y2-y1)/(self.gasintervals_duration[i]+self.gasintervals_sigma[i])
-            x2=(y2-y1)/(self.gasintervals_duration[i]-self.gasintervals_sigma[i])
-            yserie=np.array([y1,y1,y2,y2,y1])
-            xserie=np.array([x1,x2,x2,x1,x1])
-            if i==0:
-                mpl.plot(xserie,yserie, color=color_obs, label='observations')
-            else:
-                mpl.plot(xserie,yserie, color=color_obs)
-
-
-        mpl.figure(self.label+' accumulation')
-        mpl.title(self.label+' accumulation')
-        mpl.xlabel('Optimized age (yr)')
-        mpl.ylabel('Accumulation (m/an)')
-
-        mpl.figure(self.label+' LID')
-        mpl.title(self.label+' LID')
-        mpl.xlabel('Optimized age (yr)')
-        mpl.ylabel('LID')
-
-        mpl.figure(self.label+' ice age')
-        mpl.title(self.label+' ice age')
-        mpl.xlabel('age (yr b1950)')
-        mpl.ylabel('depth (m)')
-        if show_initial:
-            mpl.plot(self.age, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
-#        mpl.ylim(mpl.ylim()[::-1])
-
-        mpl.figure(self.label+' gas age')
-        mpl.title(self.label+' gas age')
-        mpl.xlabel('age (yr b1950)')
-        mpl.ylabel('depth (m)')
-        if show_initial:
-            mpl.plot(self.gage, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
-#        mpl.ylim(mpl.ylim()[::-1])
-        
-        mpl.figure(self.label+' Ddepth')
-        mpl.title(self.label+' $\Delta$depth')
-        mpl.xlabel('$\Delta$depth (m)')
-        mpl.ylabel('depth (m)')
-        if show_initial:
-            mpl.plot(self.Ddepth, self.depth, color=color_init, label='Initial')
-        mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
-#        mpl.ylim(mpl.ylim()[::-1])
-        
-    def display_final(self):
-
-
-        mpl.figure(self.label+' thinning')
+            mpl.plot(self.tau_init, self.depth_mid, color=color_init, label='Initial')
         mpl.plot(self.tau_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.tau, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.tau-self.sigma_tau, self.tau+self.sigma_tau, color=color_ci)
@@ -604,8 +544,25 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/thinning.pdf')
         pp.savefig(mpl.figure(self.label+' thinning'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' ice layer thickness')
+        mpl.title(self.label+' ice layer thickness')
+        mpl.xlabel('thickness of annual layers (m/yr)')
+        mpl.ylabel('Depth')
+        if show_initial:
+            mpl.plot(self.icelayerthick_init, self.depth_mid, color=color_init, label='Initial')
+        for i in range(np.size(self.iceintervals_duration)):
+            y1=self.iceintervals_depthtop[i]
+            y2=self.iceintervals_depthbot[i]
+            x1=(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
+            x2=(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
+            yserie=np.array([y1,y1,y2,y2,y1])
+            xserie=np.array([x1,x2,x2,x1,x1])
+            if i==0:
+                mpl.plot(xserie,yserie, color=color_obs, label="observations")
+            else:
+                mpl.plot(xserie,yserie, color=color_obs)
         mpl.plot(self.icelayerthick_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
@@ -616,8 +573,25 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' ice layer thickness'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' gas layer thickness')
+        mpl.title(self.label+' gas layer thickness')
+        mpl.xlabel('thickness of annual layers (m/yr)')
+        mpl.ylabel('Depth')
+        if show_initial:
+            mpl.plot(self.gaslayerthick_init, self.depth_mid, color=color_init, label='Initial')
+        for i in range(np.size(self.gasintervals_duration)):
+            y1=self.gasintervals_depthtop[i]
+            y2=self.gasintervals_depthbot[i]
+            x1=(y2-y1)/(self.gasintervals_duration[i]+self.gasintervals_sigma[i])
+            x2=(y2-y1)/(self.gasintervals_duration[i]-self.gasintervals_sigma[i])
+            yserie=np.array([y1,y1,y2,y2,y1])
+            xserie=np.array([x1,x2,x2,x1,x1])
+            if i==0:
+                mpl.plot(xserie,yserie, color=color_obs, label='observations')
+            else:
+                mpl.plot(xserie,yserie, color=color_obs)
         mpl.plot(self.gaslayerthick_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
@@ -628,8 +602,12 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' gas layer thickness'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' accumulation')
+        mpl.title(self.label+' accumulation')
+        mpl.xlabel('Optimized age (yr)')
+        mpl.ylabel('Accumulation (m/an)')
         if show_initial:
             mpl.step(self.age, np.concatenate((self.a_init, np.array([self.a_init[-1]]))), color=color_init, where='post', label='Initial')
         mpl.step(self.age, np.concatenate((self.a_model, np.array([self.a_model[-1]]))), color=color_mod, where='post', label='Model')
@@ -641,8 +619,12 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/accumulation.pdf')
         pp.savefig(mpl.figure(self.label+' accumulation'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' LID')
+        mpl.title(self.label+' LID')
+        mpl.xlabel('Optimized age (yr)')
+        mpl.ylabel('LID')
         if show_initial:
             mpl.plot(self.age, self.LID_init, color=color_init, label='Initial')
         mpl.plot(self.age, self.LID_model, color=color_mod, label='Model')
@@ -654,8 +636,16 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/LID.pdf')
         pp.savefig(mpl.figure(self.label+' LID'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' ice age')
+        mpl.title(self.label+' ice age')
+        mpl.xlabel('age (yr b1950)')
+        mpl.ylabel('depth (m)')
+        if show_initial:
+            mpl.plot(self.age_init, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+#        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.age_model, self.depth, color=color_mod, label='Model')
         mpl.plot(self.age, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=color_ci)
@@ -669,8 +659,16 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' gas age')
+        mpl.title(self.label+' gas age')
+        mpl.xlabel('age (yr b1950)')
+        mpl.ylabel('depth (m)')
+        if show_initial:
+            mpl.plot(self.gage_init, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+#        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.gage_model, self.depth, color=color_mod, label='Model')
         mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=color_ci)
         mpl.plot(self.gage, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
@@ -685,20 +683,28 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/gas_age.pdf')
         pp.savefig(mpl.figure(self.label+' gas age'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' Ddepth')
+        mpl.title(self.label+' $\Delta$depth')
+        mpl.xlabel('$\Delta$depth (m)')
+        mpl.ylabel('depth (m)')
+        if show_initial:
+            mpl.plot(self.Ddepth_init, self.depth, color=color_init, label='Initial')
+        mpl.errorbar(self.Ddepth_Ddepth, self.Ddepth_depth, color=color_obs, xerr=self.Ddepth_sigma, linestyle='', marker='o', markersize=2, label="observations")
+#        mpl.ylim(mpl.ylim()[::-1])
         mpl.plot(self.Ddepth_model, self.depth, color=color_mod, label='Model')
         mpl.plot(self.Ddepth, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth, self.Ddepth-self.sigma_Ddepth, self.Ddepth+self.sigma_Ddepth, color=color_ci)
 #        mpl.plot(self.Ddepth+self.sigma_Ddepth, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.Ddepth-self.sigma_Ddepth, self.depth, color='k', linestyle='-')
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth[0],self.depth[-1]))
-        mpl.legend(loc=4)
-        mpl.ylim(mpl.ylim()[::-1])
+        mpl.axis((x1,x2,self.depth[-1],self.depth[0]))
+        mpl.legend()
         pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
         pp.savefig(mpl.figure(self.label+' Ddepth'))
         pp.close()
+        mpl.close()
 
 
     def save(self):
@@ -812,42 +818,18 @@ class DrillingCouple:
         
         return resi
     
-    def display_init(self):
-        
-        mpl.figure(self.label+' ice-ice')
-        mpl.xlabel(self.D1.label+' ice age')
-        mpl.ylabel(self.D2.label+' ice age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
 
-        mpl.figure(self.label+' gas-gas')
-        mpl.xlabel(self.D1.label+' gas age')
-        mpl.ylabel(self.D2.label+' gas age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-
-        mpl.figure(self.label+' ice-gas')
-        mpl.xlabel(self.D1.label+' ice age')
-        mpl.ylabel(self.D2.label+' gas age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-
-        mpl.figure(self.label+' gas-ice')
-        mpl.xlabel(self.D1.label+' gas age')
-        mpl.ylabel(self.D2.label+' ice age')
-        if show_initial:
-            mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
-
-
-
-
-    def display_final(self):
+    def figures(self):
 
         if not os.path.isdir(datadir+self.label):
             os.mkdir(datadir+self.label)
 
 
         mpl.figure(self.label+' ice-ice')
+        mpl.xlabel(self.D1.label+' ice age')
+        mpl.ylabel(self.D2.label+' ice age')
+        if show_initial:
+            mpl.errorbar(self.D1.fct_age_init(self.iceicemarkers_depth1),self.D2.fct_age_init(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
         mpl.errorbar(self.D1.fct_age_model(self.iceicemarkers_depth1),self.D2.fct_age_model(self.iceicemarkers_depth2), color=color_mod, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.iceicemarkers_depth1),self.D2.fct_age(self.iceicemarkers_depth2), color=color_opt, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
@@ -860,8 +842,13 @@ class DrillingCouple:
         pp=PdfPages(datadir+self.label+'/ice-ice.pdf')
         pp.savefig(mpl.figure(self.label+' ice-ice'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' gas-gas')
+        mpl.xlabel(self.D1.label+' gas age')
+        mpl.ylabel(self.D2.label+' gas age')
+        if show_initial:
+            mpl.errorbar(self.D1.fct_gage_init(self.gasgasmarkers_depth1),self.D2.fct_gage_init(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
         mpl.errorbar(self.D1.fct_gage_model(self.gasgasmarkers_depth1),self.D2.fct_gage_model(self.gasgasmarkers_depth2), color=color_mod, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasgasmarkers_depth1),self.D2.fct_gage(self.gasgasmarkers_depth2), color=color_opt, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
@@ -874,8 +861,13 @@ class DrillingCouple:
         pp=PdfPages(datadir+self.label+'/gas-gas.pdf')
         pp.savefig(mpl.figure(self.label+' gas-gas'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' ice-gas')
+        mpl.xlabel(self.D1.label+' ice age')
+        mpl.ylabel(self.D2.label+' gas age')
+        if show_initial:
+            mpl.errorbar(self.D1.fct_age_init(self.icegasmarkers_depth1),self.D2.fct_gage_init(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
         mpl.errorbar(self.D1.fct_age_model(self.icegasmarkers_depth1),self.D2.fct_gage_model(self.icegasmarkers_depth2), color=color_mod, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_age(self.icegasmarkers_depth1),self.D2.fct_gage(self.icegasmarkers_depth2), color=color_opt, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
@@ -888,8 +880,13 @@ class DrillingCouple:
         pp=PdfPages(datadir+self.label+'/ice-gas.pdf')
         pp.savefig(mpl.figure(self.label+' ice-gas'))
         pp.close()
+        mpl.close()
 
         mpl.figure(self.label+' gas-ice')
+        mpl.xlabel(self.D1.label+' gas age')
+        mpl.ylabel(self.D2.label+' ice age')
+        if show_initial:
+            mpl.errorbar(self.D1.fct_gage_init(self.gasicemarkers_depth1),self.D2.fct_age_init(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
         mpl.errorbar(self.D1.fct_gage_model(self.gasicemarkers_depth1),self.D2.fct_age_model(self.gasicemarkers_depth2), color=color_mod, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Model")
         mpl.errorbar(self.D1.fct_gage(self.gasicemarkers_depth1),self.D2.fct_age(self.gasicemarkers_depth2), color=color_opt, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Optimized")
         x1,x2,y1,y2 = mpl.axis()
@@ -902,4 +899,5 @@ class DrillingCouple:
         pp=PdfPages(datadir+self.label+'/gas-ice.pdf')
         pp.savefig(mpl.figure(self.label+' gas-ice'))
         pp.close()
+        mpl.close()
 

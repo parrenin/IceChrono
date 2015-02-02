@@ -85,9 +85,10 @@ for i,dlabel in enumerate(list_drillings):
     D[dlabel]=Drilling(dlabel)
     D[dlabel].init()
     D[dlabel].model(D[dlabel].variables)
-    D[dlabel].a_init=D[dlabel].a
-    D[dlabel].LID_init=D[dlabel].LID
-    D[dlabel].display_init()
+#    D[dlabel].a_init=D[dlabel].a
+#    D[dlabel].LID_init=D[dlabel].LID
+    D[dlabel].write_init()
+#    D[dlabel].display_init()
     variables=np.concatenate((variables,D[dlabel].variables))
 
 for i,dlabel in enumerate(list_drillings):
@@ -96,7 +97,7 @@ for i,dlabel in enumerate(list_drillings):
             print 'Initialization of drilling couple '+dlabel2+'-'+dlabel
             DC[dlabel2+'-'+dlabel]=DrillingCouple(D[dlabel2],D[dlabel])
             DC[dlabel2+'-'+dlabel].init()
-            DC[dlabel2+'-'+dlabel].display_init()
+#            DC[dlabel2+'-'+dlabel].display_init()
 
 
 ##Optimization
@@ -128,10 +129,12 @@ for dlabel in list_drillings:
 print 'Display of results'
 for i,dlabel in enumerate(list_drillings):
     D[dlabel].save()
-    D[dlabel].display_final()
+    D[dlabel].figures()
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
-            DC[dlabel2+'-'+dlabel].display_final()
+#            DC[dlabel2+'-'+dlabel].display_init()
+#            DC[dlabel2+'-'+dlabel].display_final()
+            DC[dlabel2+'-'+dlabel].figures()
             
 ###Program execution time
 message='Program execution time: '+str(time.clock()-start_time)+' seconds.' 
