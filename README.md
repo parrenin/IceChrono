@@ -127,9 +127,9 @@ Then you have one directory per drilling, which contains:
 - `parameters.py`                           : all the drilling specific parameters
 - `parameters-CovarianceObservations.py`    : this file allows to define the correlation of drilling specific observations
 - `density-prior.txt`                       : depth / relative density
-- `accu-prior.txt`                          : depth / background accu (in ice-equivalent)
-- `LID-prior.txt`                           : depth / background Lock-in-Depth
-- `thinning-prior.txt`                      : depth / background thinning function
+- `accu-prior.txt`                          : depth / background accu (in ice-equivalent) / sigma (in %)
+- `LID-prior.txt`                           : depth / background Lock-in-Depth / sigma (in %)
+- `thinning-prior.txt`                      : depth / background thinning function sigma (in %)
 - `ice_age.txt`                             : depth / age / sigma for ice age observations
 - `gas_age.txt`                             : depth / age / sigma for gas age observations
 - `Ddepth.txt`                              : depth / Delta-depth / sigma for Delta-depth observations

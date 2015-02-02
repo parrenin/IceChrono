@@ -21,21 +21,6 @@ self.correlation_corr_tau=g(np.abs(np.ones((np.size(self.corr_tau_depth),np.size
 
 ##Now we define the sigmas
 
-#sigmap_corr_a
-readarray=np.loadtxt(datadir+self.label+'/accu-sigma-prior.txt')
-f=interp1d(self.age_model[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
-self.sigmap_corr_a=f(self.corr_a_age)
-
-#Sigmap_corr_tau
-readarray=np.loadtxt(datadir+self.label+'/thinning-sigma-prior.txt')
-f=interp1d(self.depth[:-1],readarray, bounds_error=False, fill_value=readarray[-1])
-self.sigmap_corr_tau=f(self.corr_tau_depth)
-
-#Sigmap_corr_LID
-readarray=np.loadtxt(datadir+self.label+'/LID-sigma-prior.txt')
-f=interp1d(self.age_model,readarray, bounds_error=False, fill_value=readarray[-1])
-self.sigmap_corr_LID=f(self.corr_LID_age)
-
 
 #def weighted_std(values, weights):
 #    """

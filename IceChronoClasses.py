@@ -82,9 +82,11 @@ class Drilling:
             readarray=np.loadtxt(datadir+self.label+'/accu-prior.txt')
             self.a_depth=readarray[:,0]
             self.a_a=readarray[:,1]
+            self.a_sigma=readarray[:,2]
             f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
             self.a_model=f(self.depth)
             self.a=self.a_model
+
 
         
         self.age=np.empty_like(self.depth)
@@ -113,6 +115,7 @@ class Drilling:
             readarray=np.loadtxt(datadir+self.label+'/LID-prior.txt')
             self.LID_depth=readarray[:,0]
             self.LID_LID=readarray[:,1]
+            self.LID_sigma=readarray[:,2]
         f=interp1d_extrap(self.LID_depth, self.LID_LID)
         self.LID_model=f(self.depth)
 
@@ -131,6 +134,7 @@ class Drilling:
             readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
             self.tau_depth=readarray[:,0]
             self.tau_tau=readarray[:,1]
+            self.tau_sigma=readarray[:,2]
             f=interp1d_extrap(self.tau_depth, self.tau_tau)
             self.tau_model=f(self.depth_mid)
             self.tau=self.tau_model
@@ -154,6 +158,15 @@ class Drilling:
 
 
 ## Definition of the covariance matrix of the background
+
+        f=interp1d(self.fct_age_model((self.a_depth[1:]+self.a_depth[:-1])/2),self.a_sigma[:-1], bounds_error=False, fill_value=self.a_sigma[-1])
+        self.sigmap_corr_a=f(self.corr_a_age)
+
+        f=interp1d(self.fct_gage_model(self.LID_depth),self.LID_sigma, bounds_error=False, fill_value=self.LID_sigma[-1])
+        self.sigmap_corr_LID=f(self.corr_LID_age)
+
+        f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
+        self.sigmap_corr_tau=f(self.corr_tau_depth)
 
         self.correlation_corr_a_before=self.correlation_corr_a+0
         self.correlation_corr_LID_before=self.correlation_corr_LID+0
