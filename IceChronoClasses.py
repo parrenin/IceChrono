@@ -126,7 +126,7 @@ class Drilling:
         self.udepth=np.empty_like(self.depth)
 
 #        print 'depth_mid ', np.size(self.depth_mid)
-        self.zeta=(self.thickness-self.depth_mid)/self.thickness
+        self.zeta=(self.thickness-self.depth_mid)/self.thickness  #FIXME: maybe we should use iedepth and thickness_ie here?
 #        print 'zeta ', np.size(self.zeta)
         if self.calc_tau:
             self.tau=np.empty_like(self.depth_mid)
@@ -143,9 +143,20 @@ class Drilling:
 
 ## Now we set up the correction functions
 
-        self.corr_a=np.zeros(np.size(self.corr_a_age))
-        self.corr_LID=np.zeros(np.size(self.corr_LID_age))
-        self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
+        if self.start=='restart':
+            self.variables=np.loadtxt(datadir+self.label+'/restart.txt')
+        elif self.start=='default':
+            self.corr_a=np.zeros(np.size(self.corr_a_age))
+            self.corr_LID=np.zeros(np.size(self.corr_LID_age))
+            self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
+        elif self.start=='random':
+            self.corr_a=np.random.normal(loc=0., scale=1., size=np.size(self.corr_a))
+            self.corr_LID=np.random.normal(loc=0., scale=1., size=np.size(self.corr_LID))
+            self.corr_tau=np.random.normal(loc=0., scale=1., size=np.size(self.corr_tau))
+        else:
+            print 'Start option not recognized.'
+
+## Now we set up the correlation matrices
 
         self.correlation_corr_a=np.diag(np.ones(np.size(self.corr_a)))
         self.correlation_corr_LID=np.diag(np.ones(np.size(self.corr_LID)))
@@ -194,9 +205,6 @@ class Drilling:
         if self.calc_tau==True:
             self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.muprime])))
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
-
-        if self.restart:
-            self.variables=np.loadtxt(datadir+self.label+'/restart.txt')
 
 
 #Reading of observations

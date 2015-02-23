@@ -128,12 +128,12 @@ for dlabel in list_drillings:
 ###Final display and output
 print 'Display of results'
 for i,dlabel in enumerate(list_drillings):
+#    print dlabel+'\n'
     D[dlabel].save()
     D[dlabel].figures()
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
-#            DC[dlabel2+'-'+dlabel].display_init()
-#            DC[dlabel2+'-'+dlabel].display_final()
+#            print dlabel2+'-'+dlabel+'\n'
             DC[dlabel2+'-'+dlabel].figures()
             
 ###Program execution time
