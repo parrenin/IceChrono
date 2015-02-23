@@ -43,7 +43,7 @@ IceChrono is developed and tested using the anaconda distribution, therefore we 
 Anaconda can be downloaded here (use the python2 version):  
 http://continuum.io/downloads  
 
-IceChrono probably work on other scipy distributions, provided they contain the following python modules:  
+IceChrono probably works on other scipy distributions, provided they contain the following python modules:  
 - sys
 - os
 - time

@@ -150,9 +150,9 @@ class Drilling:
             self.corr_LID=np.zeros(np.size(self.corr_LID_age))
             self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
         elif self.start=='random':
-            self.corr_a=np.random.normal(loc=0., scale=1., size=np.size(self.corr_a))
-            self.corr_LID=np.random.normal(loc=0., scale=1., size=np.size(self.corr_LID))
-            self.corr_tau=np.random.normal(loc=0., scale=1., size=np.size(self.corr_tau))
+            self.corr_a=np.random.normal(loc=0., scale=1., size=np.size(self.corr_a_age))
+            self.corr_LID=np.random.normal(loc=0., scale=1., size=np.size(self.corr_LID_age))
+            self.corr_tau=np.random.normal(loc=0., scale=1., size=np.size(self.corr_tau_depth))
         else:
             print 'Start option not recognized.'
 
@@ -546,7 +546,6 @@ class Drilling:
         
     def figures(self):
 
-
         mpl.figure(self.label+' thinning')
         mpl.title(self.label+' thinning')
         mpl.xlabel('Thinning')
@@ -618,7 +617,7 @@ class Drilling:
         mpl.axis((0, 2*max(self.icelayerthick),self.depth[-1],self.depth[0]))
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
-        pp.savefig(mpl.figure(self.label+' gas layer thickness'))
+#        pp.savefig(mpl.figure(self.label+' gas layer thickness'))  #buggy line on anaconda
         pp.close()
         mpl.close()
 
