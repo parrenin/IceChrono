@@ -6,10 +6,9 @@ self.thickness=3273.                    #Real thickness
 self.corr_a_age=np.arange(self.age_top, 1000000+self.age_top+0.01, self.age_step)      #Age grid for the accu correction function
 self.corr_LID_age=np.arange(self.age_top, 1000000+self.age_top+0.01, self.age_step)    #Age grid for the LID correction function
 self.corr_tau_depth=np.arange(self.depth[0], self.depth[-1]+0.01, (self.depth[-1]-self.depth[0])/(self.corr_tau_nodes-1))   #Depth grid for the thinning correction function
-self.restart=False			#Define whether you start from the restart file.
 
 #The following parameters defines the covariance matrices as in AICC2012 (Bazin et al., 2013 and Veres et al., 2013).
-self.cT2=0.000030/0.55
-self.sigmabA=0.7
-self.cA1=0.
-self.sigmabL=0.7
+#self.cT2=0.000030/0.55
+#self.sigmabA=0.7
+#self.cA1=0.
+#self.sigmabL=0.7

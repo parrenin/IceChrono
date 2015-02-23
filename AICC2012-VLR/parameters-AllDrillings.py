@@ -4,6 +4,7 @@ self.calc_LID=False         #Use False for now.
 self.corr_tau_nodes=26  #Define the number of nodes of the thinning function.
 self.age_step=20000.	#Define the age step for the LID and accu correction functions.
 self.Dfirn=0.7            #Average density of the firn
+self.restart=False
 
 #Parameters needed to define the covariance matrices as in AICC2012 (Bazin et al., CP, 2013 and Veres et al., CP, 2013).
 self.lambda_tau=70
