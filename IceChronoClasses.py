@@ -101,7 +101,9 @@ class Drilling:
         self.D=f(self.depth_mid)
 
         self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
-        self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
+        self.iedepth_mid=(self.iedepth[1:]+self.iedepth[:-1])/2
+        if self.calc_tau:
+            self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
         
         if self.calc_LID:
             if self.depth[0]<self.LID_value:
@@ -126,9 +128,9 @@ class Drilling:
         self.udepth=np.empty_like(self.depth)
 
 #        print 'depth_mid ', np.size(self.depth_mid)
-        self.zeta=(self.thickness-self.depth_mid)/self.thickness  #FIXME: maybe we should use iedepth and thickness_ie here?
 #        print 'zeta ', np.size(self.zeta)
         if self.calc_tau:
+            self.zeta=(self.thicknessie-self.iedepth_mid)/self.thicknessie  #FIXME: maybe we should use iedepth and thickness_ie here?
             self.tau=np.empty_like(self.depth_mid)
         else:
             readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
