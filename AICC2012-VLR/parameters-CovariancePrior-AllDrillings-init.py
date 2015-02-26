@@ -1,4 +1,5 @@
 ##In this file, the covariance matrix for the a prioris is defined.
+# At first, you will most likely play with the lambda_a, lambda_LID and lambda_tau parameters which are defined parameters-AllDrillings.py file.
 
 #Accu correlation matrix
 f=interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
@@ -20,7 +21,7 @@ self.correlation_corr_tau=g(np.abs(np.ones((np.size(self.corr_tau_depth),np.size
 
 
 ##Now we define the sigmas
-
+# This is not used for now since the sigmas are imported from the accu-prio.txt, LID-prior.txt and thinning-prior.txt.
 
 #def weighted_std(values, weights):
 #    """

@@ -7,9 +7,9 @@ A statistical and physical model to optimize chronologies of deep polar ice core
 What this manual is and is not?
 -------------------------------
 
-This manual is a documentation on how to use the IceChrono software.
-It is _not_ a description of the IceChrono principles. Please read to the scientific articles describing IceChrono for that purpose.
-It is _not_ an operating system or python documentation. Please use your operating system or python documentation.
+This manual is a documentation on how to use the IceChrono software.  
+It is _not_ a description of the IceChrono principles. Please read to the scientific articles describing IceChrono for that purpose.  
+It is _not_ an operating system or python documentation. Please use your operating system or python documentation instead.
 
 
 Where can I get help on IceChrono?
@@ -176,8 +176,8 @@ It defines age at the top of the core, the age equation grid and the correction 
 Have a look at the files `AICC2012-VLR/EDC/parameters.py`, it is commented.
 
 
-How to set up correlation matrices for the observations?
---------------------------------------------------------
+How to set up the `parameters-CovarianceObservations.py` file?
+--------------------------------------------------------------
 
 You need to know a little bit of python to do that.
 Feel free to send an email on the mailing list if you need assistance.
@@ -195,6 +195,14 @@ For drilling couple specific observations (stratigraphic links), you set up the 
 - `self.icegasmarkers_correlation`  : for ice-gas stratigraphic links
 - `self.gasicemarkers_correlation`  : for gas-ice stratigraphic links
 
+Let us take a concrete example and assume we want a correlation matrix for ice dated horizons with ones in the diagonal and with a constant correlation factor k outside the diagonal, you can write:
+
+```
+self.icemarkers_correlation=k*np.ones((np.shape(self.icemarkers_correlation)))+(1-k)*np.diag(np.ones(np.shape(self.icemarkers_correlation)[0]))
+```
+
+Don't forget that if you find the use of python and the IceChrono internal variables too difficult, you can define your correlation matrices outside IceChrono and import them here by using for example the `np.loadtxt` function.
+
 
 How to set up the `parameters-CovariancePrior-AllDrillings-init.py` file?
 -------------------------------------------------------------------------
@@ -210,6 +218,26 @@ You need to define:
 - `self.sigmap_corr_a`          : the standard deviation of the accu correction function
 - `self.sigmap_corr_LID`        : the standard deviation of the LID correction function
 - `self.sigmap_corr_tau`        : the standard deviation of the thinning correction function
+
+Let us take a concrete example and assume, as in the AICC2012 example, that the accumulation correlation linearly decreases to zero when the absolute value of the age difference of the accumulation corrections increases to lambda_a yr. We first define a function that linearly decreases to zero from 0 to 4000 and which is zero above 4000:
+
+```
+f=interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
+```
+
+Then we define a matrix whose term (i,j) is equal to the age difference of the accumulation corrections `self.corr_a_age[i]-self.corr_a_age[j]`:
+
+```
+M=np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age)
+```
+
+And then we define the correlation matrix:
+
+```
+self.correlation_corr_a=f(np.abs(M))
+```
+
+Don't forget that if you find the use of python and the IceChrono internal variables too difficult, you can define your correlation matrices outside IceChrono and import them here by using for example the `np.loadtxt` function.
 
 
 What to do if something goes wrong?

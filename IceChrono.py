@@ -18,7 +18,6 @@ from scipy.linalg import cholesky
 ###Registration of start time
 start_time = time.clock()      #Use time.clock() for processor time
 
-
 ###Reading parameters directory
 datadir=sys.argv[1]
 if datadir[-1]!='/':
