@@ -10,4 +10,5 @@ color_opt='k'
 color_mod='b'
 color_ci='0.8'
 color_sigma='m'
-show_initial=True 
+color_di='g'
+show_initial=False

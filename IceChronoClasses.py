@@ -486,6 +486,10 @@ class Drilling:
         return np.concatenate((resi_corr_a, resi_corr_LID, resi_corr_tau, resi_age,resi_gage, resi_iceint, resi_gasint, resi_Ddepth))
 
 
+    def cost_function(self):
+        cost=np.dot(self.residuals,np.transpose(self.residuals))
+        return cost
+
     def jacobian(self):
         epsilon=np.sqrt(np.diag(self.hess))/100000000.
         model0=self.model(self.variables)
@@ -573,17 +577,17 @@ class Drilling:
         mpl.ylabel('Depth')
         if show_initial:
             mpl.plot(self.icelayerthick_init, self.depth_mid, color=color_init, label='Initial')
-        for i in range(np.size(self.iceintervals_duration)):
-            y1=self.iceintervals_depthtop[i]
-            y2=self.iceintervals_depthbot[i]
-            x1=(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
-            x2=(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
-            yserie=np.array([y1,y1,y2,y2,y1])
-            xserie=np.array([x1,x2,x2,x1,x1])
-            if i==0:
-                mpl.plot(xserie,yserie, color=color_obs, label="observations")
-            else:
-                mpl.plot(xserie,yserie, color=color_obs)
+#        for i in range(np.size(self.iceintervals_duration)):
+#            y1=self.iceintervals_depthtop[i]
+#            y2=self.iceintervals_depthbot[i]
+#            x1=(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
+#            x2=(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
+#            yserie=np.array([y1,y1,y2,y2,y1])
+#            xserie=np.array([x1,x2,x2,x1,x1])
+#            if i==0:
+#                mpl.plot(xserie,yserie, color=color_obs, label="observations")
+#            else:
+#                mpl.plot(xserie,yserie, color=color_obs)
         mpl.plot(self.icelayerthick_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
@@ -601,17 +605,17 @@ class Drilling:
         mpl.ylabel('Depth')
         if show_initial:
             mpl.plot(self.gaslayerthick_init, self.depth_mid, color=color_init, label='Initial')
-        for i in range(np.size(self.gasintervals_duration)):
-            y1=self.gasintervals_depthtop[i]
-            y2=self.gasintervals_depthbot[i]
-            x1=(y2-y1)/(self.gasintervals_duration[i]+self.gasintervals_sigma[i])
-            x2=(y2-y1)/(self.gasintervals_duration[i]-self.gasintervals_sigma[i])
-            yserie=np.array([y1,y1,y2,y2,y1])
-            xserie=np.array([x1,x2,x2,x1,x1])
-            if i==0:
-                mpl.plot(xserie,yserie, color=color_obs, label='observations')
-            else:
-                mpl.plot(xserie,yserie, color=color_obs)
+#        for i in range(np.size(self.gasintervals_duration)):
+#            y1=self.gasintervals_depthtop[i]
+#            y2=self.gasintervals_depthbot[i]
+#            x1=(y2-y1)/(self.gasintervals_duration[i]+self.gasintervals_sigma[i])
+#            x2=(y2-y1)/(self.gasintervals_duration[i]-self.gasintervals_sigma[i])
+#            yserie=np.array([y1,y1,y2,y2,y1])
+#            xserie=np.array([x1,x2,x2,x1,x1])
+#            if i==0:
+#                mpl.plot(xserie,yserie, color=color_obs, label='observations')
+#            else:
+#                mpl.plot(xserie,yserie, color=color_obs)
         mpl.plot(self.gaslayerthick_model, self.depth_mid, color=color_mod, label='Model')
         mpl.plot(self.gaslayerthick, self.depth_mid, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.gaslayerthick-self.sigma_gaslayerthick, self.gaslayerthick+self.sigma_gaslayerthick, color=color_ci)
@@ -619,7 +623,7 @@ class Drilling:
         mpl.axis((0, 2*max(self.icelayerthick),self.depth[-1],self.depth[0]))
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/gaslayerthick.pdf')
-#        pp.savefig(mpl.figure(self.label+' gas layer thickness'))  #buggy line on anaconda
+#        pp.savefig(mpl.figure(self.label+' gas layer thickness'))  #Fixme: buggy line on anaconda
         pp.close()
         mpl.close()
 
@@ -664,8 +668,24 @@ class Drilling:
         if show_initial:
             mpl.plot(self.age_init, self.depth, color=color_init, label='Initial')
         if (np.size(self.icemarkers_depth)>0):
-            mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
+            mpl.errorbar(self.icemarkers_age, self.icemarkers_depth, color=color_obs, xerr=self.icemarkers_sigma, linestyle='', marker='o', markersize=2, label="dated horizons")
 #        mpl.ylim(mpl.ylim()[::-1])
+        for i in range(np.size(self.iceintervals_duration)):
+            y1=self.iceintervals_depthtop[i]
+            y2=self.iceintervals_depthbot[i]
+            x1=self.fct_age(y1)  #(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
+            x2=x1+self.iceintervals_duration[i]  #(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
+            xseries=np.array([x1,x2,x2,x1,x1])
+            yseries=np.array([y1,y1,y2,y2,y1])
+            if i==0:
+                mpl.plot(xseries, yseries, color=color_di, label="dated intervals")
+                mpl.errorbar(x2, y2, color=color_di, xerr=self.iceintervals_sigma[i], capsize=1)
+            else:
+                mpl.plot(xseries, yseries, color=color_di)
+                mpl.errorbar(x2, y2, color=color_di, xerr=self.iceintervals_sigma[i], capsize=1)
+#            mpl.arrow(x1, y1, x2-x1, y2-y1, fc=color_di, ec=color_di, head_width=0.02, head_length=0.05)        
+#        if (np.size(self.iceintervals_depthtop)>0):
+#            mpl.errorbar(self.fct_age(self.iceintervals_depthtop)+self.iceintervals_duration, self.iceintervals_depthbot, color=color_di, xerr=self.iceintervals_sigma, linestyle='', marker='o', markersize='2', label="dated intervals")
         mpl.plot(self.age_model, self.depth, color=color_mod, label='Model')
         mpl.plot(self.age, self.depth, color=color_opt, label='Corrected +/-$\sigma$')
         mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=color_ci)
@@ -688,6 +708,19 @@ class Drilling:
         if (np.size(self.gasmarkers_depth)>0):
             mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
+        for i in range(np.size(self.iceintervals_duration)):
+            y1=self.gasintervals_depthtop[i]
+            y2=self.gasintervals_depthbot[i]
+            x1=self.fct_gage(y1)  #(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
+            x2=x1+self.gasintervals_duration[i]  #(y2-y1)/(self.iceintervals_duration[i]-self.iceintervals_sigma[i])
+            xseries=np.array([x1,x2,x2,x1,x1])
+            yseries=np.array([y1,y1,y2,y2,y1])
+            if i==0:
+                mpl.plot(xseries, yseries, color=color_di, label="dated intervals")
+                mpl.errorbar(x2, y2, color=color_di, xerr=self.gasintervals_sigma[i], capsize=1)
+            else:
+                mpl.plot(xseries, yseries, color=color_di)
+                mpl.errorbar(x2, y2, color=color_di, xerr=self.gasintervals_sigma[i], capsize=1)
         mpl.plot(self.gage_model, self.depth, color=color_mod, label='Model')
         mpl.fill_betweenx(self.depth, self.gage-self.sigma_gage, self.gage+self.sigma_gage , color=color_ci)
         mpl.plot(self.gage, self.depth, color=color_opt, label='Corrected +/-$\sigma$')

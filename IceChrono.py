@@ -10,7 +10,7 @@ import warnings
 import os
 import scipy.linalg
 from scipy.interpolate import interp1d
-from scipy.optimize import leastsq
+from scipy.optimize import leastsq, minimize
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy.linalg import cholesky
 
@@ -55,6 +55,11 @@ def residuals(var):
             if j<i:
                 resi=np.concatenate((resi,DC[dlabel2+'-'+dlabel].residuals()))
     return resi
+
+def cost_function(var):
+    cost=np.dot(residuals(var),np.transpose(residuals(var)))
+    return cost
+
 
 def Dres(var):
     """Calculate derivatives for each parameter using pool."""
@@ -101,18 +106,30 @@ for i,dlabel in enumerate(list_drillings):
 
 ##Optimization
 start_time_opt = time.time()
+print 'cost function: ',cost_function(variables)
 if opt_method=='leastsq':
     print 'Optimization by leastsq'
     variables,hess,infodict,mesg,ier=leastsq(residuals, variables, full_output=1)
 elif opt_method=='leastsq-parallel':
     print 'Optimization by leastsq-parallel'
     variables,hess,infodict,mesg,ier=leastsq(residuals, variables, Dfun=Dres, col_deriv=1, full_output=1)
+elif opt_method=="L-BFGS-B":
+    print 'Optimization by L-BFGS-B'
+    res=minimize(cost_function, variables, method='L-BFGS-B', jac=False)
+    variables=res.x
+    print 'number of iterations: ',res.nit
+    hess=np.zeros((np.size(variables),np.size(variables)))
+    print 'Message: ',res.message
+#    cost=cost_function(variables)
 elif opt_method=='none':
+    print 'No optimization'
     hess=np.zeros((np.size(variables),np.size(variables)))
 else:
     print opt_method,': Optimization method not recognized.'
     quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
+print 'solution: ',variables
+print 'cost function: ',cost_function(variables)
 if hess==None:
     print 'singular matrix encountered (flat curvature in some direction)'
     quit()
