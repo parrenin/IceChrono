@@ -128,7 +128,7 @@ else:
     print opt_method,': Optimization method not recognized.'
     quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
-print 'solution: ',variables
+#print 'solution: ',variables
 print 'cost function: ',cost_function(variables)
 if hess==None:
     print 'singular matrix encountered (flat curvature in some direction)'

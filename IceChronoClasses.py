@@ -40,7 +40,7 @@ class Drilling:
 
 #        print 'Initialization of drilling '+self.label
 
-        execfile(datadir+'parameters-AllDrillings.py')
+        execfile(datadir+'/parameters-AllDrillings.py')
         execfile(datadir+self.label+'/parameters.py')
 
         self.depth_mid=(self.depth[1:]+self.depth[:-1])/2
@@ -172,23 +172,27 @@ class Drilling:
 
 ## Definition of the covariance matrix of the background
 
-        f=interp1d(self.fct_age_model((self.a_depth[1:]+self.a_depth[:-1])/2),self.a_sigma[:-1], bounds_error=False, fill_value=self.a_sigma[-1])
-        self.sigmap_corr_a=f(self.corr_a_age)
+        xx=np.where(self.a_depth<=self.depth[-1],self.fct_age_model(np.minimum(self.a_depth,self.depth[-1])),np.nan)
+        yy=np.where(self.a_depth<=self.depth[-1],self.a_sigma,np.nan)
+        f=interp1d(xx,yy)
+        self.sigmap_corr_a=f(self.corr_a_age)           #FIXME: we should average here since it would be more representative
 
-        f=interp1d(self.fct_gage_model(self.LID_depth),self.LID_sigma, bounds_error=False, fill_value=self.LID_sigma[-1])
-        self.sigmap_corr_LID=f(self.corr_LID_age)
+        xx=np.where(self.LID_depth<=self.depth[-1],self.fct_gage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)
+        yy=np.where(self.LID_depth<=self.depth[-1],self.LID_sigma,np.nan)
+        f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[0])
+        self.sigmap_corr_LID=f(self.corr_LID_age)           #FIXME: we should average here since it would be more representative
 
         f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
-        self.sigmap_corr_tau=f(self.corr_tau_depth)
+        self.sigmap_corr_tau=f(self.corr_tau_depth)           #FIXME: we should average here since it would be more representative
 
         self.correlation_corr_a_before=self.correlation_corr_a+0
         self.correlation_corr_LID_before=self.correlation_corr_LID+0
         self.correlation_corr_tau_before=self.correlation_corr_tau+0
 
-        filename=datadir+'parameters-CovariancePrior-AllDrillings-init.py'
+        filename=datadir+'/parameters-CovariancePrior-AllDrillings-init.py'
         if os.path.isfile(filename):
             execfile(filename)
-        filename=datadir+self.label+'parameters-CovariancePrior-init.py'
+        filename=datadir+self.label+'/parameters-CovariancePrior-init.py'
         if os.path.isfile(filename):
             execfile(filename)
 
@@ -287,27 +291,27 @@ class Drilling:
         self.gasintervals_correlation=np.diag(np.ones(np.size(self.gasintervals_depthtop)))
         self.Ddepth_correlation=np.diag(np.ones(np.size(self.Ddepth_depth)))
 #        print self.icemarkers_correlation
-        filename=datadir+'parameters-CovarianceObservations-AllDrillings.py'
+        filename=datadir+'/parameters-CovarianceObservations-AllDrillings.py'
         if os.path.isfile(filename):
             execfile(filename)
-        filename=datadir+self.label+'parameters-CovarianceObservations.py'
+        filename=datadir+self.label+'/parameters-CovarianceObservations.py'
         if os.path.isfile(filename):
             execfile(filename)
         if np.size(self.icemarkers_depth)>0:
             self.icemarkers_chol=cholesky(self.icemarkers_correlation)
-            self.icemarkers_lu_piv=scipy.linalg.lu_factor(self.icemarkers_chol)  #FIXME: we LU factor a triangular matrix. This is suboptimal. We should set lu_piv directly instead.
+            self.icemarkers_lu_piv=scipy.linalg.lu_factor(np.transpose(self.icemarkers_chol))  #FIXME: we LU factor a triangular matrix. This is suboptimal. We should set lu_piv directly instead.
         if np.size(self.gasmarkers_depth)>0:
             self.gasmarkers_chol=cholesky(self.gasmarkers_correlation)
-            self.gasmarkers_lu_piv=scipy.linalg.lu_factor(self.gasmarkers_chol)
+            self.gasmarkers_lu_piv=scipy.linalg.lu_factor(np.transpose(self.gasmarkers_chol))
         if np.size(self.iceintervals_depthtop)>0:
             self.iceintervals_chol=cholesky(self.iceintervals_correlation)
-            self.iceintervals_lu_piv=scipy.linalg.lu_factor(self.iceintervals_chol)
+            self.iceintervals_lu_piv=scipy.linalg.lu_factor(np.transpose(self.iceintervals_chol))
         if np.size(self.gasintervals_depthtop)>0:
             self.gasintervals_chol=cholesky(self.gasintervals_correlation)
-            self.gasintervals_lu_piv=scipy.linalg.lu_factor(self.gasintervals_chol)
+            self.gasintervals_lu_piv=scipy.linalg.lu_factor(np.transpose(self.gasintervals_chol))
         if np.size(self.Ddepth_depth)>0:
             self.Ddepth_chol=cholesky(self.Ddepth_correlation)
-            self.Ddepth_lu_piv=scipy.linalg.lu_factor(self.Ddepth_chol)
+            self.Ddepth_lu_piv=scipy.linalg.lu_factor(np.transpose(self.Ddepth_chol))
 
 
     def raw_model(self):
@@ -353,10 +357,10 @@ class Drilling:
         self.correlation_corr_LID_before=self.correlation_corr_LID+0
         self.correlation_corr_tau_before=self.correlation_corr_tau+0
 
-        filename=datadir+'parameters-CovariancePrior-AllDrillings.py'
+        filename=datadir+'/parameters-CovariancePrior-AllDrillings.py'
         if os.path.isfile(filename):
             execfile(filename)
-        filename=datadir+self.label+'parameters-CovariancePrior.py'
+        filename=datadir+self.label+'/parameters-CovariancePrior.py'
         if os.path.isfile(filename):
             execfile(filename)
 
@@ -708,7 +712,7 @@ class Drilling:
         if (np.size(self.gasmarkers_depth)>0):
             mpl.errorbar(self.gasmarkers_age, self.gasmarkers_depth, color=color_obs, xerr=self.gasmarkers_sigma, linestyle='', marker='o', markersize=2, label="observations")
 #        mpl.ylim(mpl.ylim()[::-1])
-        for i in range(np.size(self.iceintervals_duration)):
+        for i in range(np.size(self.gasintervals_duration)):
             y1=self.gasintervals_depthtop[i]
             y2=self.gasintervals_depthbot[i]
             x1=self.fct_gage(y1)  #(y2-y1)/(self.iceintervals_duration[i]+self.iceintervals_sigma[i])
@@ -831,10 +835,10 @@ class DrillingCouple:
         self.gasgasmarkers_correlation=np.diag(np.ones(np.size(self.gasgasmarkers_depth1)))
         self.icegasmarkers_correlation=np.diag(np.ones(np.size(self.icegasmarkers_depth1)))
         self.gasicemarkers_correlation=np.diag(np.ones(np.size(self.gasicemarkers_depth1)))
-        filename=datadir+'parameters-CovarianceObservations-AllDrillingCouples.py'
+        filename=datadir+'/parameters-CovarianceObservations-AllDrillingCouples.py'
         if os.path.isfile(filename):
             execfile(filename)
-        filename=datadir+self.label+'parameters-CovarianceObservations.py'
+        filename=datadir+self.label+'/parameters-CovarianceObservations.py'
         if os.path.isfile(filename):
             execfile(filename)
         if np.size(self.iceicemarkers_depth1)>0:
