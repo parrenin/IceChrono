@@ -174,12 +174,12 @@ class Drilling:
 
         xx=np.where(self.a_depth<=self.depth[-1],self.fct_age_model(np.minimum(self.a_depth,self.depth[-1])),np.nan)
         yy=np.where(self.a_depth<=self.depth[-1],self.a_sigma,np.nan)
-        f=interp1d(xx,yy)
+        f=interp1d(xx,yy, bounds_error=False, fill_value=self.a_sigma[-1])
         self.sigmap_corr_a=f(self.corr_a_age)           #FIXME: we should average here since it would be more representative
 
-        xx=np.where(self.LID_depth<=self.depth[-1],self.fct_gage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)
+        xx=np.where(self.LID_depth<=self.depth[-1],self.fct_gage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)  #FIXME: we should concatenate here to really start from age_top
         yy=np.where(self.LID_depth<=self.depth[-1],self.LID_sigma,np.nan)
-        f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[0])
+        f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[-1])
         self.sigmap_corr_LID=f(self.corr_LID_age)           #FIXME: we should average here since it would be more representative
 
         f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
