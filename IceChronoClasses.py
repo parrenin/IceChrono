@@ -636,7 +636,7 @@ class Drilling:
         mpl.figure(self.label+' accumulation')
         mpl.title(self.label+' accumulation')
         mpl.xlabel('Optimized age (yr)')
-        mpl.ylabel('Accumulation (m/an)')
+        mpl.ylabel('Accumulation (m/yr)')
         if show_initial:
             mpl.step(self.age, np.concatenate((self.a_init, np.array([self.a_init[-1]]))), color=color_init, where='post', label='Initial')
         mpl.step(self.age, np.concatenate((self.a_model, np.array([self.a_model[-1]]))), color=color_mod, where='post', label='Model')
@@ -883,8 +883,8 @@ class DrillingCouple:
 
 
         mpl.figure(self.label+' ice-ice')
-        mpl.xlabel(self.D1.label+' ice age')
-        mpl.ylabel(self.D2.label+' ice age')
+        mpl.xlabel(self.D1.label+' ice age (yr b1950)')
+        mpl.ylabel(self.D2.label+' ice age (yr b1950)')
         if (np.size(self.iceicemarkers_depth1)>0):
             if show_initial:
                 mpl.errorbar(self.D1.fct_age_init(self.iceicemarkers_depth1),self.D2.fct_age_init(self.iceicemarkers_depth2), color=color_init, xerr=self.iceicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
@@ -903,8 +903,8 @@ class DrillingCouple:
         mpl.close()
 
         mpl.figure(self.label+' gas-gas')
-        mpl.xlabel(self.D1.label+' gas age')
-        mpl.ylabel(self.D2.label+' gas age')
+        mpl.xlabel(self.D1.label+' gas age (yr b1950)')
+        mpl.ylabel(self.D2.label+' gas age (yr b1950)')
         if (np.size(self.gasgasmarkers_depth1)>0):
             if show_initial:
                 mpl.errorbar(self.D1.fct_gage_init(self.gasgasmarkers_depth1),self.D2.fct_gage_init(self.gasgasmarkers_depth2), color=color_init, xerr=self.gasgasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
@@ -923,8 +923,8 @@ class DrillingCouple:
         mpl.close()
 
         mpl.figure(self.label+' ice-gas')
-        mpl.xlabel(self.D1.label+' ice age')
-        mpl.ylabel(self.D2.label+' gas age')
+        mpl.xlabel(self.D1.label+' ice age (yr b1950)')
+        mpl.ylabel(self.D2.label+' gas age (yr b1950)')
         if (np.size(self.icegasmarkers_depth1)>0):
             if show_initial:
                 mpl.errorbar(self.D1.fct_age_init(self.icegasmarkers_depth1),self.D2.fct_gage_init(self.icegasmarkers_depth2), color=color_init, xerr=self.icegasmarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
@@ -943,8 +943,8 @@ class DrillingCouple:
         mpl.close()
 
         mpl.figure(self.label+' gas-ice')
-        mpl.xlabel(self.D1.label+' gas age')
-        mpl.ylabel(self.D2.label+' ice age')
+        mpl.xlabel(self.D1.label+' gas age (yr b1950)')
+        mpl.ylabel(self.D2.label+' ice age (yr b1950)')
         if (np.size(self.gasicemarkers_depth1)>0):
             if show_initial:
                 mpl.errorbar(self.D1.fct_gage_init(self.gasicemarkers_depth1),self.D2.fct_age_init(self.gasicemarkers_depth2), color=color_init, xerr=self.gasicemarkers_sigma, linestyle='', marker='o', markersize=2, label="Initial")
