@@ -776,7 +776,7 @@ class Drilling:
 #        np.savetxt(datadir+self.label+'/udepth.txt',self.udepth)
 
 
-class DrillingCouple:
+class DrillingPair:
 
     def __init__(self, D1, D2):
         self.D1=D1
@@ -785,7 +785,7 @@ class DrillingCouple:
 
     def init(self):
         self.label=self.D1.label+'-'+self.D2.label
-#        print 'Initialization of drilling couple ',self.label
+#        print 'Initialization of drilling pair ',self.label
 
 
 #TODO: allow to have either dlabel1+'-'dlabel2 or dlbel2+'-'dlabel1 as directory
@@ -838,7 +838,7 @@ class DrillingCouple:
         self.airairmarkers_correlation=np.diag(np.ones(np.size(self.airairmarkers_depth1)))
         self.iceairmarkers_correlation=np.diag(np.ones(np.size(self.iceairmarkers_depth1)))
         self.airicemarkers_correlation=np.diag(np.ones(np.size(self.airicemarkers_depth1)))
-        filename=datadir+'/parameters-CovarianceObservations-AllDrillingCouples.py'
+        filename=datadir+'/parameters-CovarianceObservations-AllDrillingPairs.py'
         if os.path.isfile(filename):
             execfile(filename)
         filename=datadir+self.label+'/parameters-CovarianceObservations.py'

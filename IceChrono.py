@@ -98,8 +98,8 @@ for i,dlabel in enumerate(list_drillings):
 for i,dlabel in enumerate(list_drillings):
     for j,dlabel2 in enumerate(list_drillings):
         if j<i:
-            print 'Initialization of drilling couple '+dlabel2+'-'+dlabel
-            DC[dlabel2+'-'+dlabel]=DrillingCouple(D[dlabel2],D[dlabel])
+            print 'Initialization of drilling pair '+dlabel2+'-'+dlabel
+            DC[dlabel2+'-'+dlabel]=DrillingPair(D[dlabel2],D[dlabel])
             DC[dlabel2+'-'+dlabel].init()
 #            DC[dlabel2+'-'+dlabel].display_init()
 
