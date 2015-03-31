@@ -87,21 +87,21 @@ In the main directory, you have the following output file:
 - `output.txt`		: only contains the program execution time for now.
 
 In each drilling directory, you have the following output files:
-- `output.txt`			: is the main output file. It gives you the posterior estimates and uncertainties of the three input variables (accumulation, LID and thinning) and of the output variables (ice age, gas age, Δdepth, etc.). The header in the file tells you which column is which variable.
+- `output.txt`			: is the main output file. It gives you the posterior estimates and uncertainties of the three input variables (accumulation, LID and thinning) and of the output variables (ice age, air age, Δdepth, etc.). The header in the file tells you which column is which variable.
 - `restart.txt`			: is a restart file, which can be used to start an optimization experiment from the result of a previous optimization experiment, for a faster convergence.
 - `accumulation.pdf`	: is the accumulation figure (with prior and posterior estimates)
 - `Ddepth.pdf`			: is the Δdepth figure (with prior estimates, observations and posterior estimates)
-- `gas_age.pdf`			: is the gas age figure (with prior estimates, observations and posterior estimates)
-- `gaslayerthick.pdf`	: is the gas layer thickness figure (with prior estimates, observations of dated intervals and posterior estimates)
+- `air_age.pdf`			: is the air age figure (with prior estimates, observations and posterior estimates)
+- `airlayerthick.pdf`	: is the air layer thickness figure (with prior estimates, observations of dated intervals and posterior estimates)
 - `ice_age.pdf`			: is the ice age figure (with prior estimates, observations and posterior estimates)
 - `icelayerthick.pdf`	: is the ice layer thickness figure (with prior estimates, observations of dated intervals and posterior estimates)
 - `LID.pdf`				: is the Lock-In Depth figure (with prior estimates, observations and posterior estimates)
 - `thinning.pdf`		: is the thinning figure (with prior and posterior estimates)
 
 In each drilling-couple directory, you have the following output files:
-- `gas-gas.pdf`		: is the air-air stratigraphic links figure (with prior and posterior estimates)
-- `gas-ice.pdf`		: is the air-ice stratigraphic links figure (with prior and posterior estimates)
-- `ice-gas.pdf`		: is the ice-air stratigraphic links figure (with prior and posterior estimates)
+- `air-air.pdf`		: is the air-air stratigraphic links figure (with prior and posterior estimates)
+- `air-ice.pdf`		: is the air-ice stratigraphic links figure (with prior and posterior estimates)
+- `ice-air.pdf`		: is the ice-air stratigraphic links figure (with prior and posterior estimates)
 - `ice-ice.pdf`		: is the ice-ice stratigraphic links figure (with prior and posterior estimates)
 
 
@@ -142,17 +142,17 @@ Then you have one directory per drilling, which contains:
 - `LID-prior.txt`                           : depth / background Lock-in-Depth / standard deviation (in %)
 - `thinning-prior.txt`                      : depth / background thinning function / standard deviation (in %)
 - `ice_age.txt`                             : depth / age / sigma for ice age observations
-- `gas_age.txt`                             : depth / age / sigma for gas age observations
+- `air_age.txt`                             : depth / age / sigma for air age observations
 - `Ddepth.txt`                              : depth / Delta-depth / sigma for Delta-depth observations
 - `ice_age_intervals.txt`		   			: depth\_top / depth\_bottom / duration / sigma for dated ice intervals observations
-- `gas_age_intervals.txt`   		    	: depth\_top / depth\_bottom / duration / sigma for dated gas intervals observations
+- `air_age_intervals.txt`   		    	: depth\_top / depth\_bottom / duration / sigma for dated air intervals observations
 
 Then you have one directory per drilling couple, which contains:
 - `parameters-CovarianceObservations.py`    : this file allows to define the correlation of drilling couple specific observations
 - `ice_depth.txt`           : depth1 / depth2 / sigma on age for ice-ice stratigraphic links observations
-- `gas_depth.txt`           : depth1 / depth2 / sigma on age for gas-gas stratigraphic links observations
-- `icegas_depth.txt`        : depth1 / depth2 / sigma on age for ice-gas stratigraphic links observations
-- `gasice_depth.txt`        : depth1 / depth2 / sigma on age for gas-ice stratigraphic links observations
+- `air_depth.txt`           : depth1 / depth2 / sigma on age for air-air stratigraphic links observations
+- `iceair_depth.txt`        : depth1 / depth2 / sigma on age for ice-air stratigraphic links observations
+- `airice_depth.txt`        : depth1 / depth2 / sigma on age for air-ice stratigraphic links observations
 
 A few things you need to know to use Icechrono:
 1) You can use whatever units you want but they need to be consistent. For example, if you use meters for the depths and years for the dated horizons, you need to use meters per years for the accumulation rates. 
@@ -184,16 +184,16 @@ Feel free to send an email on the mailing list if you need assistance.
 
 For drilling specific observations, you set up the correlation matrices in the file `parameters-CovarianceObservations.py` in the drilling directory.
 - `self.icemarkers_correlation`     : for ice dated horizons
-- `self.gasmarkers_correlation`     : for gas dated horizons
+- `self.airmarkers_correlation`     : for air dated horizons
 - `self.iceintervals_correlation`   : for ice dated intervals
-- `self.gasintervals_correlation`   : for gas dated intervals
+- `self.airintervals_correlation`   : for air dated intervals
 - `self.Ddepth_correlation`         : for Delta-depth observations
 
 For drilling couple specific observations (stratigraphic links), you set up the correlation matrices in the file `parameters-CovarianceObservations.py` in the drilling couple directory.
 - `self.iceicemarkers_correlation`  : for ice-ice stratigraphic links
-- `self.gasgasmarkers_correlation`  : for gas-gas stratigraphic links
-- `self.icegasmarkers_correlation`  : for ice-gas stratigraphic links
-- `self.gasicemarkers_correlation`  : for gas-ice stratigraphic links
+- `self.airairmarkers_correlation`  : for air-air stratigraphic links
+- `self.iceairmarkers_correlation`  : for ice-air stratigraphic links
+- `self.airicemarkers_correlation`  : for air-ice stratigraphic links
 
 Let us take a concrete example and assume we want a correlation matrix for ice dated horizons with ones in the diagonal and with a constant correlation factor k outside the diagonal, you can write:
 
