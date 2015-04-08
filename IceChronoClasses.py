@@ -3,7 +3,11 @@
 #TODO: is there an elegant way to unpack the variables vector in the model function?
 #TODO: allow to save the correction vector to be able to restart while changing the resolution
 #TODO: include some checks for when dDdepth/dz>1
-#TODO: transform all input *gas* files to *air* files in the documentation
+#TODO: Delta-depth observations should be lognormal?
+#TODO: we should superpose two charts for ice and air ages, one for the age and one for the uncertainty, since the min age is not always near 0.
+#TODO: also compute the prior uncertainties and show them in the figures.
+#TODO: the reading of observations does not work if there is only one observation (since the readed matrix is 1D in this case).
+#TODO: is there really a computation gain with the change of variable for the correction functions? Avoiding this change of variables would make the code easier to understand.
 
 
 def interp1d_extrap(x,y):
@@ -51,6 +55,7 @@ class Drilling:
 
         if self.calc_a:
             readarray=np.loadtxt(datadir+self.label+'/isotopes.txt')
+            if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.iso_depth=readarray[:,0]
             if self.calc_a_method=='fullcorr':
                 self.iso_d18Oice=readarray[:,1]
@@ -81,6 +86,7 @@ class Drilling:
                 quit()
         else:
             readarray=np.loadtxt(datadir+self.label+'/accu-prior.txt')
+            if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.a_depth=readarray[:,0]
             self.a_a=readarray[:,1]
             self.a_sigma=readarray[:,2]
@@ -96,6 +102,7 @@ class Drilling:
 
         readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
 #        self.density_depth=readarray[:,0]
+        if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
         self.D_depth=readarray[:,0]
         self.D_D=readarray[:,1]
         f=interp1d_extrap(self.D_depth, self.D_D)
@@ -116,6 +123,7 @@ class Drilling:
         else:
 #            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
             readarray=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+            if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.LID_depth=readarray[:,0]
             self.LID_LID=readarray[:,1]
             self.LID_sigma=readarray[:,2]
@@ -135,6 +143,7 @@ class Drilling:
             self.tau=np.empty_like(self.depth_mid)
         else:
             readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
+            if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.tau_depth=readarray[:,0]
             self.tau_tau=readarray[:,1]
             self.tau_sigma=readarray[:,2]
@@ -223,6 +232,7 @@ class Drilling:
             warnings.simplefilter("ignore")
             if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
                 readarray=np.loadtxt(filename)
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
                 self.icemarkers_depth=readarray[:,0]
                 self.icemarkers_age=readarray[:,1]
                 self.icemarkers_sigma=readarray[:,2]
@@ -236,6 +246,7 @@ class Drilling:
             warnings.simplefilter("ignore")
             if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
                 readarray=np.loadtxt(filename)
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
                 self.airmarkers_depth=readarray[:,0]
                 self.airmarkers_age=readarray[:,1]
                 self.airmarkers_sigma=readarray[:,2]
@@ -249,6 +260,7 @@ class Drilling:
             warnings.simplefilter("ignore")
             if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
                 readarray=np.loadtxt(filename)
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
                 self.iceintervals_depthtop=readarray[:,0]
                 self.iceintervals_depthbot=readarray[:,1]
                 self.iceintervals_duration=readarray[:,2]
@@ -264,6 +276,7 @@ class Drilling:
             warnings.simplefilter("ignore")
             if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
                 readarray=np.loadtxt(filename)
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
                 self.airintervals_depthtop=readarray[:,0]
                 self.airintervals_depthbot=readarray[:,1]
                 self.airintervals_duration=readarray[:,2]
@@ -279,6 +292,7 @@ class Drilling:
             warnings.simplefilter("ignore")
             if os.path.isfile(filename) and open(filename).read() and np.size(np.loadtxt(filename))>0:
                 readarray=np.loadtxt(filename)
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
                 self.Ddepth_depth=readarray[:,0]
                 self.Ddepth_Ddepth=readarray[:,1]
                 self.Ddepth_sigma=readarray[:,2]
@@ -699,7 +713,7 @@ class Drilling:
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_age*10, self.depth, color=color_sigma, label='$\sigma$ x10')   
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth[-1],self.depth[0]))    
+        mpl.axis((self.age_top,x2,self.depth[-1],self.depth[0]))    
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
@@ -735,7 +749,7 @@ class Drilling:
 #        mpl.plot(self.airage-self.sigma_airage, self.depth, color='k', linestyle='-')
         mpl.plot(self.sigma_airage*10, self.depth, color=color_sigma, label='$\sigma$ x10')  
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth[-1],self.depth[0]))    
+        mpl.axis((self.age_top,x2,self.depth[-1],self.depth[0]))    
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/air_age.pdf')
         pp.savefig(mpl.figure(self.label+' air age'))
