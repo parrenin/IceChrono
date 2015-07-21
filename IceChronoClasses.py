@@ -7,7 +7,7 @@
 #TODO: we should superpose two charts for ice and air ages, one for the age and one for the uncertainty, since the min age is not always near 0.
 #TODO: also compute the prior uncertainties and show them in the figures.
 #TODO: the reading of observations does not work if there is only one observation (since the readed matrix is 1D in this case).
-#TODO: is there really a computation gain with the change of variable for the correction functions? Avoiding this change of variables would make the code easier to understand.
+#TODO: is there really a computation gain with the change of variable for the correction functions? Avoiding this change of variables would make the code easier to understand. I think there is no gain since solving A^-1 b when we have the LU factorisation of A does not cost more than computing A^-1 * b when we have computed A^-1.
 
 
 def interp1d_extrap(x,y):
@@ -89,7 +89,8 @@ class Drilling:
             if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.a_depth=readarray[:,0]
             self.a_a=readarray[:,1]
-            self.a_sigma=readarray[:,2]
+            if readarray.shape[1]>=3:
+                self.a_sigma=readarray[:,2]
             f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
             self.a_model=f(self.depth)
             self.a=self.a_model
@@ -126,7 +127,8 @@ class Drilling:
             if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.LID_depth=readarray[:,0]
             self.LID_LID=readarray[:,1]
-            self.LID_sigma=readarray[:,2]
+            if readarray.shape[1]>=3:
+                self.LID_sigma=readarray[:,2]
         f=interp1d_extrap(self.LID_depth, self.LID_LID)
         self.LID_model=f(self.depth)
 
@@ -146,7 +148,8 @@ class Drilling:
             if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
             self.tau_depth=readarray[:,0]
             self.tau_tau=readarray[:,1]
-            self.tau_sigma=readarray[:,2]
+            if readarray.shape[1]>=3:
+                self.tau_sigma=readarray[:,2]
             f=interp1d_extrap(self.tau_depth, self.tau_tau)
             self.tau_model=f(self.depth_mid)
             self.tau=self.tau_model
