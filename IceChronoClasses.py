@@ -632,7 +632,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/thinning.pdf')
         pp.savefig(mpl.figure(self.label+' thinning'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' ice layer thickness')
         mpl.title(self.label+' ice layer thickness')
@@ -660,7 +661,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' ice layer thickness'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' air layer thickness')
         mpl.title(self.label+' air layer thickness')
@@ -688,7 +690,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/airlayerthick.pdf')
 #        pp.savefig(mpl.figure(self.label+' air layer thickness'))  #Fixme: buggy line on anaconda
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' accumulation')
         mpl.title(self.label+' accumulation')
@@ -705,7 +708,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/accumulation.pdf')
         pp.savefig(mpl.figure(self.label+' accumulation'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' LID')
         mpl.title(self.label+' LID')
@@ -722,7 +726,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/LID.pdf')
         pp.savefig(mpl.figure(self.label+' LID'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' ice age')
         mpl.title(self.label+' ice age')
@@ -753,14 +758,15 @@ class Drilling:
         mpl.plot(self.age, self.depth, color=color_opt, label='Posterior +/-$\sigma$')
         mpl.fill_betweenx(self.depth, self.age-self.sigma_age, self.age+self.sigma_age , color=color_ci)
 #        mpl.plot(self.age-self.sigma_age, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_age*10, self.depth, color=color_sigma, label='$\sigma$ x10')   
+        mpl.plot(self.sigma_age*scale_ageci, self.depth, color=color_sigma, label='$\sigma$ x'+str(scale_ageci))   
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_top,x2,self.depth[-1],self.depth[0]))    
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/ice_age.pdf')
         pp.savefig(mpl.figure(self.label+' ice age'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' air age')
         mpl.title(self.label+' air age')
@@ -789,14 +795,15 @@ class Drilling:
         mpl.plot(self.airage, self.depth, color=color_opt, label='Posterior +/-$\sigma$')
 #        mpl.plot(self.airage+self.sigma_airage, self.depth, color='k', linestyle='-', label='+/- 1 sigma')
 #        mpl.plot(self.airage-self.sigma_airage, self.depth, color='k', linestyle='-')
-        mpl.plot(self.sigma_airage*10, self.depth, color=color_sigma, label='$\sigma$ x10')  
+        mpl.plot(self.sigma_airage*scale_ageci, self.depth, color=color_sigma, label='$\sigma$ x'+str(scale_ageci))  
         x1,x2,y1,y2 = mpl.axis()
         mpl.axis((self.age_top,x2,self.depth[-1],self.depth[0]))    
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/air_age.pdf')
         pp.savefig(mpl.figure(self.label+' air age'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' Ddepth')
         mpl.title(self.label+' $\Delta$depth')
@@ -818,7 +825,8 @@ class Drilling:
         pp=PdfPages(datadir+self.label+'/Ddepth.pdf')
         pp.savefig(mpl.figure(self.label+' Ddepth'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
 
     def save(self):
@@ -957,7 +965,8 @@ class DrillingPair:
         pp=PdfPages(datadir+self.label+'/ice-ice.pdf')
         pp.savefig(mpl.figure(self.label+' ice-ice'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' air-air')
         mpl.xlabel(self.D1.label+' air age (yr b1950)')
@@ -977,7 +986,8 @@ class DrillingPair:
         pp=PdfPages(datadir+self.label+'/air-air.pdf')
         pp.savefig(mpl.figure(self.label+' air-air'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' ice-air')
         mpl.xlabel(self.D1.label+' ice age (yr b1950)')
@@ -997,7 +1007,8 @@ class DrillingPair:
         pp=PdfPages(datadir+self.label+'/ice-air.pdf')
         pp.savefig(mpl.figure(self.label+' ice-air'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 
         mpl.figure(self.label+' air-ice')
         mpl.xlabel(self.D1.label+' air age (yr b1950)')
@@ -1017,5 +1028,6 @@ class DrillingPair:
         pp=PdfPages(datadir+self.label+'/air-ice.pdf')
         pp.savefig(mpl.figure(self.label+' air-ice'))
         pp.close()
-        mpl.close()
+        if not show_figures:
+            mpl.close()
 

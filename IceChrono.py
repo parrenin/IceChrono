@@ -29,6 +29,8 @@ print 'Parameters directory is: ',datadir
 output_file = open(datadir+'output.txt','a')
 
 ##Parameters
+scale_ageci=10.
+show_figures=False
 execfile(datadir+'/parameters.py')
 
 
@@ -157,3 +159,5 @@ message='Program execution time: '+str(time.clock()-start_time)+' seconds.'
 print  message
 output_file.write(message)
 
+if show_figures:
+    mpl.show()
