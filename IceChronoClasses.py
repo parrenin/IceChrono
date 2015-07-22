@@ -170,6 +170,7 @@ class Drilling:
 #        print 'depth_mid ', np.size(self.depth_mid)
 #        print 'zeta ', np.size(self.zeta)
         if self.calc_tau:
+            self.thicknessie=self.thickness-self.depth[-1]+self.iedepth[-1]
             self.zeta=(self.thicknessie-self.iedepth_mid)/self.thicknessie  #FIXME: maybe we should use iedepth and thickness_ie here?
             self.tau=np.empty_like(self.depth_mid)
         else:
@@ -259,10 +260,10 @@ class Drilling:
 
 
         self.variables=np.array([])
-        if self.calc_a==True:
-            self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
-        if self.calc_tau==True:
-            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.muprime])))
+#        if self.calc_a==True:
+#            self.variables=np.concatenate((self.variables, np.array([self.A0]), np.array([self.beta])))
+#        if self.calc_tau==True:
+#            self.variables=np.concatenate((self.variables, np.array([self.pprime]), np.array([self.muprime])))
         self.variables=np.concatenate((self.variables, self.corr_tau, self.corr_a, self.corr_LID))
 
 
@@ -460,18 +461,18 @@ class Drilling:
 
     def model(self, variables):
         index=0
-        if self.calc_a==True:
-            self.A0=variables[index]
-            self.beta=variables[index+1]
-            index=index+2
-        if self.calc_tau==True:
-#            self.p=-1+m.exp(variables[index])
-#            self.s=variables[index+1]
-#            self.mu=variables[index+2]
-#            index=index+3
-            self.pprime=variables[index]
-            self.muprime=variables[index+1]
-            index=index+2
+#        if self.calc_a==True:
+#            self.A0=variables[index]
+#            self.beta=variables[index+1]
+#            index=index+2
+#        if self.calc_tau==True:
+##            self.p=-1+m.exp(variables[index])
+##            self.s=variables[index+1]
+##            self.mu=variables[index+2]
+##            index=index+3
+#            self.pprime=variables[index]
+#            self.muprime=variables[index+1]
+#            index=index+2
         self.corr_tau=variables[index:index+np.size(self.corr_tau)]
         self.corr_a=variables[index+np.size(self.corr_tau):index+np.size(self.corr_tau)+np.size(self.corr_a)]
         self.corr_LID=variables[index+np.size(self.corr_tau)+np.size(self.corr_a):index+np.size(self.corr_tau)+np.size(self.corr_a)+np.size(self.corr_LID)]
