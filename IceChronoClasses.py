@@ -214,20 +214,29 @@ class Drilling:
 
 ## Definition of the covariance matrix of the background
 
-        xx=np.where(self.a_depth<=self.depth[-1],self.fct_age_model(np.minimum(self.a_depth,self.depth[-1])),np.nan)
-        yy=np.where(self.a_depth<=self.depth[-1],self.a_sigma,np.nan)
-        f=interp1d(xx,yy, bounds_error=False, fill_value=self.a_sigma[-1])
-        self.sigmap_corr_a=f(self.corr_a_age)           #FIXME: we should average here since it would be more representative
+        try:
+            xx=np.where(self.a_depth<=self.depth[-1],self.fct_age_model(np.minimum(self.a_depth,self.depth[-1])),np.nan)
+            yy=np.where(self.a_depth<=self.depth[-1],self.a_sigma,np.nan)
+            f=interp1d(xx,yy, bounds_error=False, fill_value=self.a_sigma[-1])
+            self.sigmap_corr_a=f(self.corr_a_age)           #FIXME: we should average here since it would be more representative
+        except AttributeError:
+            print 'Sigma on prior accu scenario not defined in the accu-prior.txt file'
 
-        xx=np.where(self.LID_depth<=self.depth[-1],self.fct_airage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)
-        xx=np.concatenate((np.array([self.age_top]),xx))
-        yy=np.where(self.LID_depth<=self.depth[-1],self.LID_sigma,np.nan)
-        yy=np.concatenate((np.array([self.LID_sigma[0]]),yy))
-        f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[-1])
-        self.sigmap_corr_LID=f(self.corr_LID_age)           #FIXME: we should average here since it would be more representative
+        try:
+            xx=np.where(self.LID_depth<=self.depth[-1],self.fct_airage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)
+            xx=np.concatenate((np.array([self.age_top]),xx))
+            yy=np.where(self.LID_depth<=self.depth[-1],self.LID_sigma,np.nan)
+            yy=np.concatenate((np.array([self.LID_sigma[0]]),yy))
+            f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[-1])
+            self.sigmap_corr_LID=f(self.corr_LID_age)           #FIXME: we should average here since it would be more representative
+        except AttributeError:
+            print 'Sigma on prior LID scenario not defined in the LID-prior.txt file'
 
-        f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
-        self.sigmap_corr_tau=f(self.corr_tau_depth)           #FIXME: we should average here since it would be more representative
+        try:
+            f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
+            self.sigmap_corr_tau=f(self.corr_tau_depth)           #FIXME: we should average here since it would be more representative
+        except AttributeError:
+            print 'Sigma on prior thinning scenario not defined in the thinning-prior.txt file'
 
         self.correlation_corr_a_before=self.correlation_corr_a+0
         self.correlation_corr_LID_before=self.correlation_corr_LID+0
