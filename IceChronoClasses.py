@@ -16,6 +16,28 @@ def interp1d_extrap(x,y):
         return np.where(xp<x[0],y[0],np.where(xp>x[-1],y[-1],g(xp)))    
     return f
 
+def interp1d_lin_aver_extrap(x, y):
+    def f(xp):
+        yp=np.nan*np.zeros(np.size(xp)-1)
+        if xp[0]<min(x):
+            xmod=np.concatenate((np.array([xp[0]]),x))
+            ymod=np.concatenate((np.array([y[0]]),y))
+        else:
+            xmod=x+0
+            ymod=y+0
+        if xp[-1]>max(x):
+            xmod=np.concatenate((xmod,np.array([xp[-1]])))
+            ymod=np.concatenate((ymod,np.array([y[-1]])))
+        for i in range(np.size(xp)-1):
+            xx=xmod[np.where(np.logical_and(xmod>xp[i],xmod<xp[i+1]))]
+            xx=np.concatenate((np.array([xp[i]]),xx,np.array([xp[i+1]])))
+            f=interp1d(xmod,ymod)
+            yy=f(xx)
+            yp[i]=np.sum((yy[1:]+yy[:-1])/2*(xx[1:]-xx[:-1]))
+        return yp
+
+    return f
+
 def interp1d_stair_aver_extrap(x, y):
     def f(xp):
         xmod=x+0
@@ -44,6 +66,8 @@ class Drilling:
     def init(self):
 
 #        print 'Initialization of drilling '+self.label
+
+        self.accu_prior_rep='staircase'
 
         execfile(datadir+'/parameters-AllDrillings.py')
         execfile(datadir+self.label+'/parameters.py')
@@ -91,7 +115,12 @@ class Drilling:
             self.a_a=readarray[:,1]
             if readarray.shape[1]>=3:
                 self.a_sigma=readarray[:,2]
-            f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
+            if self.accu_prior_rep=='staircase':
+                f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
+            elif self.accu_prior_rep=='linear':
+                f=interp1d_lin_aver_extrap(self.a_depth,self.a_a)    #FIXME: We should implement a interp1d_lin_aver_extrap function
+            else:
+                print 'Representation of prior accu scenario not recognized'
             self.a_model=f(self.depth)
             self.a=self.a_model
 
