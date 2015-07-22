@@ -6,11 +6,13 @@ opt_method='leastsq'  #leastsq, leastsq-parallel (EXPERIMENTAL), none
 nb_nodes=6         #Number of nodes for the leastsq-parallel mode
 
 #Defines the colors for the graphs
-color_init='c'  
-color_obs='r'
-color_opt='k'
-color_mod='b'
-color_ci='0.8'
-color_sigma='m'
-color_di='g'
-show_initial=False
+color_obs='r'       #color for the observations
+color_opt='k'       #color for the posterior scenario
+color_mod='b'       #color for the prior scenario
+color_ci='0.8'      #color for the confidence intervals
+color_sigma='m'     #color for the uncertainty
+color_di='g'        #color for the dated intervals
+show_initial=False  #always put to False for now
+color_init='c'      #always put to 'c' for now
+scale_ageci=10.     #scaling of the confidence interval in the ice and air age figures
+show_figures=False  #whether to show or not the figures at the end of the run

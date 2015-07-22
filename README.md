@@ -138,9 +138,9 @@ Then you have one directory per drilling, which contains:
 - `parameters.py`                           : all the drilling specific parameters
 - `parameters-CovarianceObservations.py`    : this file allows to define the correlation of drilling specific observations
 - `density-prior.txt`                       : depth / relative density
-- `accu-prior.txt`                          : depth / background accu (in ice-equivalent) / standard deviation (, in %)
-- `LID-prior.txt`                           : depth / background Lock-in-Depth / standard deviation (in %)
-- `thinning-prior.txt`                      : depth / background thinning function / standard deviation (in %)
+- `accu-prior.txt`                          : depth / background accu (in ice-equivalent) / standard deviation (opt, in %)
+- `LID-prior.txt`                           : depth / background Lock-in-Depth / standard deviation (opt, in %)
+- `thinning-prior.txt`                      : depth / background thinning function / standard deviation (opt, in %)
 - `ice_age.txt`                             : depth / age / sigma for ice age observations
 - `air_age.txt`                             : depth / age / sigma for air age observations
 - `Ddepth.txt`                              : depth / Delta-depth / sigma for Delta-depth observations
@@ -172,7 +172,7 @@ Have a look at the file `AICC2012-VLR/parameters.py`, it is commented.
 What is the structure of a drilling `parameters.py` file?
 ---------------------------------------------------------
 
-It defines age at the top of the core, the age equation grid and the correction functions grids. You can also define other parameters that are used to defined the covariance matrices of the priors.
+It defines age at the top of the core, the unthinned depth at the top of the core, the age equation grid, the correction functions grids and the type of representation of the prior accu scenario (linear or staircase). You can also define other parameters that are used to defined the covariance matrices of the priors.
 Have a look at the files `AICC2012-VLR/EDC/parameters.py`, it is commented.
 
 
@@ -215,9 +215,12 @@ You need to define:
 - `self.correlation_corr_a`     : the correlation matix for the accu correction function
 - `self.correlation_corr_LID`   : the correlation matix for the LID correction function
 - `self.correlation_corr_tau`   : the correlation matix for the thinning correction function
+
+Optionnally, if they have not been imported in the accu-prior.txt, LID-prior.txt and thinning-prior.txt files, you can also define:
 - `self.sigmap_corr_a`          : the standard deviation of the accu correction function
 - `self.sigmap_corr_LID`        : the standard deviation of the LID correction function
 - `self.sigmap_corr_tau`        : the standard deviation of the thinning correction function
+
 
 Let us take a concrete example and assume, as in the AICC2012 example, that the accumulation correlation linearly decreases to zero when the absolute value of the age difference of the accumulation corrections increases to lambda_a yr. We first define a function that linearly decreases to zero from 0 to 4000 and which is zero above 4000:
 
