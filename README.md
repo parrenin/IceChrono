@@ -8,7 +8,8 @@ What this manual is and is not?
 -------------------------------
 
 This manual is a documentation on how to use the IceChrono software.  
-It is _not_ a description of the IceChrono principles. Please read to the scientific articles describing IceChrono for that purpose.  
+It is _not_ a description of the IceChrono principles. Please read to the scientific articles describing IceChrono for that purpose:  
+Parrenin, F., Bazin, L., Capron, E., Landais, A., Lemieux-Dudon, B. and Masson-Delmotte, V.: IceChrono1: a probabilistic model to compute a common and optimal chronology for several ice cores, _Geosci. Model Dev._, 8(5), 1473–1492, doi:10.5194/gmd-8-1473-2015, 2015.  
 It is _not_ an operating system or python documentation. Please use your operating system or python documentation instead.
 
 
