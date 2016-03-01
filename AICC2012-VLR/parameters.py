@@ -1,5 +1,3 @@
-#TODO: use an irregular resolution to decrease computation time.
-
 list_drillings=['EDC','VK','TALDICE','EDML','NGRIP']
 
 opt_method='leastsq'  #leastsq, leastsq-parallel, none

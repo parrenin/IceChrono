@@ -33,7 +33,7 @@ def interp1d_lin_aver_extrap(x, y):
             xx=np.concatenate((np.array([xp[i]]),xx,np.array([xp[i+1]])))
             f=interp1d(xmod,ymod)
             yy=f(xx)
-            yp[i]=np.sum((yy[1:]+yy[:-1])/2*(xx[1:]-xx[:-1]))
+            yp[i]=np.sum((yy[1:]+yy[:-1])/2*(xx[1:]-xx[:-1]))/(xp[i+1]-xp[i])
         return yp
 
     return f
