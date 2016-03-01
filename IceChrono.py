@@ -56,7 +56,6 @@ def residuals(var):
         for j,dlabel2 in enumerate(list_drillings):
             if j<i:
                 resi=np.concatenate((resi,DC[dlabel2+'-'+dlabel].residuals()))
-#                print 'test: ',dlabel2,dlabel
     return resi
 
 def cost_function(var):

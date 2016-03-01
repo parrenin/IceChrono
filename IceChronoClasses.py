@@ -512,7 +512,6 @@ class Drilling:
    
     def fct_airage(self, depth):
         f=interp1d(self.depth,self.airage)
-#        print 'depth: ',depth
         return f(depth)
 
     def fct_airage_init(self, depth):
@@ -871,7 +870,6 @@ class DrillingPair:
             self.airairmarkers_depth1=readarray[:,0]
             self.airairmarkers_depth2=readarray[:,1]
             self.airairmarkers_sigma=readarray[:,2]
-#            print 'test reading: ',self.airairmarkers_depth2
         else:
             self.airairmarkers_depth1=np.array([])
             self.airairmarkers_depth2=np.array([])
