@@ -656,7 +656,7 @@ class Drilling:
         mpl.plot(self.icelayerthick, self.depth_mid, color=color_opt, label='Posterior +/-$\sigma$')
         mpl.fill_betweenx(self.depth_mid, self.icelayerthick-self.sigma_icelayerthick, self.icelayerthick+self.sigma_icelayerthick, color=color_ci)
         x1,x2,y1,y2 = mpl.axis()
-        mpl.axis((x1,x2,self.depth[-1],self.depth[0]))
+        mpl.axis((0,x2,self.depth[-1],self.depth[0]))
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/icelayerthick.pdf')
         pp.savefig(mpl.figure(self.label+' ice layer thickness'))
@@ -688,7 +688,8 @@ class Drilling:
         mpl.axis((0, 2*max(self.icelayerthick),self.depth[-1],self.depth[0]))
         mpl.legend(loc="best")
         pp=PdfPages(datadir+self.label+'/airlayerthick.pdf')
-#        pp.savefig(mpl.figure(self.label+' air layer thickness'))  #Fixme: buggy line on anaconda
+        if show_airlayerthick:
+            pp.savefig(mpl.figure(self.label+' air layer thickness'))  #Fixme: buggy line on anaconda
         pp.close()
         if not show_figures:
             mpl.close()
@@ -830,9 +831,9 @@ class Drilling:
 
 
     def save(self):
-        output=np.vstack((self.depth,self.age,self.sigma_age,self.airage,self.sigma_airage,np.concatenate((self.a,np.array([self.a[-1]]))),np.concatenate((self.sigma_a,np.array([self.sigma_a[-1]]))),np.concatenate((self.tau,np.array([self.tau[-1]]))),np.concatenate((self.sigma_tau,np.array([self.sigma_tau[-1]]))),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth,np.concatenate((self.a_model,np.array([self.a_model[-1]]))),np.concatenate((self.sigma_a_model,np.array([self.sigma_a_model[-1]]))),np.concatenate((self.tau_model,np.array([self.tau_model[-1]]))),np.concatenate((self.sigma_tau_model,np.array([self.sigma_tau_model[-1]]))),self.LID_model,self.sigma_LID_model))
+        output=np.vstack((self.depth,self.age,self.sigma_age,self.airage,self.sigma_airage,np.append(self.a,self.a[-1]),np.append(self.sigma_a,self.sigma_a[-1]),np.append(self.tau,self.tau[-1]),np.append(self.sigma_tau,self.sigma_tau[-1]),self.LID,self.sigma_LID, self.Ddepth,self.sigma_Ddepth,np.append(self.a_model,self.a_model[-1]),np.append(self.sigma_a_model,self.sigma_a_model[-1]),np.append(self.tau_model,self.tau_model[-1]),np.append(self.sigma_tau_model,self.sigma_tau_model[-1]),self.LID_model,self.sigma_LID_model,np.append(self.icelayerthick,self.icelayerthick[-1]),np.append(self.sigma_icelayerthick,self.sigma_icelayerthick[-1]),np.append(self.airlayerthick,self.airlayerthick[-1]),np.append(self.sigma_airlayerthick,self.sigma_airlayerthick[-1])))
         with open(datadir+self.label+'/output.txt','w') as f:
-            f.write('#depth\tage\tsigma_age\tair_age\tsigma_air_age\taccu\tsigma_accu\tthinning\tsigma_thinning\tLID\tsigma_LID\tDdepth\tsigma_Ddepth\taccu_model\tsigma_accu_model\tthinning_model\tsigma_thinning_model\tLID_model\tsigma_LID_model\n')
+            f.write('#depth\tage\tsigma_age\tair_age\tsigma_air_age\taccu\tsigma_accu\tthinning\tsigma_thinning\tLID\tsigma_LID\tDdepth\tsigma_Ddepth\taccu_model\tsigma_accu_model\tthinning_model\tsigma_thinning_model\tLID_model\tsigma_LID_model\ticelayerthick\tsigma_icelayerthick\tairlayerthick\tsigma_airlayerthick\n')
             np.savetxt(f,np.transpose(output), delimiter='\t')
         np.savetxt(datadir+self.label+'/restart.txt',np.transpose(self.variables))
     

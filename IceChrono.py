@@ -31,6 +31,7 @@ output_file = open(datadir+'output.txt','a')
 ##Parameters
 scale_ageci=10.
 show_figures=False
+show_airlayerthick=False
 execfile(datadir+'/parameters.py')
 
 
