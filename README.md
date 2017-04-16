@@ -223,22 +223,16 @@ Optionnally, if they have not been imported in the accu-prior.txt, LID-prior.txt
 - `self.sigmap_corr_tau`        : the standard deviation of the thinning correction function
 
 
-Let us take a concrete example and assume, as in the AICC2012 example, that the accumulation correlation linearly decreases to zero when the absolute value of the age difference of the accumulation corrections increases to lambda_a yr. We first define a function that linearly decreases to zero from 0 to 4000 and which is zero above 4000:
-
-```
-f=interp1d(np.array([0,self.lambda_a,10000000]),np.array([1, 0, 0]))
-```
-
-Then we define a matrix whose term (i,j) is equal to the age difference of the accumulation corrections `self.corr_a_age[i]-self.corr_a_age[j]`:
+Let us take a concrete example and assume, as in the AICC2012 example, that the accumulation correlation linearly decreases to zero when the absolute value of the age difference of the accumulation corrections increases to lambda_a yr. We first define a matrix whose term (i,j) is equal to the age difference of the accumulation corrections `self.corr_a_age[i]-self.corr_a_age[j]`:
 
 ```
 M=np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age-np.transpose(np.ones((np.size(self.corr_a_age),np.size(self.corr_a_age)))*self.corr_a_age)
 ```
 
-And then we define the correlation matrix:
+And then we define the correlation matrix by interpolation a function that linearly decreases from 1 to 0 between 0 and self.lambda_a:
 
 ```
-self.correlation_corr_a=f(np.abs(M))
+self.correlation_corr_a=np.interp(np.abs(M), np.array([0,self.lambda_a]),np.array([1, 0]))
 ```
 
 Don't forget that if you find the use of python and the IceChrono internal variables too difficult, you can define your correlation matrices outside IceChrono and import them here by using for example the `np.loadtxt` function.

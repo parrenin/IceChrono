@@ -9,7 +9,6 @@ import multiprocessing
 import warnings
 import os
 import scipy.linalg
-from scipy.interpolate import interp1d
 from scipy.optimize import leastsq, minimize
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy.linalg import cholesky
