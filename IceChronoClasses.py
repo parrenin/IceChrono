@@ -10,50 +10,37 @@
 #TODO: is there really a computation gain with the change of variable for the correction functions? Avoiding this change of variables would make the code easier to understand. I think there is no gain since solving A^-1 b when we have the LU factorisation of A does not cost more than computing A^-1 * b when we have computed A^-1.
 
 
-def interp1d_extrap(x,y):
-    def f(xp):
-        g=interp1d(x,y, bounds_error=False)
-        return np.where(xp<x[0],y[0],np.where(xp>x[-1],y[-1],g(xp)))    
-    return f
-
-def interp1d_lin_aver_extrap(x, y):
-    def f(xp):
-        yp=np.nan*np.zeros(np.size(xp)-1)
-        if xp[0]<min(x):
-            xmod=np.concatenate((np.array([xp[0]]),x))
-            ymod=np.concatenate((np.array([y[0]]),y))
-        else:
-            xmod=x+0
-            ymod=y+0
-        if xp[-1]>max(x):
-            xmod=np.concatenate((xmod,np.array([xp[-1]])))
-            ymod=np.concatenate((ymod,np.array([y[-1]])))
-        for i in range(np.size(xp)-1):
-            xx=xmod[np.where(np.logical_and(xmod>xp[i],xmod<xp[i+1]))]
-            xx=np.concatenate((np.array([xp[i]]),xx,np.array([xp[i+1]])))
-            f=interp1d(xmod,ymod)
-            yy=f(xx)
-            yp[i]=np.sum((yy[1:]+yy[:-1])/2*(xx[1:]-xx[:-1]))/(xp[i+1]-xp[i])
-        return yp
-
-    return f
-
-def interp1d_stair_aver_extrap(x, y):
-    def f(xp):
+def interp_lin_aver(xp, x, y):
+    yp=np.nan*np.zeros(np.size(xp)-1)
+    if xp[0]<min(x):
+        xmod=np.concatenate((np.array([xp[0]]),x))
+        ymod=np.concatenate((np.array([y[0]]),y))
+    else:
         xmod=x+0
         ymod=y+0
-        if xp[0]<x[0]:
-            xmod=np.concatenate((np.array([xp[0]]),xmod))
-            ymod=np.concatenate((np.array([y[0]]),ymod))
-        if xp[-1]>x[-1]:
-            xmod=np.concatenate((xmod,np.array([xp[-1]])))
-            ymod=np.concatenate((ymod,np.array([y[-1]])))
-        yint=np.cumsum(np.concatenate((np.array([0]),ymod[:-1]*(xmod[1:]-xmod[:-1]))))
-        g=interp1d(xmod,yint)
-        yp=(g(xp[1:])-g(xp[:-1]))/(xp[1:]-xp[:-1])     #Maybe this is suboptimal since we compute twice g(xp[i])
-        return yp
+    if xp[-1]>max(x):
+        xmod=np.concatenate((xmod,np.array([xp[-1]])))
+        ymod=np.concatenate((ymod,np.array([y[-1]])))
+    for i in range(np.size(xp)-1):
+        xx=xmod[np.where(np.logical_and(xmod>xp[i],xmod<xp[i+1]))]
+        xx=np.concatenate((np.array([xp[i]]),xx,np.array([xp[i+1]])))
+        yy=np.interp(xx, xmod, ymod)
+        yp[i]=np.sum((yy[1:]+yy[:-1])/2*(xx[1:]-xx[:-1]))/(xp[i+1]-xp[i])
+    return yp
 
-    return f
+def interp_stair_aver(xp, x, y):
+    xmod=x+0
+    ymod=y+0
+    if xp[0]<x[0]:
+        xmod=np.concatenate((np.array([xp[0]]),xmod))
+        ymod=np.concatenate((np.array([y[0]]),ymod))
+    if xp[-1]>x[-1]:
+        xmod=np.concatenate((xmod,np.array([xp[-1]])))
+        ymod=np.concatenate((ymod,np.array([y[-1]])))
+    yint=np.cumsum(np.concatenate((np.array([0]),ymod[:-1]*(xmod[1:]-xmod[:-1]))))
+    yp=(np.interp(xp[1:], xmod, yint)-np.interp(xp[:-1], xmod, yint))/(xp[1:]-xp[:-1])     #Maybe this is suboptimal since we compute twice g(xp[i])
+    return yp
+
 
 def gaussian(x):
     return np.exp(-x**2/2)
@@ -83,14 +70,11 @@ class Drilling:
             self.iso_depth=readarray[:,0]
             if self.calc_a_method=='fullcorr':
                 self.iso_d18Oice=readarray[:,1]
-                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Oice)
-                self.d18Oice=f(self.depth)
+                self.d18Oice=interp.stair_aver(self.depth, self.iso_depth, self.iso_d18Oice)
                 self.iso_deutice=readarray[:,2]
-                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_deutice)
-                self.deutice=f(self.depth)
+                self.deutice=interp_stair_aver(self.depth, self.iso_depth, self.iso_deutice)
                 self.iso_d18Osw=readarray[:,3]
-                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Osw)
-                self.d18Osw=f(self.depth)
+                self.d18Osw=interp.stair_aver(self.depth, self.iso_depth, self.iso_d18Osw)
                 self.excess=self.deutice-8*self.d18Oice   # dans Uemura : d=excess
                 self.a=np.empty_like(self.deutice)
                 self.d18Oice_corr=self.d18Oice-self.d18Osw*(1+self.d18Oice/1000)/(1+self.d18Osw/1000)	#Uemura (1)
@@ -99,12 +83,10 @@ class Drilling:
                 self.deutice_fullcorr=self.deutice_corr+self.gamma_source/self.beta_source*self.excess_corr
             elif self.calc_a_method=='deut':
                 self.iso_deutice=readarray[:,1]
-                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_deutice)
-                self.deutice_fullcorr=f(self.depth)
+                self.deutice_fullcorr=interp_stair_aver(self.depth, self.iso_depth, self.iso_deutice)
             elif selc.calc_a_method=='d18O':
                 self.d18Oice=readarray[:,1]
-                f=interp1d_stair_aver_extrap(self.iso_depth, self.iso_d18Oice)
-                self.deutice_fullcorr=8*f(depth)
+                self.deutice_fullcorr=8*interp_stair_aver(self.depth, self.iso_depth, self.iso_d18Oice)
             else:
                 print 'Accumulation method not recognized'
                 quit()
@@ -116,12 +98,11 @@ class Drilling:
             if readarray.shape[1]>=3:
                 self.a_sigma=readarray[:,2]
             if self.accu_prior_rep=='staircase':
-                f=interp1d_stair_aver_extrap(self.a_depth, self.a_a)
+                self.a_model=interp_stair_aver(self.depth, self.a_depth, self.a_a)
             elif self.accu_prior_rep=='linear':
-                f=interp1d_lin_aver_extrap(self.a_depth,self.a_a)    #FIXME: We should implement a interp1d_lin_aver_extrap function
+                self.a_model=interp_lin_aver(self.depth, self.a_depth, self.a_a)
             else:
                 print 'Representation of prior accu scenario not recognized'
-            self.a_model=f(self.depth)
             self.a=self.a_model
 
 
@@ -135,8 +116,7 @@ class Drilling:
         if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
         self.D_depth=readarray[:,0]
         self.D_D=readarray[:,1]
-        f=interp1d_extrap(self.D_depth, self.D_D)
-        self.D=f(self.depth_mid)
+        self.D=np.interp(self.depth_mid, self.D_depth, self.D_D)
 
         self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
         self.iedepth_mid=(self.iedepth[1:]+self.iedepth[:-1])/2
@@ -158,8 +138,7 @@ class Drilling:
             self.LID_LID=readarray[:,1]
             if readarray.shape[1]>=3:
                 self.LID_sigma=readarray[:,2]
-        f=interp1d_extrap(self.LID_depth, self.LID_LID)
-        self.LID_model=f(self.depth)
+        self.LID_model=np.interp(self.depth, self.LID_depth, self.LID_LID)
 
 
 
@@ -180,8 +159,7 @@ class Drilling:
             self.tau_tau=readarray[:,1]
             if readarray.shape[1]>=3:
                 self.tau_sigma=readarray[:,2]
-            f=interp1d_extrap(self.tau_depth, self.tau_tau)
-            self.tau_model=f(self.depth_mid)
+            self.tau_model=np.interp(self.depth_mid, self.tau_depth, self.tau_tau)
             self.tau=self.tau_model
 
         self.raw_model()
@@ -216,26 +194,17 @@ class Drilling:
 ## Definition of the covariance matrix of the background
 
         try:
-            xx=np.where(self.a_depth<=self.depth[-1],self.fct_age_model(np.minimum(self.a_depth,self.depth[-1])),np.nan)
-            yy=np.where(self.a_depth<=self.depth[-1],self.a_sigma,np.nan)
-            f=interp1d(xx,yy, bounds_error=False, fill_value=self.a_sigma[-1])
-            self.sigmap_corr_a=f(self.corr_a_age)           #FIXME: we should average here since it would be more representative
+            self.sigmap_corr_a=np.interp(self.corr_a_age, self.fct_age_model(self.a_depth), self.a_sigma)           #FIXME: we should average here since it would be more representative
         except AttributeError:
             print 'Sigma on prior accu scenario not defined in the accu-prior.txt file'
 
         try:
-            xx=np.where(self.LID_depth<=self.depth[-1],self.fct_airage_model(np.minimum(self.LID_depth,self.depth[-1])),np.nan)
-            xx=np.concatenate((np.array([self.age_top]),xx))
-            yy=np.where(self.LID_depth<=self.depth[-1],self.LID_sigma,np.nan)
-            yy=np.concatenate((np.array([self.LID_sigma[0]]),yy))
-            f=interp1d(xx,yy, bounds_error=False, fill_value=self.LID_sigma[-1])
-            self.sigmap_corr_LID=f(self.corr_LID_age)           #FIXME: we should average here since it would be more representative
+            self.sigmap_corr_LID=np.interp(self.corr_LID_age, self.fct_airage_model(self.LID_depth) , self.LID_sigma)          #FIXME: we should average here since it would be more representative
         except AttributeError:
             print 'Sigma on prior LID scenario not defined in the LID-prior.txt file'
 
         try:
-            f=interp1d(self.tau_depth,self.tau_sigma, bounds_error=False, fill_value=self.tau_sigma[-1])
-            self.sigmap_corr_tau=f(self.corr_tau_depth)           #FIXME: we should average here since it would be more representative
+            self.sigmap_corr_tau=np.interp(self.corr_tau_depth, self.tau_depth, self.tau_sigma)           #FIXME: we should average here since it would be more representative
         except AttributeError:
             print 'Sigma on prior thinning scenario not defined in the thinning-prior.txt file'
 
@@ -393,21 +362,19 @@ class Drilling:
         #udepth
         self.udepth_model=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model*self.depth_inter)))
         
-        g_model=interp1d(self.iedepth, self.udepth_model)
         self.LIDIE_model=self.LID_model*self.Dfirn
-        self.ULIDIE_model=g_model(self.LIDIE_model)
-        i_model=interp1d(self.udepth_model, self.depth)
+        self.ULIDIE_model=np.interp(self.LIDIE_model, self.iedepth, self.udepth_model)
 
         #Ice age
         self.icelayerthick_model=self.tau_model*self.a_model/self.D
         self.age_model=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau_model/self.a_model*self.depth_inter)))
             
-        f_model=interp1d(self.depth, self.age_model, bounds_error=False, fill_value=np.nan)
 
         #air age
-        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_top, self.udepth_model-self.ULIDIE_model, np.nan))  
+#        self.ice_equiv_depth_model=i_model(np.where(self.udepth_model-self.ULIDIE_model>self.udepth_top, self.udepth_model-self.ULIDIE_model, np.nan))  
+        self.ice_equiv_depth_model=np.interp(self.udepth_model-self.ULIDIE_model, self.udepth_model, self.depth)  
         self.Ddepth_model=self.depth-self.ice_equiv_depth_model
-        self.airage_model=f_model(self.ice_equiv_depth_model)
+        self.airage_model=np.interp(self.ice_equiv_depth_model, self.depth, self.age_model, left=np.nan, right=np.nan)
         self.airlayerthick_model=1/np.diff(self.airage_model)
 
     def corrected_model(self):
@@ -433,29 +400,23 @@ class Drilling:
 
         #Accu
         corr=np.dot(self.chol_a,self.corr_a)*self.sigmap_corr_a
-        j=interp1d_extrap(self.corr_a_age, corr)
-        self.a=self.a_model*np.exp(j(self.age_model[:-1])) #FIXME: we should use mid-age and not age
+        self.a=self.a_model*np.exp(np.interp(self.age_model[:-1], self.corr_a_age, corr)) #FIXME: we should use mid-age and not age
 
         #Thinning
-        h=interp1d(self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau)
-        self.tau=self.tau_model*np.exp(h(self.depth_mid))
+        self.tau=self.tau_model*np.exp(np.interp(self.depth_mid, self.corr_tau_depth, np.dot(self.chol_tau,self.corr_tau)*self.sigmap_corr_tau))
         self.udepth=self.udepth_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau*self.depth_inter)))
-        g=interp1d(self.iedepth, self.udepth)
         corr=np.dot(self.chol_LID,self.corr_LID)*self.sigmap_corr_LID
-        j=interp1d_extrap(self.corr_LID_age, corr)
-        self.LID=self.LID_model*np.exp(j(self.age_model))
+        self.LID=self.LID_model*np.exp(np.interp(self.age_model, self.corr_LID_age, corr))
         self.LIDIE=self.LID*self.Dfirn
-        self.ULIDIE=g(self.LIDIE)
-        i=interp1d(self.udepth, self.depth)
+        self.ULIDIE=np.interp(self.LIDIE, self.iedepth, self.udepth)
 
         #Ice age
         self.icelayerthick=self.tau*self.a/self.D
         self.age=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a*self.depth_inter)))
-        f=interp1d(self.depth,self.age, bounds_error=False, fill_value=np.nan)
 
-        self.ice_equiv_depth=i(np.where(self.udepth-self.LIDIE>self.udepth_top, self.udepth-self.LIDIE, np.nan))
+        self.ice_equiv_depth=np.interp(self.udepth-self.LIDIE, self.udepth, self.depth)
         self.Ddepth=self.depth-self.ice_equiv_depth
-        self.airage=f(self.ice_equiv_depth)
+        self.airage=np.interp(self.ice_equiv_depth, self.depth,self.age, left=np.nan, right=np.nan)
         self.airlayerthick=1/np.diff(self.airage)
 
 
@@ -499,32 +460,25 @@ class Drilling:
         self.Ddepth_init=self.Ddepth
 
     def fct_age(self, depth):
-        f=interp1d(self.depth,self.age)
-        return f(depth)
+        return np.interp(depth, self.depth, self.age)
 
     def fct_age_init(self, depth):
-        f=interp1d(self.depth,self.age_init)
-        return f(depth)
+        return np.interp(depth, self.depth, self.age_init)
    
     def fct_age_model(self, depth):
-        f=interp1d(self.depth,self.age_model)
-        return f(depth)
+        return np.interp(depth, self.depth,self.age_model)
    
     def fct_airage(self, depth):
-        f=interp1d(self.depth,self.airage)
-        return f(depth)
+        return np.interp(depth, self.depth, self.airage)
 
     def fct_airage_init(self, depth):
-        f=interp1d(self.depth,self.airage_init)
-        return f(depth)
+        return np.interp(depth, self.depth, self.airage_init)
 
     def fct_airage_model(self, depth):
-        f=interp1d(self.depth,self.airage_model)
-        return f(depth)
+        return np.interp(depth, self.depth, self.airage_model)
 
     def fct_Ddepth(self, depth):
-        f=interp1d(self.depth,self.Ddepth)
-        return f(depth)
+        return np.interp(depth, self.depth, self.Ddepth)
 
     def residuals(self, variables):
         self.model(variables)
@@ -602,12 +556,10 @@ class Drilling:
         c_model=np.dot(jacob[index:index+np.size(self.airlayerthick),:],np.dot(self.hess,np.transpose(jacob[index:index+np.size(self.airlayerthick),:])))
         self.sigma_airlayerthick=np.sqrt(np.diag(c_model))
 
-        f=interp1d_extrap(self.corr_a_age, self.sigmap_corr_a)
-        self.sigma_a_model=f((self.age_model[1:]+self.age_model[:-1])/2)
-        f=interp1d_extrap(self.corr_LID_age, self.sigmap_corr_LID)
-        self.sigma_LID_model=f(self.age_model)
-        f=interp1d_extrap(self.corr_tau_depth, self.sigmap_corr_tau)
-        self.sigma_tau_model=f(self.depth_mid)
+
+        self.sigma_a_model=np.interp((self.age_model[1:]+self.age_model[:-1])/2, self.corr_a_age, self.sigmap_corr_a)
+        self.sigma_LID_model=np.interp(self.age_model, self.corr_LID_age, self.sigmap_corr_LID)
+        self.sigma_tau_model=np.interp(self.depth_mid, self.corr_tau_depth, self.sigmap_corr_tau)
 
         
     

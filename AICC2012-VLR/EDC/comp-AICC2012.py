@@ -36,7 +36,7 @@ g=interpolate.interp1d(AICC2012_depth,AICC2012_age_sigma, bounds_error=False, fi
 mpl.figure('Ice Age')
 mpl.fill_between(f(IC_depth),-g(IC_depth),+g(IC_depth), color='0.8')
 mpl.plot(f(IC_depth),IC_age-f(IC_depth), color='k', label='IceChrono-Datice')
-mpl.plot(f(IC_depth),IC_age-f(IC_depth)-IC_age_sigma, color='k', linestyle='--', label='IceChrono confidence interval')
+mpl.plot(f(IC_depth),IC_age-f(IC_depth)-IC_age_sigma, color='k', linestyle='--', label='IceChrono credible interval')
 mpl.plot(f(IC_depth),IC_age-f(IC_depth)+IC_age_sigma, color='k', linestyle='--')
 mpl.ylabel('Ice age difference (yr)')
 mpl.xlabel('AICC2012 age (yr b1950)') 
@@ -57,7 +57,7 @@ g=interpolate.interp1d(AICC2012_depth,AICC2012_gage_sigma, bounds_error=False, f
 mpl.figure('Air Age')
 mpl.fill_between(f(IC_depth),-g(IC_depth),+g(IC_depth), color='0.8')
 mpl.plot(f(IC_depth),IC_gage-f(IC_depth), color='k', label='IceChrono-Datice')
-mpl.plot(f(IC_depth),IC_gage-f(IC_depth)-IC_gage_sigma, color='k', linestyle='--', label='IceChrono confidence interval')
+mpl.plot(f(IC_depth),IC_gage-f(IC_depth)-IC_gage_sigma, color='k', linestyle='--', label='IceChrono credible interval')
 mpl.plot(f(IC_depth),IC_gage-f(IC_depth)+IC_gage_sigma, color='k', linestyle='--')
 mpl.ylabel('Air age difference (yr)')
 mpl.xlabel('AICC2012 age (yr b1950)') 
@@ -86,14 +86,14 @@ pp.close()
 
 
 #f=interpolate.interp1d(AICC2012_depth,AICC2012_age_sigma, bounds_error=False, fill_value=np.nan)
-#mpl.figure('Ice Age confidence interval')
+#mpl.figure('Ice Age credible interval')
 #mpl.plot(IC_age_sigma-f(IC_depth),IC_depth)
-#mpl.xlabel('IceChrono - AICC2012 ice age confidence interval difference (yr)')
+#mpl.xlabel('IceChrono - AICC2012 ice age credible interval difference (yr)')
 #mpl.ylabel('depth (m)') 
 #x1,x2,y1,y2 = mpl.axis()
 #mpl.axis((x1, x2, y2, y1))
 #pp=PdfPages('AICC2012-age_sigma.pdf')
-#pp.savefig(mpl.figure('Ice Age confidence interval'))
+#pp.savefig(mpl.figure('Ice Age credible interval'))
 #pp.close()
 
 
@@ -110,14 +110,14 @@ pp.close()
 
 
 #g=interpolate.interp1d(AICC2012_depth,AICC2012_gage_sigma, bounds_error=False, fill_value=np.nan)
-#mpl.figure('Air Age confidence interval')
+#mpl.figure('Air Age credible interval')
 #mpl.plot(IC_gage_sigma-g(IC_depth),IC_depth)
-#mpl.xlabel('IceChrono - AICC2012 air age confidence interval difference (yr)')
+#mpl.xlabel('IceChrono - AICC2012 air age credible interval difference (yr)')
 #mpl.ylabel('depth (m)') 
 #x1,x2,y1,y2 = mpl.axis()
 #mpl.axis((x1, x2, y2, y1))
 #pp=PdfPages('AICC2012-gage_sigma.pdf')
-#pp.savefig(mpl.figure('Air Age confidence interval'))
+#pp.savefig(mpl.figure('Air Age credible interval'))
 #pp.close()
 
 
