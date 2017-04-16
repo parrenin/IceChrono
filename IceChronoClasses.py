@@ -561,6 +561,20 @@ class Drilling:
         self.sigma_LID_model=np.interp(self.age_model, self.corr_LID_age, self.sigmap_corr_LID)
         self.sigma_tau_model=np.interp(self.depth_mid, self.corr_tau_depth, self.sigmap_corr_tau)
 
+    def sigma_zero(self):
+
+        self.sigma_age=np.zeros_like(self.age)
+        self.sigma_airage=np.zeros_like(self.airage)
+        self.sigma_Ddepth=np.zeros_like(self.Ddepth)
+        self.sigma_a=np.zeros_like(self.a)
+        self.sigma_tau=np.zeros_like(self.tau)
+        self.sigma_LID=np.zeros_like(self.LID)
+        self.sigma_icelayerthick=np.zeros_like(self.icelayerthick)
+        self.sigma_airlayerthick=np.zeros_like(self.airlayerthick)
+        self.sigma_a_model=np.interp((self.age_model[1:]+self.age_model[:-1])/2, self.corr_a_age, self.sigmap_corr_a)
+        self.sigma_LID_model=np.interp(self.age_model, self.corr_LID_age, self.sigmap_corr_LID)
+        self.sigma_tau_model=np.interp(self.depth_mid, self.corr_tau_depth, self.sigmap_corr_tau)
+
         
     
 

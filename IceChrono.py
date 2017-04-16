@@ -9,6 +9,7 @@ import multiprocessing
 import warnings
 import os
 import scipy.linalg
+from scipy.interpolate import interp1d
 from scipy.optimize import leastsq, minimize
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy.linalg import cholesky
@@ -125,23 +126,26 @@ elif opt_method=="L-BFGS-B":
 #    cost=cost_function(variables)
 elif opt_method=='none':
     print 'No optimization'
-    hess=np.zeros((np.size(variables),np.size(variables)))
+#    hess=np.zeros((np.size(variables),np.size(variables)))
 else:
     print opt_method,': Optimization method not recognized.'
     quit()
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
 #print 'solution: ',variables
 print 'cost function: ',cost_function(variables)
-if hess==None:
+if opt_method!='none' and hess==None:
     print 'singular matrix encountered (flat curvature in some direction)'
     quit()
 print 'Calculation of confidence intervals'
 index=0
 for dlabel in list_drillings:
-    D[dlabel].variables=variables[index:index+np.size(D[dlabel].variables)]
-    D[dlabel].hess=hess[index:index+np.size(D[dlabel].variables),index:index+np.size(D[dlabel].variables)]
-    index=index+np.size(D[dlabel].variables)
-    D[dlabel].sigma()
+    if opt_method=='none':
+        D[dlabel].sigma_zero()
+    else:
+        D[dlabel].variables=variables[index:index+np.size(D[dlabel].variables)]
+        D[dlabel].hess=hess[index:index+np.size(D[dlabel].variables),index:index+np.size(D[dlabel].variables)]
+        index=index+np.size(D[dlabel].variables)
+        D[dlabel].sigma()
 
 ###Final display and output
 print 'Display of results'
