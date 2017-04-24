@@ -27,6 +27,8 @@ for root, dirs, files in os.walk(dir, topdown=False):
         if len(os.listdir(path)) == 0:
             os.rmdir(path)
 
+
+            
 pattern='restart.txt'
 regexObj = re.compile(pattern)
 for root, dirs, files in os.walk(dir, topdown=False):
@@ -39,6 +41,8 @@ for root, dirs, files in os.walk(dir, topdown=False):
         if len(os.listdir(path)) == 0:
             os.rmdir(path)
 
+
+            
 pattern='~'
 regexObj = re.compile(pattern)
 for root, dirs, files in os.walk(dir, topdown=False):
