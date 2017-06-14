@@ -1,1 +1,0 @@
-Program execution time: 95.594112 seconds.
