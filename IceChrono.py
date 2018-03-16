@@ -133,7 +133,7 @@ else:
 print 'Optimization execution time: ', time.time() - start_time_opt, 'seconds'
 #print 'solution: ',variables
 print 'cost function: ',cost_function(variables)
-if opt_method!='none' and hess==None:
+if opt_method!='none' and np.size(hess)==1 and hess==None:
     print 'singular matrix encountered (flat curvature in some direction)'
     quit()
 print 'Calculation of confidence intervals'
@@ -165,3 +165,6 @@ output_file.write(message)
 
 if show_figures:
     mpl.show()
+
+###Closing output file
+output_file.close()
