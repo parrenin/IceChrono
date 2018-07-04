@@ -212,12 +212,13 @@ class Drilling:
         self.correlation_corr_LID_before=self.correlation_corr_LID+0
         self.correlation_corr_tau_before=self.correlation_corr_tau+0
 
-        filename=datadir+'/parameters-CovariancePrior-AllDrillings-init.py'
+	filename=datadir+self.label+'/parameters-CovariancePrior-init.py'
         if os.path.isfile(filename):
             execfile(filename)
-        filename=datadir+self.label+'/parameters-CovariancePrior-init.py'
-        if os.path.isfile(filename):
-            execfile(filename)
+        else:
+            filename=datadir+'/parameters-CovariancePrior-AllDrillings-init.py'
+            if os.path.isfile(filename):
+                execfile(filename)
 
 
         if (self.correlation_corr_a_before!=self.correlation_corr_a).any():
