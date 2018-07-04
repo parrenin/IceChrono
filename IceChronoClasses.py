@@ -414,7 +414,7 @@ class Drilling:
         self.icelayerthick=self.tau*self.a/self.D
         self.age=self.age_top+np.cumsum(np.concatenate((np.array([0]), self.D/self.tau/self.a*self.depth_inter)))
 
-        self.ice_equiv_depth=np.interp(self.udepth-self.LIDIE, self.udepth, self.depth)
+        self.ice_equiv_depth=np.interp(self.udepth-self.ULIDIE, self.udepth, self.depth)
         self.Ddepth=self.depth-self.ice_equiv_depth
         self.airage=np.interp(self.ice_equiv_depth, self.depth,self.age, left=np.nan, right=np.nan)
         self.airlayerthick=1/np.diff(self.airage)
