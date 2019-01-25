@@ -1,1 +1,1 @@
-Program execution time: 11.498421 seconds.Program execution time: 11.749161 seconds.Program execution time: 11.806958 seconds.
+Program execution time: 11.498421 seconds.Program execution time: 11.749161 seconds.Program execution time: 11.806958 seconds.Program execution time: 10.344747 seconds.Program execution time: 85.386034 seconds.Program execution time: 9.271164 seconds.Program execution time: 72.70908 seconds.Program execution time: 101.798767 seconds.

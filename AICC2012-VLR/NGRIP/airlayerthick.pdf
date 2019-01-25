@@ -1,12 +1,12 @@
 %PDF-1.4
 %¬Ü «º
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<< /Pages 2 0 R /Type /Catalog >>
 endobj
 8 0 obj
-<< /XObject 7 0 R /Pattern 5 0 R
-/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] /ExtGState 4 0 R
-/Shading 6 0 R /Font 3 0 R >>
+<< /ExtGState 4 0 R /Font 3 0 R /Pattern 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] /Shading 6 0 R
+/XObject 7 0 R >>
 endobj
 3 0 obj
 << >>
@@ -27,9 +27,9 @@ endobj
 << /Count 0 /Kids [ ] /Type /Pages >>
 endobj
 9 0 obj
-<< /CreationDate (D:20180704110020+02'00')
-/Producer (matplotlib pdf backend)
-/Creator (matplotlib 2.0.0, http://matplotlib.org) >>
+<< /CreationDate (D:20190125105351+02'00')
+/Creator (matplotlib 2.2.3, http://matplotlib.org)
+/Producer (matplotlib pdf backend 2.2.3) >>
 endobj
 xref
 0 10
@@ -46,5 +46,5 @@ xref
 trailer
 << /Info 9 0 R /Root 1 0 R /Size 10 >>
 startxref
-513
+519
 %%EOF

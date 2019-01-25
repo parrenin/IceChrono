@@ -54,6 +54,7 @@ class Drilling:
 
 #        print 'Initialization of drilling '+self.label
 
+	self.archive='icecore'
         self.accu_prior_rep='staircase'
 
         execfile(datadir+'/parameters-AllDrillings.py')
@@ -110,57 +111,55 @@ class Drilling:
         self.age=np.empty_like(self.depth)
         self.airage=np.empty_like(self.depth)
         
+        if self.archive=='icecore':
 
-        readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
-#        self.density_depth=readarray[:,0]
-        if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
-        self.D_depth=readarray[:,0]
-        self.D_D=readarray[:,1]
-        self.D=np.interp(self.depth_mid, self.D_depth, self.D_D)
-
-        self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
-        self.iedepth_mid=(self.iedepth[1:]+self.iedepth[:-1])/2
-        if self.calc_tau:
-            self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
-        
-        if self.calc_LID:
-            if self.depth[0]<self.LID_value:
-                self.LID_depth=np.array([self.depth[0], self.LID_value, self.depth[-1]])
-                self.LID_LID=np.array([self.depth[0], self.LID_value, self.LID_value])
-            else:
-                self.LID_depth=np.array([self.depth[0], self.depth[-1]])
-                self.LID_LID=np.array([self.LID_value, self.LID_value])
-        else:
-#            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
-            readarray=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+            readarray=np.loadtxt(datadir+self.label+'/density-prior.txt')
+            #        self.density_depth=readarray[:,0]
             if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
-            self.LID_depth=readarray[:,0]
-            self.LID_LID=readarray[:,1]
-            if readarray.shape[1]>=3:
-                self.LID_sigma=readarray[:,2]
-        self.LID_model=np.interp(self.depth, self.LID_depth, self.LID_LID)
+            self.D_depth=readarray[:,0]
+            self.D_D=readarray[:,1]
+            self.D=np.interp(self.depth_mid, self.D_depth, self.D_D)
+            self.iedepth=np.cumsum(np.concatenate((np.array([0]), self.D*self.depth_inter)))
+            self.iedepth_mid=(self.iedepth[1:]+self.iedepth[:-1])/2
 
+            if self.calc_tau:
+                self.thickness_ie=self.thickness-self.depth[-1]+self.iedepth[-1]
+            
+            if self.calc_LID:
+                if self.depth[0]<self.LID_value:
+                    self.LID_depth=np.array([self.depth[0], self.LID_value, self.depth[-1]])
+                    self.LID_LID=np.array([self.depth[0], self.LID_value, self.LID_value])
+                else:
+                    self.LID_depth=np.array([self.depth[0], self.depth[-1]])
+                    self.LID_LID=np.array([self.LID_value, self.LID_value])
+            else:
+    #            self.LID_model=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+                readarray=np.loadtxt(datadir+self.label+'/LID-prior.txt')
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
+                self.LID_depth=readarray[:,0]
+                self.LID_LID=readarray[:,1]
+                if readarray.shape[1]>=3:
+                    self.LID_sigma=readarray[:,2]
+            self.LID_model=np.interp(self.depth, self.LID_depth, self.LID_LID)
 
-
-
-        self.Ddepth=np.empty_like(self.depth)
-        self.udepth=np.empty_like(self.depth)
+            self.Ddepth=np.empty_like(self.depth)
+            self.udepth=np.empty_like(self.depth)
 
 #        print 'depth_mid ', np.size(self.depth_mid)
 #        print 'zeta ', np.size(self.zeta)
-        if self.calc_tau:
-            self.thicknessie=self.thickness-self.depth[-1]+self.iedepth[-1]
-            self.zeta=(self.thicknessie-self.iedepth_mid)/self.thicknessie  #FIXME: maybe we should use iedepth and thickness_ie here?
-            self.tau=np.empty_like(self.depth_mid)
-        else:
-            readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
-            if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
-            self.tau_depth=readarray[:,0]
-            self.tau_tau=readarray[:,1]
-            if readarray.shape[1]>=3:
-                self.tau_sigma=readarray[:,2]
-            self.tau_model=np.interp(self.depth_mid, self.tau_depth, self.tau_tau)
-            self.tau=self.tau_model
+            if self.calc_tau:
+                self.thicknessie=self.thickness-self.depth[-1]+self.iedepth[-1]
+                self.zeta=(self.thicknessie-self.iedepth_mid)/self.thicknessie  #FIXME: maybe we should use iedepth and thickness_ie here?
+                self.tau=np.empty_like(self.depth_mid)
+            else:
+                readarray=np.loadtxt(datadir+self.label+'/thinning-prior.txt')
+                if (np.size(readarray)==np.shape(readarray)[0]): readarray.resize(1, np.size(readarray))
+                self.tau_depth=readarray[:,0]
+                self.tau_tau=readarray[:,1]
+                if readarray.shape[1]>=3:
+                    self.tau_sigma=readarray[:,2]
+                self.tau_model=np.interp(self.depth_mid, self.tau_depth, self.tau_tau)
+                self.tau=self.tau_model
 
         self.raw_model()
 
@@ -170,24 +169,26 @@ class Drilling:
             self.variables=np.loadtxt(datadir+self.label+'/restart.txt')
         elif self.start=='default':
             self.corr_a=np.zeros(np.size(self.corr_a_age))
-            self.corr_LID=np.zeros(np.size(self.corr_LID_age))
-            self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
+            if self.archive=='icecore':
+                self.corr_LID=np.zeros(np.size(self.corr_LID_age))
+                self.corr_tau=np.zeros(np.size(self.corr_tau_depth))
         elif self.start=='random':
             self.corr_a=np.random.normal(loc=0., scale=1., size=np.size(self.corr_a_age))
-            self.corr_LID=np.random.normal(loc=0., scale=1., size=np.size(self.corr_LID_age))
-            self.corr_tau=np.random.normal(loc=0., scale=1., size=np.size(self.corr_tau_depth))
+            if self.archive=='icecore':
+                self.corr_LID=np.random.normal(loc=0., scale=1., size=np.size(self.corr_LID_age))
+                self.corr_tau=np.random.normal(loc=0., scale=1., size=np.size(self.corr_tau_depth))
         else:
             print 'Start option not recognized.'
 
 ## Now we set up the correlation matrices
 
         self.correlation_corr_a=np.diag(np.ones(np.size(self.corr_a)))
-        self.correlation_corr_LID=np.diag(np.ones(np.size(self.corr_LID)))
-        self.correlation_corr_tau=np.diag(np.ones(np.size(self.corr_tau)))
-
         self.chol_a=np.diag(np.ones(np.size(self.corr_a)))
-        self.chol_LID=np.diag(np.ones(np.size(self.corr_LID)))
-        self.chol_tau=np.diag(np.ones(np.size(self.corr_tau)))
+        if self.archive=='icecore':
+            self.correlation_corr_LID=np.diag(np.ones(np.size(self.corr_LID)))
+            self.correlation_corr_tau=np.diag(np.ones(np.size(self.corr_tau)))
+            self.chol_LID=np.diag(np.ones(np.size(self.corr_LID)))
+            self.chol_tau=np.diag(np.ones(np.size(self.corr_tau)))
 
 
 
@@ -198,21 +199,23 @@ class Drilling:
         except AttributeError:
             print 'Sigma on prior accu scenario not defined in the accu-prior.txt file'
 
-        try:
-            self.sigmap_corr_LID=np.interp(self.corr_LID_age, self.fct_airage_model(self.LID_depth) , self.LID_sigma)          #FIXME: we should average here since it would be more representative
-        except AttributeError:
-            print 'Sigma on prior LID scenario not defined in the LID-prior.txt file'
+        if self.archive=='icecore':
+            try:
+                self.sigmap_corr_LID=np.interp(self.corr_LID_age, self.fct_airage_model(self.LID_depth) , self.LID_sigma)          #FIXME: we should average here since it would be more representative
+            except AttributeError:
+                print 'Sigma on prior LID scenario not defined in the LID-prior.txt file'
 
-        try:
-            self.sigmap_corr_tau=np.interp(self.corr_tau_depth, self.tau_depth, self.tau_sigma)           #FIXME: we should average here since it would be more representative
-        except AttributeError:
-            print 'Sigma on prior thinning scenario not defined in the thinning-prior.txt file'
+            try:
+                self.sigmap_corr_tau=np.interp(self.corr_tau_depth, self.tau_depth, self.tau_sigma)           #FIXME: we should average here since it would be more representative
+            except AttributeError:
+                print 'Sigma on prior thinning scenario not defined in the thinning-prior.txt file'
 
         self.correlation_corr_a_before=self.correlation_corr_a+0
-        self.correlation_corr_LID_before=self.correlation_corr_LID+0
-        self.correlation_corr_tau_before=self.correlation_corr_tau+0
+        if self.archive=='icecore':
+            self.correlation_corr_LID_before=self.correlation_corr_LID+0
+            self.correlation_corr_tau_before=self.correlation_corr_tau+0
 
-	filename=datadir+self.label+'/parameters-CovariancePrior-init.py'
+    	filename=datadir+self.label+'/parameters-CovariancePrior-init.py'
         if os.path.isfile(filename):
             execfile(filename)
         else:
@@ -998,3 +1001,4 @@ class DrillingPair:
         pp.close()
         if not show_figures:
             mpl.close()
+
